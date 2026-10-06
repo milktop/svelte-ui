@@ -2,6 +2,7 @@
 <script>
   import * as select from '@zag-js/select'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
+  import { tick } from 'svelte'
   import 'iconify-icon'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
   import '../theme.css'
@@ -46,16 +47,37 @@
     // Zag's values are strings; map them back to the items' own.
     onValueChange: (details) => {
       const chosen = details.value.map((key) => items.find((item) => String(valueOf(item)) === key)).filter((item) => item !== undefined).map(valueOf)
+      if (multiple) keepPlace(details.value)
       value = multiple ? chosen : chosen[0] ?? null
     },
   }))
   const api = $derived(select.connect(service, normalizeProps))
+  const triggerProps = $derived(api.getTriggerProps())
+
+  // Picking several: the highlight stays where it was (on the next item, when
+  // the picked one leaves the list), so Enter can pick a run of them.
+  function keepPlace(next) {
+    const key = next.find((k) => !selectedKeys.includes(k)) ?? selectedKeys.find((k) => !next.includes(k))
+    const at = listed.findIndex((item) => String(valueOf(item)) === key)
+    if (at < 0) return
+    tick().then(() => setTimeout(() => {
+      const item = listed[Math.min(at, listed.length - 1)]
+      if (item && api.open) api.setHighlightValue(String(valueOf(item)))
+    }, 30))
+  }
+
+  // Backspace on the closed button removes the last pick.
+  function removeLast(e) {
+    if (e.key !== 'Backspace' || !multiple || api.open || !selectedKeys.length) return false
+    api.clearValue(selectedKeys.at(-1))
+    return true
+  }
 </script>
 
 <div {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)} data-size={size} data-variant={variant}>
   {#if label && !field}<label {...part('label')} {...api.getLabelProps()}>{label}</label>{/if}
   <div {...part('control')} {...api.getControlProps()}>
-    <button {...part('trigger')} {...api.getTriggerProps()} {...fieldAttrs(field)}>
+    <button {...part('trigger')} {...triggerProps} {...fieldAttrs(field)} onkeydown={(e) => removeLast(e) || triggerProps.onkeydown?.(e)}>
       {#if multiple && tags && api.hasSelectedItems}
         <!-- Chips, not buttons (a button can't hold buttons): untick an item to remove it. -->
         <span {...part('tags')}>

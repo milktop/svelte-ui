@@ -2,6 +2,7 @@
 <script>
   import * as combobox from '@zag-js/combobox'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
+  import { tick } from 'svelte'
   import 'iconify-icon'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
   import '../theme.css'
@@ -111,10 +112,35 @@
     onValueChange: (details) => {
       if (details.value.includes(CREATE)) return createFrom(typed)
       const chosen = details.value.map(byKey).filter((item) => item !== undefined).map(valueOf)
+      if (multiple) keepPlace(details.value)
       value = multiple ? chosen : chosen[0] ?? null
     },
   }))
   const api = $derived(combobox.connect(service, normalizeProps))
+  const inputProps = $derived(api.getInputProps())
+
+  // Picking several: the highlight stays where it was (on the next item, when
+  // the picked one leaves the list), so Enter can pick a run of them. Not
+  // after a search, which the pick clears. Zag only acts on Enter once the
+  // keys have moved the highlight, so it moves there the way they would.
+  function keepPlace(next) {
+    const key = next.find((k) => !selectedKeys.includes(k)) ?? selectedKeys.find((k) => !next.includes(k))
+    const at = listed.findIndex((item) => keyOf(item) === key)
+    if (at < 0 || query) return
+    tick().then(() => setTimeout(() => {
+      const n = Math.min(at, listed.length - 1)
+      if (n < 0 || !api.open) return
+      if (n > 0) api.setHighlightValue(keyOf(listed[n - 1]))
+      inputEl?.dispatchEvent(new KeyboardEvent('keydown', { key: n > 0 ? 'ArrowDown' : 'Home', bubbles: true }))
+    }, 30))
+  }
+
+  // Backspace in an empty input removes the last pick.
+  function removeLast(e) {
+    if (e.key !== 'Backspace' || !multiple || e.currentTarget.value || !selectedKeys.length) return false
+    api.clearValue(selectedKeys.at(-1))
+    return true
+  }
 
   // A click on the box (around the tags, not on a button) types into the input.
   let inputEl = $state()
@@ -144,7 +170,8 @@
             onclick={(e) => { e.stopPropagation(); api.clearValue(keyOf(item)) }}><iconify-icon icon="lucide:x"></iconify-icon></button>
         </span>
       {/each}
-      <input bind:this={inputEl} {...part('input')} {...api.getInputProps()} placeholder={picked.length ? '' : placeholder} {...fieldAttrs(field)} />
+      <input bind:this={inputEl} {...part('input')} {...inputProps} placeholder={picked.length ? '' : placeholder} {...fieldAttrs(field)}
+        onkeydown={(e) => removeLast(e) || inputProps.onkeydown?.(e)} />
     </div>
     {#if clearable}<button {...part('clear')} {...api.getClearTriggerProps()}><iconify-icon icon="lucide:x"></iconify-icon></button>{/if}
     <button {...part('trigger')} {...api.getTriggerProps()}><iconify-icon icon="lucide:chevron-down"></iconify-icon></button>
