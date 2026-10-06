@@ -54,7 +54,7 @@ API panel reads parts from both through the imports.
 
 - Tags input: Zag clears the box (in the next frame) even when `validate`
   rejects a tag; the component puts the text back two frames later.
-- Combobox `load`: show "Loading…" instead of the previous query's results.
+- SearchSelect `load`: show "Loading…" instead of the previous query's results.
 - AppShell listens for ⌘B on the window: a second shell on the page needs
   `shortcut={false}` (and `breakpoint={0}` to stay out of drawer mode).
 - Deleting an example and recreating it under the same name can leave the
@@ -65,7 +65,7 @@ API panel reads parts from both through the imports.
   to `value`); a script testing a file input must fire `input`, not just `change`.
 - Inside a Field, a control's own `min-width` must give way (`min-width: 0` on
   the field's control), or it overflows narrow grid cells.
-- Combobox: `inputBehavior: 'autohighlight'`, or Enter picks nothing until
+- SearchSelect: `inputBehavior: 'autohighlight'`, or Enter picks nothing until
   you arrow down. Filter on `reason === 'input-change'` only.
 - Tags input: Zag doesn't always clear the box after a delimiter adds a tag;
   the component clears it when the value grows.
