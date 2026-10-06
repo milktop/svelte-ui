@@ -12,6 +12,8 @@
   import { apiOf } from './lib/api.js'
   import Theming from './pages/Theming.svelte'
   import Installation from './pages/Installation.svelte'
+  import BlockPage from './lib/BlockPage.svelte'
+  import { blocks } from './blocks/registry.js'
 
   const guides = { '#/theming': 'Theming', '#/installation': 'Installation' }
 
@@ -24,6 +26,7 @@
   // ⌘K: every page, then a few actions.
   const commands = [
     ...pages.map((p) => ({ label: p.title, description: p.about, href: `#/${p.slug}`, icon: p.group.icon, group: p.group.heading })),
+    ...blocks.map((b) => ({ label: b.title, description: b.about, href: `#/blocks/${b.slug}`, icon: b.icon, group: 'Blocks' })),
     { label: 'Theming', description: 'Tokens and overrides', href: '#/theming', icon: 'lucide:palette', group: 'Guides' },
     { label: 'Installation', description: 'Install, set up the CSS layers, import', href: '#/installation', icon: 'lucide:download', group: 'Guides' },
     { label: 'GitHub', description: 'Source, releases and issues', href: repo, icon: 'mdi:github', group: 'Guides', keywords: ['repo', 'source'] },
@@ -41,9 +44,11 @@
   let showApi = $state(false)
 
   const page = $derived(pages.find((p) => hash === `#/${p.slug}`))
+  const block = $derived(blocks.find((b) => hash === `#/blocks/${b.slug}`))
   const intro = $derived(page ? apiOf(page.files[0], sourceOf(page.files[0])).summary : '')
   const trail = $derived(page
     ? [{ label: 'Svelte UI', href: '#/' }, { label: page.group.heading }, { label: page.title }]
+    : block ? [{ label: 'Svelte UI', href: '#/' }, { label: 'Blocks' }, { label: block.group }, { label: block.title }]
     : [{ label: 'Svelte UI', href: '#/' }, { label: guides[hash] ?? 'Overview' }])
 </script>
 
@@ -77,7 +82,7 @@
     {/snippet}
 
     <NavSection>
-      <NavItem icon="lucide:house" href="#/" active={!page && !guides[hash]}>Overview</NavItem>
+      <NavItem icon="lucide:house" href="#/" active={!page && !block && !guides[hash]}>Overview</NavItem>
       <NavItem icon="lucide:palette" href="#/theming" active={hash === '#/theming'}>Theming</NavItem>
       <NavItem icon="lucide:download" href="#/installation" active={hash === '#/installation'}>Installation</NavItem>
     </NavSection>
@@ -86,6 +91,16 @@
         <NavGroup label={group.heading} icon={group.icon} open={group.pages.some((p) => hash === `#/${p.slug}`)}>
           {#each group.pages as p}
             <NavItem href="#/{p.slug}" active={hash === `#/${p.slug}`}>{p.title}</NavItem>
+          {/each}
+        </NavGroup>
+      {/each}
+    </NavSection>
+    <NavSection heading="Blocks">
+      {#each ['Sections', 'Pages'] as group}
+        <NavGroup label={group} icon={group === 'Pages' ? 'lucide:app-window' : 'lucide:layout-panel-top'}
+          open={blocks.some((b) => b.group === group && hash === `#/blocks/${b.slug}`)}>
+          {#each blocks.filter((b) => b.group === group) as b}
+            <NavItem href="#/blocks/{b.slug}" active={hash === `#/blocks/${b.slug}`}>{b.title}</NavItem>
           {/each}
         </NavGroup>
       {/each}
@@ -112,7 +127,8 @@
     {/snippet}
   </Topbar>
 
-  <Page width={appearance.width} align={appearance.align}>
+  <!-- The appearance panel's width, or by default: blocks wide, the rest default. -->
+  <Page width={block && appearance.width === 'default' ? 'wide' : appearance.width} align={appearance.align}>
     {#if page}
       {#key page}
         <div class="flex items-center justify-between gap-4">
@@ -132,6 +148,8 @@
           <Demo {example} form={page.form ?? !!page.group.form} />
         {/each}
       {/key}
+    {:else if block}
+      {#key block}<BlockPage {block} />{/key}
     {:else if hash === '#/theming'}
       <Theming />
     {:else if hash === '#/installation'}
