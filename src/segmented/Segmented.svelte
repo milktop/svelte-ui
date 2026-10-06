@@ -8,6 +8,8 @@
   - `value`: bindable; the item's own value
   - `label`: a label above it (skipped inside a Field)
   - `iconOnly`: just the icons (each keeps its label for assistive tech)
+  - `tooltips`: each item's label (or its own `tooltip`) in a tooltip on
+    hover and keyboard focus; on by default with `iconOnly`
   - `size`: 'sm', 'md' or 'lg'
   - `name`: for plain form posts
 -->
@@ -15,13 +17,14 @@
   import * as radio from '@zag-js/radio-group'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
   import 'iconify-icon'
+  import Tooltip from '../tooltip/Tooltip.svelte'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
   import '../theme.css'
   import './segmented.css'
 
   let {
     label = null, items = [], value = $bindable(null), labelKey = 'label', valueKey = 'value', disabledKey = 'disabled',
-    iconOnly = false, size = 'md', name = null, disabled = false,
+    iconOnly = false, tooltips = null, size = 'md', name = null, disabled = false,
     class: className = '', classes = {}, ...rest
   } = $props()
 
@@ -46,6 +49,12 @@
     },
   }))
   const api = $derived(radio.connect(service, normalizeProps))
+
+  const withTooltips = $derived(tooltips ?? iconOnly)
+  // The focusable element is the hidden radio, so keyboard focus opens its
+  // tooltip by hand (pointer focus doesn't).
+  let tipOpen = $state({})
+  const tipFor = (item) => (typeof item === 'object' && item.tooltip) || labelOf(item)
 </script>
 
 <div {...rest} {...part('root')} class={cx(className)} data-size={size}>
@@ -53,12 +62,22 @@
   <div {...api.getRootProps()} {...part('group')} {...fieldAttrs(field)}>
     <span {...api.getIndicatorProps()} {...part('indicator')}></span>
     {#each items as item (valueOf(item))}
-      <label {...api.getItemProps(itemProps(item))} {...part('item')} data-icon-only={iconOnly || undefined} title={iconOnly ? labelOf(item) : undefined}>
+      {@const key = String(valueOf(item))}
+      {@const input = api.getItemHiddenInputProps(itemProps(item))}
+      <label {...api.getItemProps(itemProps(item))} {...part('item')} data-icon-only={iconOnly || undefined}>
         <span {...api.getItemTextProps(itemProps(item))} {...part('item-text')}>
           {#if item?.icon}<iconify-icon {...part('item-icon')} icon={item.icon} aria-hidden="true"></iconify-icon>{/if}
           {#if iconOnly}<span {...part('sr-only')}>{labelOf(item)}</span>{:else}{labelOf(item)}{/if}
         </span>
-        <input {...api.getItemHiddenInputProps(itemProps(item))} />
+        {#if withTooltips}
+          <!-- Zag's tooltip props go on a layer over the item, since the item's own are Zag's radio's. -->
+          <Tooltip content={tipFor(item)} bind:open={() => !!tipOpen[key], (v) => (tipOpen[key] = v)}>
+            {#snippet trigger(props)}<span {...props} {...part('tooltip-target')}></span>{/snippet}
+          </Tooltip>
+        {/if}
+        <input {...input}
+          onfocus={(e) => { input.onfocus?.(e); if (withTooltips && e.target.matches(':focus-visible')) tipOpen[key] = true }}
+          onblur={(e) => { input.onblur?.(e); tipOpen[key] = false }} />
       </label>
     {/each}
   </div>

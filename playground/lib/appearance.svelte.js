@@ -1,4 +1,4 @@
-// The playground's appearance: theme, accent, font, radius, density and the
+// The playground's appearance (the theme is the library's colorScheme): accent, font, radius, density and the
 // shell's layout, all applied by overriding the library's --ui-* tokens on
 // <html>, which is exactly what an app would do in its own CSS. Ported from
 // imba-ui's playground (appearance.imba), with the same options.
@@ -42,28 +42,28 @@ export const aligns = { center: ['Centred'], start: ['Left'] }
 export const options = (map) => Object.entries(map).map(([value, option]) => ({ value, label: Array.isArray(option) ? option[0] : option.label }))
 
 const KEY = 'svelte-ui:appearance'
-export const defaults = { theme: 'system', accent: 'blue', font: 'jakarta', radius: 'default', density: 'default', layout: 'inset', canvas: 'cool', sidebar: 'shaded', width: 'default', align: 'center' }
+import { colorScheme } from '@milktop/svelte-ui'
+
+export const defaults = { accent: 'blue', font: 'jakarta', radius: 'default', density: 'default', layout: 'inset', canvas: 'cool', sidebar: 'shaded', width: 'default', align: 'center' }
 
 function load() {
   try { return { ...defaults, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') } } catch { return { ...defaults } }
 }
 
 export const appearance = $state(load())
-export const reset = () => Object.assign(appearance, defaults)
+delete appearance.theme
+export const reset = () => {
+  Object.assign(appearance, defaults)
+  colorScheme.value = 'system'
+}
 
-const media = matchMedia('(prefers-color-scheme: dark)')
-let systemDark = $state(media.matches)
-media.addEventListener('change', (e) => (systemDark = e.matches))
-
-export const isDark = () => appearance.theme === 'dark' || (appearance.theme === 'system' && systemDark)
+export const isDark = () => colorScheme.dark
 
 // Applies it to <html> and saves it. Call it from an $effect, which re-runs
 // when anything it reads changes.
 export function applyAppearance() {
   const root = document.documentElement
   const dark = isDark()
-  root.classList.toggle('dark', dark)
-  root.style.colorScheme = dark ? 'dark' : 'light'
 
   const [accent, accentText, soft, softText, ring] = (accents[appearance.accent] ?? accents.blue)[dark ? 'dark' : 'light']
   const [, md, sm, lg] = densities[appearance.density] ?? densities.default

@@ -18,6 +18,7 @@
     &[data-focus-visible] { outline: 2px solid var(--ui-ring-soft); }
     &[data-disabled] { opacity: 0.4; cursor: not-allowed; }
     &[data-icon-only] { padding: 0 var(--seg-px-icon); } }
+  [data-scope=segmented][data-part=tooltip-target] { position: absolute; inset: 0; }
   [data-scope=segmented][data-part=item-text] { display: inline-flex; align-items: center; gap: 0.375rem; }
   [data-scope=segmented][data-part=item-icon] { display: block; font-size: var(--seg-icon); }
   [data-scope=segmented][data-part=sr-only] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

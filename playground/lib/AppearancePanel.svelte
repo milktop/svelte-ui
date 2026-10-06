@@ -1,7 +1,7 @@
 <!-- The appearance panel: a popover of settings that override the library's
      tokens, as in imba-ui's playground. -->
 <script>
-  import { Popover, Button, Fields, Field, Segmented, Select } from '@milktop/svelte-ui'
+  import { Popover, Button, Fields, Field, Segmented, Select, colorScheme } from '@milktop/svelte-ui'
   import { appearance, reset, isDark, accents, fonts, radii, densities, layouts, canvases, sidebars, widths, aligns, options } from './appearance.svelte.js'
 
   const themes = [
@@ -16,7 +16,7 @@
   {#snippet trigger(props)}<Button {...props} size="sm" variant="ghost" icon="lucide:palette" aria-label="Appearance" />{/snippet}
 
   <Fields classes={{ grid: 'grid-cols-1 sm:grid-cols-2 gap-x-6 [&>*]:col-auto' }}>
-    <Field label="Theme"><Segmented size="sm" items={themes} bind:value={appearance.theme} /></Field>
+    <Field label="Theme"><Segmented size="sm" items={themes} bind:value={() => colorScheme.value, (v) => (colorScheme.value = v)} /></Field>
     <Field label="Accent">
       <div class="flex flex-wrap gap-2" role="radiogroup" aria-label="Accent">
         {#each Object.entries(accents) as [key, accent]}

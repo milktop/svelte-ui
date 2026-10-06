@@ -1,0 +1,23 @@
+@layer ui {
+  [data-scope=theme-toggle][data-part=root] { display: inline-block;
+    --tt-h: var(--ui-control-height); --tt-icon: 16px;
+    &[data-size=sm] { --tt-h: var(--ui-control-height-sm); --tt-icon: 15px; }
+    &[data-size=lg] { --tt-h: var(--ui-control-height-lg); --tt-icon: 18px; } }
+  /* The menu and toggle variants: one square button, like a segmented item. */
+  [data-scope=theme-toggle][data-part=trigger] { display: inline-flex; align-items: center; justify-content: center; width: var(--tt-h); height: var(--tt-h);
+    padding: 0; box-sizing: border-box; border: 1px solid var(--ui-border); background: var(--ui-surface); color: var(--ui-text);
+    border-radius: var(--ui-radius); cursor: pointer;
+    &:hover, &[data-state=open] { background: var(--ui-hover); }
+    &:focus-visible { outline: 2px solid var(--ui-ring-soft); } }
+  [data-scope=theme-toggle][data-part=trigger-icon] { display: block; font-size: var(--tt-icon); }
+  /* Icons only: a narrow column, the current scheme highlighted instead of
+     dotted, names kept for screen readers. */
+  [data-scope=theme-toggle][data-icon-only] {
+    & [data-scope=menu][data-part=content] { min-width: 0; padding: 0.25rem; }
+    & [data-scope=menu][data-part=item] { justify-content: center; width: var(--tt-h); height: var(--tt-h); padding: 0; box-sizing: border-box;
+      &[data-state=checked] { background: var(--ui-hover); }
+      &[data-state=checked] [data-part=icon] { color: var(--ui-text); } }
+    & [data-scope=menu][data-part=indicator] { display: none; }
+    & [data-scope=menu][data-part=icon] { font-size: var(--tt-icon); }
+    & [data-scope=menu][data-part=label] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } }
+}

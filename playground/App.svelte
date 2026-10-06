@@ -1,5 +1,8 @@
 <script>
-  import { AppShell, Sidebar, NavSection, NavGroup, NavItem, Topbar, Breadcrumbs, Page, Toaster } from '@milktop/svelte-ui'
+  import {
+    AppShell, Sidebar, NavSection, NavGroup, NavItem, Topbar, Breadcrumbs, Page, Toaster, toaster, colorScheme,
+    SidebarUser, MenuItem, Submenu, MenuRadioGroup, MenuRadio, MenuSeparator,
+  } from '@milktop/svelte-ui'
   import Demo from './lib/Demo.svelte'
   import ApiPanel from './lib/ApiPanel.svelte'
   import ThemeSwitch from './lib/ThemeSwitch.svelte'
@@ -32,6 +35,21 @@
         <span class="inline-flex h-7 w-7 items-center justify-center rounded-[var(--ui-radius)] bg-(--ui-accent) text-xs font-bold text-(--ui-accent-text)">UI</span>
         Svelte UI
       </a>
+    {/snippet}
+    {#snippet footer()}
+      <SidebarUser name="Ada Lovelace" description="ada@example.com" onselect={(action) => toaster.info({ title: `Picked “${action}”` })}>
+        <MenuItem value="profile" icon="lucide:user">Profile</MenuItem>
+        <MenuItem value="settings" icon="lucide:settings" shortcut="⌘,">Settings</MenuItem>
+        <Submenu label="Theme" icon="lucide:palette">
+          <MenuRadioGroup bind:value={() => colorScheme.value, (v) => (colorScheme.value = v)}>
+            <MenuRadio value="light" icon="lucide:sun">Light</MenuRadio>
+            <MenuRadio value="dark" icon="lucide:moon">Dark</MenuRadio>
+            <MenuRadio value="system" icon="lucide:monitor">System</MenuRadio>
+          </MenuRadioGroup>
+        </Submenu>
+        <MenuSeparator />
+        <MenuItem value="logout" icon="lucide:log-out" danger>Log out</MenuItem>
+      </SidebarUser>
     {/snippet}
 
     <NavSection>
