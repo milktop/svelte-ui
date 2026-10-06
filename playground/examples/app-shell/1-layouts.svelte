@@ -6,7 +6,7 @@
 
 {#each [false, true] as inset}
   <div class="h-72 w-full overflow-hidden rounded-xl border border-(--ui-border) sm:w-[calc(50%-0.375rem)]">
-    <AppShell {inset} class="h-full min-h-0 [--ui-sidebar-width:9rem]">
+    <AppShell {inset} shortcut={false} breakpoint={0} class="h-full min-h-0 [--ui-sidebar-width:9rem]">
       <Sidebar class="h-full">
         {#snippet logo()}TutorApp{/snippet}
         <NavSection>

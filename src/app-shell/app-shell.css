@@ -2,10 +2,14 @@
 @layer ui {
   [data-scope=app-shell][data-part=root] {
     display: grid; grid-template-columns: var(--ui-sidebar-width) minmax(0, 1fr); grid-template-rows: auto 1fr;
-    grid-template-areas: "sidebar topbar" "sidebar main"; min-height: 100dvh;
+    grid-template-areas: "sidebar topbar" "sidebar main"; min-height: 100dvh; transition: grid-template-columns 200ms ease;
     background: var(--ui-canvas); color: var(--ui-text); font-family: var(--ui-font);
 
     > [data-scope=sidebar] { grid-area: sidebar; }
+    &[data-rail] { grid-template-columns: var(--ui-sidebar-rail-width) minmax(0, 1fr); }
+    /* On phones the sidebar leaves the grid and slides in as a drawer. */
+    &[data-mobile] { grid-template-columns: minmax(0, 1fr); grid-template-areas: "topbar" "main"; }
+    &[data-inset][data-mobile] > [data-scope=page] { margin: 0 0.5rem 0.5rem; }
     > [data-scope=topbar] { grid-area: topbar; }
     > [data-scope=page] { grid-area: main; }
 
@@ -26,4 +30,12 @@
     @media (min-width: 768px) { padding: 0 1.5rem; } }
   [data-scope=topbar][data-part=start] { display: flex; align-items: center; gap: 0.75rem; flex-grow: 1; min-width: 0; }
   [data-scope=topbar][data-part=end] { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+  [data-scope=app-shell][data-part=backdrop] { position: fixed; inset: 0; z-index: 40; background: rgba(0, 0, 0, 0.4);
+    animation: ui-fade-in 200ms ease-out; }
+  [data-scope=topbar][data-part=menu] { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; margin-left: -0.5rem;
+    flex-shrink: 0; padding: 0; border: none; background: transparent; border-radius: var(--ui-radius); color: var(--ui-text);
+    font-size: 18px; cursor: pointer;
+    &:hover { background: var(--ui-hover); }
+    &:focus-visible { outline: 2px solid var(--ui-ring-soft); } }
+  @keyframes ui-fade-in { from { opacity: 0; } }
 }

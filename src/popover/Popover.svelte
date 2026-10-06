@@ -9,6 +9,8 @@
   - `trigger` snippet: the button that opens it; spread its props onto your button
   - `heading`, `description`: a header for the panel
   - `closable`: a close button in the corner
+  - `arrow`: points the panel at its trigger
+  - `modal`: traps focus and blocks the page behind it
   - `open`: bindable
   - `placement`: where it opens ('bottom')
 -->
@@ -21,14 +23,14 @@
   import './popover.css'
 
   let {
-    heading = null, description = null, closable = false, open = $bindable(false), placement = 'bottom',
+    heading = null, description = null, closable = false, arrow = false, modal = false, open = $bindable(false), placement = 'bottom',
     trigger = null, class: className = '', classes = {}, children, ...rest
   } = $props()
 
   const part = partsOf('popover', () => classes)
   const id = $props.id()
   const service = useMachine(popover.machine, () => ({
-    id, open,
+    id, open, modal,
     // Fixed, so a scrolling or clipped parent can't cut it off.
     positioning: { placement, strategy: 'fixed' },
     onOpenChange: (details) => { open = details.open },
@@ -39,6 +41,7 @@
 {@render trigger?.(api.getTriggerProps())}
 <div {...part('positioner')} {...api.getPositionerProps()}>
   <div {...rest} {...part('content')} {...api.getContentProps()} class={cx(className)}>
+    {#if arrow}<div {...part('arrow')} {...api.getArrowProps()}><div {...part('arrow-tip')} {...api.getArrowTipProps()}></div></div>{/if}
     {#if heading || description}
       <div {...part('header')}>
         {#if heading}<div {...part('title')} {...api.getTitleProps()}>{heading}</div>{/if}

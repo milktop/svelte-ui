@@ -7,7 +7,10 @@
   - `items`: strings, or objects (see `labelKey`, `valueKey`, `disabledKey`)
   - `value`: bindable; the item's own value, or an array of them when `multiple`
   - `multiple`: pick several; they show as tags (`variant`: 'subtle', 'accent' or 'outline')
+  - `load`: an async function(query) returning items, for server search
+    (debounced by `debounce` ms; `loadingText` shows meanwhile)
   - `placeholder`, `emptyText` (shown when nothing matches)
+  - `placement`: where the list opens ('bottom-start')
   - `item` snippet: an option's content, given the item
   - `name`: for plain form posts
 -->
@@ -21,6 +24,7 @@
 
   let {
     label = null, items = [], value = $bindable(null), multiple = false, placeholder = 'Search…', emptyText = 'No matches',
+    load = null, debounce = 200, loadingText = 'Loading…', placement = 'bottom-start',
     labelKey = 'label', valueKey = 'value', disabledKey = 'disabled', variant = 'subtle', name = null, disabled = false,
     item: itemSnippet = null, class: className = '', classes = {}, ...rest
   } = $props()
@@ -30,18 +34,44 @@
   const labelOf = (item) => (typeof item === 'object' ? item[labelKey] : String(item))
   const valueOf = (item) => (typeof item === 'object' ? item[valueKey] : item)
   const keyOf = (item) => String(valueOf(item))
-  const byKey = (key) => items.find((item) => keyOf(item) === key)
+  // Items found by `load` are remembered, so picked ones keep their labels.
+  let seen = $state([])
+  const pool = $derived(load ? seen : items)
+  const byKey = (key) => pool.find((item) => keyOf(item) === key)
 
   // What's been typed (not the picked item's label), filtering the list:
   // labels starting with it first, then those containing it.
   let query = $state('')
+  let loaded = $state([])
+  let loading = $state(false)
+  let ticket = 0
+  let timer
+
+  // With `load`, the server filters: ask it (debounced), keeping only the latest answer.
+  $effect(() => {
+    if (!load) return
+    const q = query
+    const mine = ++ticket
+    loading = true
+    clearTimeout(timer)
+    timer = setTimeout(async () => {
+      const list = await load(q)
+      if (mine !== ticket) return
+      loaded = list
+      seen = [...seen.filter((item) => !list.some((it) => keyOf(it) === keyOf(item))), ...list]
+      loading = false
+    }, debounce)
+    return () => clearTimeout(timer)
+  })
+
   const shown = $derived.by(() => {
+    if (load) return loading ? [] : loaded
     const q = query.toLowerCase()
     if (!q) return items
     const label = (item) => labelOf(item).toLowerCase()
     return [...items.filter((item) => label(item).startsWith(q)), ...items.filter((item) => !label(item).startsWith(q) && label(item).includes(q))]
   })
-  const picked = $derived(multiple ? items.filter((item) => (value ?? []).includes(valueOf(item))) : [])
+  const picked = $derived(multiple ? (value ?? []).map((v) => pool.find((item) => valueOf(item) === v)).filter((item) => item !== undefined) : [])
 
   const collection = $derived(combobox.collection({
     items: shown, itemToString: labelOf, itemToValue: keyOf,
@@ -55,7 +85,7 @@
     invalid: !!field?.invalid,
     ids: field ? { input: field.id, label: field.labelId } : undefined,
     value: multiple ? (value ?? []).map(String) : value == null ? [] : [String(value)],
-    positioning: { placement: 'bottom-start', sameWidth: true },
+    positioning: { placement, sameWidth: true },
     onInputValueChange: (details) => { query = details.reason === 'input-change' ? details.inputValue : '' },
     // Zag's values are strings; map them back to the items' own.
     onValueChange: (details) => {
@@ -93,7 +123,7 @@
           <span {...part('item-indicator')} {...api.getItemIndicatorProps({ item })}><iconify-icon icon="lucide:check"></iconify-icon></span>
         </li>
       {:else}
-        <li {...part('empty')}>{emptyText}</li>
+        <li {...part('empty')}>{loading ? loadingText : emptyText}</li>
       {/each}
     </ul>
   </div>

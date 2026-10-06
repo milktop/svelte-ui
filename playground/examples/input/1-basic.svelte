@@ -1,12 +1,13 @@
-<!-- Text, numbers and binding
-  `bind:value` works for every type; a number input binds a number. -->
+<!-- Text and numbers
+  `bind:value` for every type; a number input binds a number. -->
 <script>
-  import { Input } from '@milktop/svelte-ui'
+  import { Fields, Field, Input } from '@milktop/svelte-ui'
 
-  let name = $state('Ada')
+  let name = $state('Ada Lovelace')
   let age = $state(16)
 </script>
 
-<Input bind:value={name} placeholder="Name" />
-<Input type="number" bind:value={age} suffix="years" class="w-36" />
-<p class="m-0 self-center text-sm text-(--ui-muted)">{name}, {age} ({typeof age})</p>
+<Fields class="w-full">
+  <Field label="Name" span={6} hint="Bound: {name}"><Input bind:value={name} /></Field>
+  <Field label="Age" span={6} hint="Bound: {age} ({typeof age})"><Input type="number" bind:value={age} suffix="years" /></Field>
+</Fields>

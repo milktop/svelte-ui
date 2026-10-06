@@ -36,3 +36,14 @@ export function fieldAttrs(field) {
     'aria-invalid': field.invalid ? 'true' : undefined,
   }
 }
+
+// App shell context: the shell provides its state (rail, mobile, the drawer)
+// and toggle(); the sidebar, top bar and nav items adapt to it.
+const SHELL = Symbol('ui-shell')
+export const provideShell = (shell) => setContext(SHELL, shell)
+export const useShell = () => getContext(SHELL) ?? null
+
+// Sidebar context: for accordion groups (one open at a time).
+const SIDEBAR = Symbol('ui-sidebar')
+export const provideSidebar = (sidebar) => setContext(SIDEBAR, sidebar)
+export const useSidebar = () => getContext(SIDEBAR) ?? null

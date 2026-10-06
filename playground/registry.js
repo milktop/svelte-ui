@@ -1,4 +1,4 @@
-// The playground's pages. Each lists the component files its API panel reads,
+// The playground's pages. Each one lists the component files its API panel reads,
 // and its examples are whatever is in examples/<slug>/ (sorted by file name),
 // so nothing here needs updating when a component or example changes.
 

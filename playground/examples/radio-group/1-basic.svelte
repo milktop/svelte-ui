@@ -1,7 +1,7 @@
 <!-- Pick one
-  Items can be strings, or objects with a `description`. -->
+  Items can be strings, or objects with a `description`; `orientation="horizontal"` puts them in a row. -->
 <script>
-  import { RadioGroup } from '@milktop/svelte-ui'
+  import { Fields, Field, RadioGroup } from '@milktop/svelte-ui'
 
   const plans = [
     { value: 'payg', label: 'Pay as you go', description: 'Pay for each lesson' },
@@ -13,6 +13,9 @@
   let length = $state(60)
 </script>
 
-<RadioGroup label="Plan" items={plans} bind:value={plan} />
-<RadioGroup label="Length" orientation="horizontal" items={[{ value: 30, label: '30 min' }, { value: 60, label: '60 min' }]} bind:value={length} />
-<p class="m-0 w-full text-sm text-(--ui-muted)">{plan}, {length} ({typeof length})</p>
+<Fields class="w-full">
+  <Field label="Plan" span={6} hint="Bound: {plan}"><RadioGroup items={plans} bind:value={plan} /></Field>
+  <Field label="Length" span={6} hint="Bound: {length} ({typeof length})">
+    <RadioGroup orientation="horizontal" items={[{ value: 30, label: '30 min' }, { value: 60, label: '60 min' }]} bind:value={length} />
+  </Field>
+</Fields>

@@ -6,8 +6,9 @@
 
   - `value`: bindable; a number, or an array of two for a range
   - `min`, `max`, `step`
-  - `showValue`: the value beside the label (`format` turns it into text)
-  - `markers`: values to label under the track
+  - `showValue`: the value beside the label, formatted with `formatOptions` and `locale`
+    (e.g. { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 })
+  - `marks`: values (or { value, label }) shown as ticks under the track
   - `name`: for plain form posts
 -->
 <script>
@@ -19,13 +20,16 @@
 
   let {
     label = null, value = $bindable(0), min = 0, max = 100, step = 1, showValue = true,
-    format = (n) => String(n), markers = null, name = null, disabled = false,
+    formatOptions = undefined, locale = undefined, marks = null, name = null, disabled = false,
     class: className = '', classes = {}, ...rest
   } = $props()
 
   const field = useField()
   const part = partsOf('slider', () => classes)
   const range = $derived(Array.isArray(value))
+  const formatter = $derived(new Intl.NumberFormat(locale, formatOptions))
+  const format = (n) => formatter.format(n)
+  const markOf = (mark) => (typeof mark === 'object' ? mark : { value: mark, label: format(mark) })
 
   const id = $props.id()
   const service = useMachine(slider.machine, () => ({
@@ -51,9 +55,9 @@
       <div {...part('thumb')} {...api.getThumbProps({ index })} {...fieldAttrs(field)}><input {...api.getHiddenInputProps({ index })} /></div>
     {/each}
   </div>
-  {#if markers}
-    <div {...part('markers')} {...api.getMarkerGroupProps()}>
-      {#each markers as marker}<span {...part('marker')} {...api.getMarkerProps({ value: marker })}>{format(marker)}</span>{/each}
+  {#if marks}
+    <div {...part('marks')} {...api.getMarkerGroupProps()}>
+      {#each marks.map(markOf) as mark (mark.value)}<span {...part('mark')} {...api.getMarkerProps({ value: mark.value })}>{mark.label}</span>{/each}
     </div>
   {/if}
 </div>

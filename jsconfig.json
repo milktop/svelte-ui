@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "checkJs": true, "allowJs": true, "strict": false, "noImplicitAny": false,
+    "module": "esnext", "moduleResolution": "bundler", "target": "esnext", "skipLibCheck": true
+  },
+  "include": ["src/**/*", "playground/**/*.svelte", "playground/lib/*.js", "playground/registry.js"]
+}

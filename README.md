@@ -60,7 +60,8 @@ Theme it by setting tokens (see `src/theme.css`):
 
 ```sh
 npm install
-npm run dev   # the playground, http://localhost:5193
+npm run dev     # the playground, http://localhost:5193
+npm run check   # undefined names, which the build lets through
 ```
 
 Each playground page reads its component's doc comment, props, snippets and

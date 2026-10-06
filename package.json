@@ -17,12 +17,14 @@
   ],
   "scripts": {
     "dev": "vite playground --port 5193",
-    "build:playground": "vite build playground"
+    "build:playground": "vite build playground",
+    "check": "node scripts/check.js"
   },
   "peerDependencies": {
     "svelte": "^5.30.0"
   },
   "dependencies": {
+    "@internationalized/date": "^3.12.4",
     "@zag-js/checkbox": "^1.45.0",
     "@zag-js/combobox": "^1.45.0",
     "@zag-js/date-picker": "^1.45.0",
@@ -47,7 +49,9 @@
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tailwindcss/vite": "^4.3.3",
     "svelte": "^5.57.2",
+    "svelte-check": "^4.7.6",
     "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
     "vite": "^8.3.3"
   }
 }

@@ -3,8 +3,14 @@
 
   <DatePicker label="Lesson date" bind:value={date} min="2026-01-01" />
 
-  - `value`: bindable, an ISO date ('YYYY-MM-DD')
+  - `value`: bindable, an ISO date ('YYYY-MM-DD'), or an array of two with `range`
+  - `range`: pick a start and an end
   - `min`, `max`: ISO dates
+  - `unavailable`: function(CalendarDate) returning true for dates that can't
+    be picked (weekends, holidays); they show struck through
+
+  Up and Down in the input step its date by a day (Shift: a week), skipping
+  unavailable ones; on an empty input the first press picks today.
   - `locale`: for formatting and the first day of the week ('en-GB')
   - `placement`: where the calendar opens ('bottom-start')
   - `prev`, `next` snippets: replace those buttons; they get Zag's props
@@ -13,13 +19,14 @@
 <script>
   import * as datepicker from '@zag-js/date-picker'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
+  import { today, getLocalTimeZone } from '@internationalized/date'
   import 'iconify-icon'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
   import '../theme.css'
   import './date-picker.css'
 
   let {
-    label = null, value = $bindable(null), min = null, max = null,
+    label = null, value = $bindable(null), range = false, min = null, max = null, unavailable = null,
     locale = 'en-GB', placement = 'bottom-start', disabled = false,
     class: className = '', classes = {}, prev = null, next = null, ...rest
   } = $props()
@@ -33,21 +40,50 @@
     invalid: !!field?.invalid,
     // Inside a Field, its label points at our input.
     ids: field ? { input: () => field.id, label: () => field.labelId } : undefined,
-    value: value ? [datepicker.parse(value)] : [],
+    selectionMode: range ? 'range' : 'single',
+    value: [].concat(value ?? []).filter(Boolean).map(datepicker.parse),
     min: min ? datepicker.parse(min) : undefined,
     max: max ? datepicker.parse(max) : undefined,
+    isDateUnavailable: unavailable ?? undefined,
     positioning: { placement },
     // CalendarDate#toString is ISO.
-    onValueChange: (details) => { value = details.value[0]?.toString() ?? null },
+    onValueChange: (details) => {
+      const iso = details.value.map(String)
+      value = range ? iso : iso[0] ?? null
+    },
   }))
   const api = $derived(datepicker.connect(service, normalizeProps))
   const view = $derived(api.view)
+
+  // Up/Down step an input's date by a day (Shift: a week), skipping unavailable
+  // ones; in range mode the other end moves along so start never passes end.
+  function step(e, index) {
+    const dir = { ArrowUp: 1, ArrowDown: -1 }[e.key]
+    if (!dir || e.altKey || e.metaKey || e.ctrlKey) return false
+    e.preventDefault()
+    const values = api.value.slice()
+    let date = values[index] ? values[index].add({ days: dir * (e.shiftKey ? 7 : 1) }) : today(getLocalTimeZone())
+    for (let tries = 0; api.isUnavailable(date); date = date.add({ days: dir })) if (++tries > 366) return true
+    values[index] = date
+    if (range) {
+      const other = 1 - index
+      const crossed = values[other] && (index === 0 ? date.compare(values[1]) > 0 : date.compare(values[0]) < 0)
+      if (!values[other] || crossed) values[other] = date
+    }
+    api.setValue(values)
+    return true
+  }
 </script>
 
 <div {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)}>
   {#if label && !field}<label {...part('label')} {...api.getLabelProps()}>{label}</label>{/if}
   <div {...part('control')} {...api.getControlProps()}>
-    <input {...part('input')} {...api.getInputProps()} size="10" {...fieldAttrs(field)} />
+    {#each range ? [0, 1] : [0] as index}
+      {@const inputProps = api.getInputProps({ index })}
+      {#if index === 1}<span {...part('separator')}>–</span>{/if}
+      <input {...part('input')} {...inputProps} size="10" {...fieldAttrs(field)}
+        onkeydown={(e) => step(e, index) || inputProps.onkeydown?.(e)} />
+    {/each}
     <button {...part('clear')} {...api.getClearTriggerProps()}><iconify-icon icon="lucide:x"></iconify-icon></button>
     <button {...part('trigger')} {...api.getTriggerProps()}><iconify-icon icon="lucide:calendar"></iconify-icon></button>
   </div>

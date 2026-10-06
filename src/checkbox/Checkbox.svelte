@@ -5,6 +5,7 @@
 
   - `checked`: bindable; true, false or 'indeterminate'
   - `label`: its text (or children, for richer content)
+  - `labelHidden`: keep the label for assistive tech only (a table's row checkbox)
   - `name`, `value`: for plain form posts
   - `disabled`
 -->
@@ -17,7 +18,7 @@
   import './checkbox.css'
 
   let {
-    checked = $bindable(false), label = null, name = null, value = 'on', disabled = false,
+    checked = $bindable(false), label = null, labelHidden = false, name = null, value = 'on', disabled = false,
     class: className = '', classes = {}, children, ...rest
   } = $props()
 
@@ -39,7 +40,7 @@
     </span>
   </div>
   {#if label || children}
-    <span {...part('label')} {...api.getLabelProps()}>{#if children}{@render children()}{:else}{label}{/if}</span>
+    <span {...part('label')} {...api.getLabelProps()} data-hidden={labelHidden || undefined}>{#if children}{@render children()}{:else}{label}{/if}</span>
   {/if}
   <input {...api.getHiddenInputProps()} {...fieldAttrs(field)} />
 </label>

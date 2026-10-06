@@ -1,11 +1,12 @@
 <!-- Tags
-  Enter or a comma adds one, Backspace removes the last, a double-click edits. `variant` sets their look. -->
+  Enter or a comma adds one, Backspace removes the last, a double-click edits; pasting "a, b, c" adds three. `variant` sets their look. -->
 <script>
-  import { TagsInput } from '@milktop/svelte-ui'
+  import { Fields, Field, TagsInput } from '@milktop/svelte-ui'
 
   let topics = $state(['Algebra', 'Geometry'])
 </script>
 
-<TagsInput label="Topics" bind:value={topics} class="w-full max-w-md" />
-<TagsInput label="Accent" variant="accent" value={['Physics', 'Chemistry']} class="w-full max-w-md" />
-<p class="m-0 w-full text-sm text-(--ui-muted)">{JSON.stringify(topics)}</p>
+<Fields class="w-full">
+  <Field label="Topics" span={6} hint={JSON.stringify(topics)}><TagsInput bind:value={topics} /></Field>
+  <Field label="Accent" span={6}><TagsInput variant="accent" value={['Physics', 'Chemistry']} /></Field>
+</Fields>

@@ -22,8 +22,11 @@
 
 <svelte:window onhashchange={() => { hash = location.hash; showApi = false; scrollTo(0, 0) }} />
 
-<AppShell inset={appearance.layout === 'inset'}>
-  <Sidebar>
+<AppShell inset={appearance.layout === 'inset'} persist="svelte-ui:sidebar">
+  <Sidebar accordion>
+    {#snippet logoCollapsed()}
+      <a href="#/" aria-label="Svelte UI" class="inline-flex h-7 w-7 items-center justify-center rounded-[var(--ui-radius)] bg-(--ui-accent) text-xs font-bold text-(--ui-accent-text) no-underline">UI</a>
+    {/snippet}
     {#snippet logo()}
       <a href="#/" class="flex items-center gap-2 text-(--ui-text) no-underline">
         <span class="inline-flex h-7 w-7 items-center justify-center rounded-[var(--ui-radius)] bg-(--ui-accent) text-xs font-bold text-(--ui-accent-text)">UI</span>

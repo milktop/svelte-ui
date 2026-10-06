@@ -42,6 +42,7 @@
     --ui-control-height-lg: 2.75rem;
     /* Sidebar and its items. */
     --ui-sidebar-width: 15rem;
+    --ui-sidebar-rail-width: 3.5rem;
     --ui-sidebar-item-height: 2.125rem;
     --ui-sidebar-item-padding: 0 0.5rem 0 0.75rem;
     --ui-sidebar-item-radius: var(--ui-radius);

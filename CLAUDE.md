@@ -31,7 +31,22 @@ props, tokens, part names and look. Read `readme.md` first.
 - Snippets for parts people replace (triggers, prev/next, items): render the
   default when the snippet is absent; pass `{ ...part('x'), ...zagProps }`.
 
+## Checks
+
+- `npm run check` fails on undefined names (a prop used but never declared):
+  the build doesn't catch those, and they blank the whole page at runtime.
+  Run it after editing a component.
+
 ## Gotchas
+
+- Tags input: Zag clears the box (in the next frame) even when `validate`
+  rejects a tag; the component puts the text back two frames later.
+- Combobox `load`: show "Loading…" instead of the previous query's results.
+- AppShell listens for ⌘B on the window: a second shell on the page needs
+  `shortcut={false}` (and `breakpoint={0}` to stay out of drawer mode).
+- Deleting an example and recreating it under the same name can leave the
+  browser running the old one (a cached registry.js with old ?t= URLs):
+  restart the dev server and change registry.js.
 
 - Zag's Svelte adapter maps `onChange` to the `input` event (and `defaultValue`
   to `value`); a script testing a file input must fire `input`, not just `change`.

@@ -6,7 +6,8 @@
   - `value`: bindable number, or null when empty
   - `min`, `max`, `step`
   - `prefix`, `suffix`: text before or after it ('£', 'kg'); `icon`: an Iconify name before it
-  - `formatOptions`: Intl.NumberFormat options, e.g. { minimumFractionDigits: 2 }
+  - `formatOptions`: Intl.NumberFormat options, e.g. { style: 'currency', currency: 'GBP' }, with `locale`
+  - `allowMouseWheel`: scroll over the focused input to step
   - `steppers`: false to hide the buttons
   - `name`: for plain form posts
 -->
@@ -20,7 +21,7 @@
 
   let {
     label = null, value = $bindable(null), min = undefined, max = undefined, step = 1, prefix = null, suffix = null,
-    icon = null, formatOptions = undefined, steppers = true, placeholder = '', name = null, disabled = false,
+    icon = null, formatOptions = undefined, locale = undefined, allowMouseWheel = false, steppers = true, placeholder = '', name = null, disabled = false,
     class: className = '', classes = {}, ...rest
   } = $props()
 
@@ -36,7 +37,7 @@
 
   const id = $props.id()
   const service = useMachine(numberInput.machine, () => ({
-    id, name, disabled, min, max, step, formatOptions,
+    id, name, disabled, min, max, step, formatOptions, locale, allowMouseWheel,
     invalid: !!field?.invalid,
     ids: field ? { input: field.id, label: field.labelId } : undefined,
     value: text,
