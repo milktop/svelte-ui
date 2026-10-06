@@ -18,7 +18,7 @@ Svelte 5 components on [Zag](https://zagjs.com) state machines, with
 ## Components
 
 Button · Input · Textarea · NumberInput · PasswordInput · PinInput · TagsInput ·
-Select · Combobox · DatePicker · Checkbox · CheckboxGroup · Switch · RadioGroup ·
+Select · DatePicker · Checkbox · CheckboxGroup · Switch · RadioGroup ·
 Segmented · Slider · Field · Fields · FileUpload · Popover · Card · Page ·
 AppShell · Topbar · Sidebar · NavSection · NavGroup · NavItem · Breadcrumbs
 

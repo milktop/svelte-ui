@@ -1,6 +1,15 @@
 @layer ui {
   [data-scope=select][data-part=root] { display: inline-block; position: relative; min-width: 12rem;
-    color: var(--ui-text); font-family: var(--ui-font); }
+    color: var(--ui-text); font-family: var(--ui-font);
+    --tag-bg: var(--ui-hover); --tag-text: var(--ui-text); --tag-border: transparent;
+    &[data-variant=accent] { --tag-bg: var(--ui-accent-soft); --tag-text: var(--ui-accent-soft-text); }
+    &[data-variant=outline] { --tag-bg: var(--ui-surface); --tag-border: var(--ui-border); } }
+  /* With tags: the picks as chips in the trigger, which grows to fit them. */
+  [data-scope=select][data-part=tags] { display: flex; flex-wrap: wrap; gap: 0.25rem; min-width: 0; padding: 0.25rem 0; }
+  [data-scope=select][data-part=trigger]:has([data-part=tags]) { height: auto; min-height: var(--ui-control-height); }
+  [data-scope=select][data-part=tag] { display: inline-flex; align-items: center; height: 1.5rem; padding: 0 0.5rem; box-sizing: border-box;
+    border-radius: calc(var(--ui-radius) - 2px); background: var(--tag-bg); color: var(--tag-text); border: 1px solid var(--tag-border);
+    font-size: 13px; font-weight: 500; white-space: nowrap; }
   [data-scope=select][data-part=label] { display: block; font-size: 14px; font-weight: 500; margin-bottom: 0.375rem; }
   [data-scope=select][data-part=control] { display: flex; align-items: center; position: relative; }
   [data-scope=select][data-part=trigger] { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;

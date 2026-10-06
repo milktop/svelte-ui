@@ -1,104 +1,57 @@
 <!--
-  A select: a button that opens a list of options, with typeahead.
+  A select: pick from a list. A button that opens it, or, with `searchable`,
+  `load` or `oncreate`, an input you type into to filter it.
 
   <Select label="Level" items={['GCSE', 'A Level']} bind:value={level} />
-  <Select items={students} labelKey="name" valueKey="id" bind:value={studentId} />
+  <Select label="Student" items={students} labelKey="name" valueKey="id" searchable bind:value={studentId} />
+  <Select label="City" load={searchCities} labelKey="name" valueKey="id" bind:value={cityId} />
+  <Select label="Topics" items={topics} multiple oncreate={addTopic} bind:value={picked} />
 
   - `items`: strings, or objects (see `labelKey`, `valueKey`, `disabledKey`)
-  - `value`: bindable; the item's own value (not Zag's string), or an array of them when `multiple`
-  - `multiple`: pick several (the list stays open)
+  - `value`: bindable; the item's own value, or an array of them with `multiple`
+  - `multiple`: pick several; picked items show ticked in the list
+  - `tags`: with `multiple`, show the picks as tags in the box (always, when
+    searchable); `variant` sets their look: 'subtle', 'accent' or 'outline'
   - `hideSelected`: with `multiple`, picked items leave the list
-  - `deselectable`: clicking the picked item again clears it (single only)
+  - `searchable`: type to filter the list (labels starting with the text first)
+  - `load`: async function(query) returning items, for server search; implies
+    searchable (debounced by `debounce` ms, `loadingText` meanwhile)
+  - `oncreate`: function(query) called when someone picks "Create …" for text
+    that matches no item; implies searchable. Return the new item (or a
+    promise of it) to select it, or handle it yourself
+  - `deselectable`: clicking the picked item again clears it (without search)
   - `closeOnSelect`: close the list after a pick (on by default, except with `multiple`)
   - `clearable`: a button to clear it
-  - `placeholder`: shown while nothing is selected
-  - `name`: also renders a hidden native <select>, so plain form posts work
-  - `size`: 'sm' or 'md'
-  - `placement`: where the list opens ('bottom-start')
+  - `placeholder`, `emptyText` (when nothing matches)
+  - `name`: for plain form posts
+  - `size`: 'sm' or 'md'; `placement`: where the list opens ('bottom-start')
   - `item` snippet: an option's content, given the item
+  - `create` snippet: the create option's content, given the query
+  - `empty` snippet: shown when nothing matches, given the query
 -->
 <script>
-  import * as select from '@zag-js/select'
-  import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
-  import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
-  import '../theme.css'
-  import './select.css'
+  import ListSelect from './ListSelect.svelte'
+  import SearchSelect from './SearchSelect.svelte'
 
   let {
-    label = null, items = [], value = $bindable(null), placeholder = 'Select…',
+    label = null, items = [], value = $bindable(null), placeholder = undefined,
     labelKey = 'label', valueKey = 'value', disabledKey = 'disabled',
-    name = null, size = 'md', multiple = false, hideSelected = false, deselectable = false, closeOnSelect = undefined, clearable = false, placement = 'bottom-start', disabled = false, item: itemSnippet = null,
-    class: className = '', classes = {}, ...rest
+    multiple = false, tags = false, variant = 'subtle', hideSelected = false,
+    searchable = false, load = null, debounce = 200, loadingText = 'Loading…', oncreate = null,
+    deselectable = false, closeOnSelect = undefined, clearable = false, emptyText = 'No matches',
+    name = null, size = 'md', placement = 'bottom-start', disabled = false,
+    item = null, create = null, empty = null, class: className = '', classes = {}, ...rest
   } = $props()
 
-  const field = useField()
-  const part = partsOf('select', () => classes)
-
-  const labelOf = (item) => (typeof item === 'object' ? item[labelKey] : String(item))
-  const valueOf = (item) => (typeof item === 'object' ? item[valueKey] : item)
-
-  const selectedKeys = $derived(multiple ? (value ?? []).map(String) : value == null ? [] : [String(value)])
-  const isSelected = (item) => selectedKeys.includes(String(valueOf(item)))
-  // With hideSelected the picked items aren't rendered, but stay in Zag's
-  // collection (for their labels), disabled so the keys skip them.
-  const hidden = (item) => hideSelected && multiple && isSelected(item)
-  const listed = $derived(items.filter((item) => !hidden(item)))
-
-  const collection = $derived(select.collection({
-    items,
-    itemToString: labelOf,
-    itemToValue: (item) => String(valueOf(item)),
-    isItemDisabled: (item) => hidden(item) || (typeof item === 'object' && !!item[disabledKey]),
-  }))
-
-  const id = $props.id()
-  const service = useMachine(select.machine, () => ({
-    id, collection, name, disabled, multiple, deselectable, closeOnSelect: closeOnSelect ?? !multiple,
-    invalid: !!field?.invalid,
-    // Inside a Field, its label points at our trigger.
-    ids: field ? { trigger: field.id, label: field.labelId } : undefined,
-    value: multiple ? (value ?? []).map(String) : value == null ? [] : [String(value)],
-    positioning: { placement, sameWidth: true },
-    // Zag's values are strings; map them back to the items' own.
-    onValueChange: (details) => {
-      const chosen = details.value.map((key) => items.find((item) => String(valueOf(item)) === key)).filter((item) => item !== undefined).map(valueOf)
-      value = multiple ? chosen : chosen[0] ?? null
-    },
-  }))
-  const api = $derived(select.connect(service, normalizeProps))
+  const shared = $derived({
+    label, items, placeholder, labelKey, valueKey, disabledKey, multiple, tags, variant, hideSelected,
+    closeOnSelect, clearable, emptyText, name, size, placement, disabled, item, empty,
+    class: className, classes, ...rest,
+  })
 </script>
 
-<div {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)} data-size={size}>
-  {#if label && !field}<label {...part('label')} {...api.getLabelProps()}>{label}</label>{/if}
-  <div {...part('control')} {...api.getControlProps()}>
-    <button {...part('trigger')} {...api.getTriggerProps()} {...fieldAttrs(field)}>
-      <span {...part('value-text')} {...api.getValueTextProps()} data-placeholder={!api.hasSelectedItems || undefined}>
-        {api.hasSelectedItems ? api.valueAsString : placeholder}
-      </span>
-      <span {...part('indicator')} {...api.getIndicatorProps()}><iconify-icon icon="lucide:chevron-down"></iconify-icon></span>
-    </button>
-    {#if clearable}<button {...part('clear')} {...api.getClearTriggerProps()}><iconify-icon icon="lucide:x"></iconify-icon></button>{/if}
-  </div>
-
-  <div {...part('positioner')} {...api.getPositionerProps()}>
-    <ul {...part('content')} {...api.getContentProps()}>
-      {#each listed as item (valueOf(item))}
-        <li {...part('item')} {...api.getItemProps({ item })}>
-          <span {...part('item-text')} {...api.getItemTextProps({ item })}>
-            {#if itemSnippet}{@render itemSnippet(item)}{:else}{labelOf(item)}{/if}
-          </span>
-          <span {...part('item-indicator')} {...api.getItemIndicatorProps({ item })}><iconify-icon icon="lucide:check"></iconify-icon></span>
-        </li>
-      {:else}
-        <li {...part('empty')}>All picked</li>
-      {/each}
-    </ul>
-  </div>
-
-  {#if name}
-    <select {...api.getHiddenSelectProps()}>
-      {#each items as item (valueOf(item))}<option value={String(valueOf(item))}>{labelOf(item)}</option>{/each}
-    </select>
-  {/if}
-</div>
+{#if searchable || load || oncreate}
+  <SearchSelect bind:value {...shared} {load} {debounce} {loadingText} {oncreate} {create} />
+{:else}
+  <ListSelect bind:value {...shared} {deselectable} />
+{/if}

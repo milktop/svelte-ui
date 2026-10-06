@@ -1,4 +1,4 @@
-// The playground's pages; each lists the component files its API panel reads,
+// The playground's pages, each listing the component files its API panel reads,
 // and its examples are whatever is in examples/<slug>/ (sorted by file name),
 // so nothing here needs updating when a component or example changes.
 
@@ -19,8 +19,7 @@ export const groups = [
     { slug: 'tags-input', title: 'Tags input', about: 'Type, press Enter, get a tag', files: ['tags-input/TagsInput.svelte'] },
   ] },
   { heading: 'Pickers', form: true, icon: 'lucide:list-checks', pages: [
-    { slug: 'select', title: 'Select', about: 'Pick one from a list, with typeahead', files: ['select/Select.svelte'] },
-    { slug: 'combobox', title: 'Combobox', about: 'Type to filter, pick one or several', files: ['combobox/Combobox.svelte'] },
+    { slug: 'select', title: 'Select', about: 'Pick one or several; search, load or create', files: ['select/Select.svelte'] },
     { slug: 'date-picker', title: 'Date picker', about: 'Type a date or pick it from a calendar', files: ['date-picker/DatePicker.svelte'] },
   ] },
   { heading: 'Choices', form: true, icon: 'lucide:square-check', pages: [

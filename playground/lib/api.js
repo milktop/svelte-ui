@@ -2,7 +2,14 @@
 // and `- \`prop\`: …` notes), its props with defaults, which of them are
 // snippets or bindable, and its parts (the part('…') calls).
 
+// A component made of internal ones (Select: ListSelect and SearchSelect)
+// lists their parts too.
+const sources = import.meta.glob('../../src/**/*.svelte', { query: '?raw', import: 'default', eager: true })
+
 export function apiOf(file, source) {
+  const dir = file.split('/').slice(0, -1).join('/')
+  const internal = Array.from(source.matchAll(/import \w+ from '\.\/(\w+\.svelte)'/g), (m) => sources[`../../src/${dir}/${m[1]}`] ?? '')
+  const all = [source, ...internal].join('\n')
   const doc = (source.match(/^<!--([\s\S]*?)-->/)?.[1] ?? '').split('\n').map((line) => line.replace(/^ {2}/, '').trimEnd())
   while (doc[0] === '') doc.shift()
   const blank = doc.indexOf('')
@@ -18,7 +25,7 @@ export function apiOf(file, source) {
         name,
         default: bindable ? value.replace(/^\$bindable\(([\s\S]*)\)$/, '$1') || 'undefined' : value ?? '',
         bindable,
-        snippet: snippets.has(local ?? name),
+        snippet: snippets.has(local ?? name) || /^\s*snippet\b/.test(notes[name] ?? ''),
         note: notes[name] ?? common[name] ?? '',
       }
     })
@@ -30,7 +37,7 @@ export function apiOf(file, source) {
     props: props.filter((prop) => !prop.snippet),
     snippets: props.filter((prop) => prop.snippet).map((prop) => prop.name),
     // Its parts, as keys for the `classes` prop (the outer element is `class`).
-    parts: unique(Array.from(source.matchAll(/part\('([\w-]+)'\)/g), (m) => camel(m[1]))).filter((name) => name !== 'root'),
+    parts: unique(Array.from(all.matchAll(/part\('([\w-]+)'\)/g), (m) => camel(m[1]))).filter((name) => name !== 'root'),
   }
 }
 

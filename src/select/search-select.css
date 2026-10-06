@@ -36,6 +36,10 @@
     &[data-highlighted] { background: var(--ui-hover); }
     &[data-state=checked] { font-weight: 500; }
     &[data-disabled] { opacity: 0.4; cursor: not-allowed; } }
+  /* The create option (Zag gives it data-part="item"; ours is "create"). */
+  [data-scope=combobox][data-part=create] { display: flex; align-items: center; gap: 0.5rem; padding: 0.375rem 0.5rem;
+    border-radius: 4px; font-size: 14px; color: var(--ui-accent); cursor: pointer;
+    &[data-highlighted] { background: var(--ui-hover); } }
   [data-scope=combobox][data-part=item-indicator] { display: none; color: var(--ui-accent);
     &[data-state=checked] { display: inline-flex; } }
 }

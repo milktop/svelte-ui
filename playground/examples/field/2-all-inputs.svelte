@@ -1,7 +1,7 @@
 <!-- Every input in a Field
   Each control picks up its Field's label, hint and error. Submit to see the errors. -->
 <script>
-  import { Fields, Field, Input, Textarea, NumberInput, PasswordInput, Select, Combobox, DatePicker, TagsInput,
+  import { Fields, Field, Input, Textarea, NumberInput, PasswordInput, Select, DatePicker, TagsInput,
     Segmented, RadioGroup, CheckboxGroup, Slider, PinInput, Switch, FileUpload, Button } from '@milktop/svelte-ui'
 
   let form = $state({
@@ -24,7 +24,7 @@
     <Field label="Level" span={4} error={errors.level}><Select items={['GCSE', 'A Level']} bind:value={form.level} /></Field>
     <Field label="Start date" span={4} error={errors.date}><DatePicker bind:value={form.date} /></Field>
     <Field label="Rate" span={4}><NumberInput bind:value={form.rate} prefix="£" /></Field>
-    <Field label="Subjects" span={6} error={errors.subjects}><Combobox items={['Maths', 'Physics', 'Chemistry']} multiple bind:value={form.subjects} /></Field>
+    <Field label="Subjects" span={6} error={errors.subjects}><Select items={['Maths', 'Physics', 'Chemistry']} searchable multiple bind:value={form.subjects} /></Field>
     <Field label="Topics" span={6} hint="Enter to add"><TagsInput bind:value={form.topics} /></Field>
     <Field label="Sessions" span={6}><Segmented items={['Weekly', 'Fortnightly']} bind:value={form.cadence} /></Field>
     <Field label="Code" span={6}><PinInput count={4} bind:value={form.code} /></Field>

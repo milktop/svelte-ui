@@ -1,44 +1,30 @@
-<!--
-  A combobox: type to filter a list, then pick one (or several, as tags).
-
-  <Combobox label="Student" items={students} labelKey="name" valueKey="id" bind:value={studentId} />
-  <Combobox label="Subjects" items={subjects} multiple bind:value={picked} />
-
-  - `items`: strings, or objects (see `labelKey`, `valueKey`, `disabledKey`)
-  - `value`: bindable; the item's own value, or an array of them when `multiple`
-  - `multiple`: pick several; they show as tags (`variant`: 'subtle', 'accent' or 'outline')
-  - `hideSelected`: with `multiple`, picked items leave the list
-  - `closeOnSelect`: close the list after a pick (on by default, except with `multiple`)
-  - `load`: an async function(query) returning items, for server search
-    (debounced by `debounce` ms; `loadingText` shows meanwhile)
-  - `placeholder`, `emptyText` (shown when nothing matches)
-  - `placement`: where the list opens ('bottom-start')
-  - `item` snippet: an option's content, given the item
-  - `name`: for plain form posts
--->
+<!-- Select with search: an input that filters the list, loads it, or creates items. Used by Select.svelte, which documents the props. -->
 <script>
   import * as combobox from '@zag-js/combobox'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
   import 'iconify-icon'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
   import '../theme.css'
-  import './combobox.css'
+  import './search-select.css'
 
   let {
     label = null, items = [], value = $bindable(null), multiple = false, placeholder = 'Search…', emptyText = 'No matches',
     hideSelected = false, closeOnSelect = undefined, load = null, debounce = 200, loadingText = 'Loading…', placement = 'bottom-start',
     labelKey = 'label', valueKey = 'value', disabledKey = 'disabled', variant = 'subtle', name = null, disabled = false,
-    item: itemSnippet = null, class: className = '', classes = {}, ...rest
+    oncreate = null, clearable = false, tags = true, item: itemSnippet = null, create: createSnippet = null, empty = null,
+    class: className = '', classes = {}, ...rest
   } = $props()
 
   const field = useField()
+  // Zag stamps data-scope="combobox" on its parts; ours match, for search-select.css.
   const part = partsOf('combobox', () => classes)
   const labelOf = (item) => (typeof item === 'object' ? item[labelKey] : String(item))
   const valueOf = (item) => (typeof item === 'object' ? item[valueKey] : item)
   const keyOf = (item) => String(valueOf(item))
-  // Items found by `load` are remembered, so picked ones keep their labels.
+  // Items found by `load` or made by `oncreate` are remembered, so picked ones keep their labels.
   let seen = $state([])
-  const pool = $derived(load ? seen : items)
+  let created = $state([])
+  const pool = $derived([...(load ? seen : items), ...created])
   const byKey = (key) => pool.find((item) => keyOf(item) === key)
 
   // What's been typed (not the picked item's label), filtering the list:
@@ -83,10 +69,28 @@
   const listed = $derived(hideSelected && multiple ? shown.filter((item) => !isSelected(item)) : shown)
   const offList = $derived(selectedKeys.filter((key) => !listed.some((item) => keyOf(item) === key)).map(byKey).filter((item) => item !== undefined))
 
+  // The "Create …" option: for typed text that matches no item.
+  const CREATE = '\u0000create'
+  const typed = $derived(query.trim())
+  const creating = $derived(oncreate && typed && !loading && !pool.some((item) => labelOf(item).toLowerCase() === typed.toLowerCase())
+    ? { [CREATE]: true, label: typed } : null)
+  const keyOfItem = (item) => (item?.[CREATE] ? CREATE : keyOf(item))
+
   const collection = $derived(combobox.collection({
-    items: [...listed, ...offList], itemToString: labelOf, itemToValue: keyOf,
-    isItemDisabled: (item) => offList.includes(item) || (typeof item === 'object' && !!item[disabledKey]),
+    items: [...listed, ...(creating ? [creating] : []), ...offList],
+    itemToString: (item) => (item?.[CREATE] ? item.label : labelOf(item)), itemToValue: keyOfItem,
+    isItemDisabled: (item) => offList.includes(item) || (typeof item === 'object' && !item[CREATE] && !!item[disabledKey]),
   }))
+
+  async function createFrom(text) {
+    query = ''
+    const made = await oncreate(text)
+    if (made != null) {
+      created = [...created, made]
+      value = multiple ? [...(value ?? []), valueOf(made)] : valueOf(made)
+      api.setInputValue(multiple ? '' : labelOf(made))
+    } else api.setInputValue(multiple ? '' : selectedKeys.length ? labelOf(byKey(selectedKeys[0]) ?? '') : '')
+  }
 
   const id = $props.id()
   const service = useMachine(combobox.machine, () => ({
@@ -105,11 +109,20 @@
     },
     // Zag's values are strings; map them back to the items' own.
     onValueChange: (details) => {
+      if (details.value.includes(CREATE)) return createFrom(typed)
       const chosen = details.value.map(byKey).filter((item) => item !== undefined).map(valueOf)
       value = multiple ? chosen : chosen[0] ?? null
     },
   }))
   const api = $derived(combobox.connect(service, normalizeProps))
+
+  // A click on the box (around the tags, not on a button) types into the input.
+  let inputEl = $state()
+  function focusInput(e) {
+    if (e.target.closest('button, input')) return
+    e.preventDefault()
+    inputEl?.focus()
+  }
 
   // Zag reverts stray text only while the list is open; when focus leaves
   // the whole combobox, put the selected item's label back (or nothing).
@@ -122,7 +135,7 @@
 
 <div {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)} data-variant={variant} onfocusout={revert}>
   {#if label && !field}<label {...part('label')} {...api.getLabelProps()}>{label}</label>{/if}
-  <div {...part('control')} {...api.getControlProps()}>
+  <div {...part('control')} {...api.getControlProps()} onmousedown={focusInput}>
     <div {...part('tags')}>
       {#each picked as item (keyOf(item))}
         <span {...part('tag')}>
@@ -131,9 +144,9 @@
             onclick={(e) => { e.stopPropagation(); api.clearValue(keyOf(item)) }}><iconify-icon icon="lucide:x"></iconify-icon></button>
         </span>
       {/each}
-      <input {...part('input')} {...api.getInputProps()} placeholder={picked.length ? '' : placeholder} {...fieldAttrs(field)} />
+      <input bind:this={inputEl} {...part('input')} {...api.getInputProps()} placeholder={picked.length ? '' : placeholder} {...fieldAttrs(field)} />
     </div>
-    <button {...part('clear')} {...api.getClearTriggerProps()}><iconify-icon icon="lucide:x"></iconify-icon></button>
+    {#if clearable}<button {...part('clear')} {...api.getClearTriggerProps()}><iconify-icon icon="lucide:x"></iconify-icon></button>{/if}
     <button {...part('trigger')} {...api.getTriggerProps()}><iconify-icon icon="lucide:chevron-down"></iconify-icon></button>
   </div>
 
@@ -147,8 +160,16 @@
           <span {...part('item-indicator')} {...api.getItemIndicatorProps({ item })}><iconify-icon icon="lucide:check"></iconify-icon></span>
         </li>
       {:else}
-        <li {...part('empty')}>{loading ? loadingText : emptyText}</li>
+        {#if !creating}
+          <li {...part('empty')}>{#if loading}{loadingText}{:else if empty}{@render empty(typed)}{:else}{emptyText}{/if}</li>
+        {/if}
       {/each}
+      {#if creating}
+        <li {...api.getItemProps({ item: creating })} {...part('create')}>
+          {#if createSnippet}{@render createSnippet(creating.label)}
+          {:else}<iconify-icon icon="lucide:plus" aria-hidden="true"></iconify-icon><span>Create “{creating.label}”</span>{/if}
+        </li>
+      {/if}
     </ul>
   </div>
 </div>

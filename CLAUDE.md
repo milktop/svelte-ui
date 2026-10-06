@@ -16,6 +16,14 @@ props, tokens, part names and look. Read `readme.md` first.
   `label`, plus a `<p>` readout (spanning both columns) where binding matters.
   Only the Field page wraps examples in Fields.
 
+## Select
+
+One component for every kind of pick: `Select.svelte` declares (and
+documents) all the props and renders `ListSelect` (a button, Zag's select)
+or, with `searchable`, `load` or `oncreate`, `SearchSelect` (an input, Zag's
+combobox). Shared props go to both; keep the two in step. The playground's
+API panel reads parts from both through the imports.
+
 ## Every component
 
 - Starts with a doc comment: a summary line, a usage example, then one bullet
