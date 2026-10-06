@@ -6,7 +6,9 @@ props, tokens, part names and look. Read `readme.md` first.
 ## Layout
 
 - `src/<component>/<Name>.svelte` and `<component>.css`, exported from `src/index.js`
-- `src/theme.css`: `--ui-*` tokens (dark under `html.dark`); `src/utils.js`: `cx`, `partsOf`, field context
+- `src/theme.css`: `--ui-*` tokens (dark under `html.dark`); `src/utils.js`: `cx`, `partsOf`, field, shell and sidebar contexts
+- `src/presence.svelte.js`: `Presence` (keeps a closing part until its animation ends) and `portal` (an attachment moving an element to <body>)
+- `src/color-scheme.svelte.js`: `colorScheme` (light/dark/system, saved, on <html>)
 - `playground/`: Vite app (`npm run dev`). Pages are listed in `registry.js`;
   examples are `playground/examples/<slug>/<n>-<name>.svelte`, with a leading
   `<!-- Title\n  description -->` comment. The API panel parses the
@@ -14,7 +16,13 @@ props, tokens, part names and look. Read `readme.md` first.
   Pages in a `form` group (Inputs, Pickers, Choices) lay their examples on a
   two-column grid, so an example is just the components, each with its own
   `label`, plus a `<p>` readout (spanning both columns) where binding matters.
-  Only the Field page wraps examples in Fields.
+  Only the Field page wraps examples in Fields. A page can opt out with
+  `form: false` in the registry (Editor, Attachments, File upload).
+  An example named `<n>-<name>.bare.svelte` shows without the card round it.
+  Pages without examples are left out of the nav.
+- `playground/blocks/`: composed screens. `pages/<n>-<slug>.svelte` (one per
+  page) and `sections/<slug>/<n>-<name>.svelte` (variants), listed by
+  `blocks/registry.js`; shared data in `blocks/data.js`.
 
 ## Select
 
@@ -33,7 +41,18 @@ API panel reads parts from both through the imports.
   natural element (the button, the input), and `$bindable()` for its value.
 - `const part = partsOf('<scope>', () => classes)` and `{...part('name')}` on
   every part, including the root (`{...part('root')} class={cx(className)}`).
-  On a Zag element spread `part(…)` first, so Zag's data-part wins.
+  On a Zag element spread `part(…)` first, so Zag's data-part wins, but only
+  when the scopes match (Popover on Zag's popover). When the component's
+  scope differs from the machine's (Sheet and Command on Zag's dialog,
+  Segmented on radio-group), spread `part(…)` last, or the parts pick up the
+  other component's CSS (Sheet would look like Dialog).
+- Overlays that render at the end of <body>: `{@attach portal}`. Exit
+  animations: `const presence = new Presence(() => api.open)`, render while
+  `presence.present`, `hidden={false}` after Zag's props, and
+  `onanimationend={presence.done}`.
+- Child components that register with a parent through context (Tab,
+  NavGroup in a NavSection): the parent's `register` must `untrack` its list
+  changes, or the child's effect loops (effect_update_depth_exceeded).
 - Modifiers are data attributes (`data-variant`, `data-size`), never classes:
   plain class names collide with Tailwind's (`block`, `hidden`).
 - CSS: `@layer ui`, selectors `[data-scope=x][data-part=y]`. Containers (Card,
@@ -46,9 +65,10 @@ API panel reads parts from both through the imports.
 
 ## Checks
 
-- `npm run check` fails on undefined names (a prop used but never declared):
-  the build doesn't catch those, and they blank the whole page at runtime.
-  Run it after editing a component.
+- `npm run check` compiles every .svelte file and fails on compile errors
+  (which 500 the module and blank the playground) and undefined names (a
+  prop used but never declared, which blank the page at runtime). Run it
+  after editing a component.
 
 ## Gotchas
 
@@ -75,6 +95,18 @@ API panel reads parts from both through the imports.
 - Don't name a local `props`: Svelte then reads `$props()` as that store's
   auto-subscription ("$bindable() can only be used inside a $props() declaration").
 
+- Zag machine props: don't pass a key as `undefined` to mean "default"
+  (`closeOnSelect: undefined` overrides Zag's `true`); leave it out or pass
+  the value.
+- Snippets declared at the top of a template can go in script data (Table's
+  `columns: [{ key, cell: mySnippet }]`).
+- `{@const}` must sit directly inside a block (`{#each}`, `{#if}`), not inside
+  an element.
+- Svelte 5 binding a getter/setter pair (`bind:value={() => x, (v) => …}`)
+  is how a component's value maps onto something that isn't a plain state.
+- The in-app browser throttles animations and transitions while its pane is
+  hidden: a part can look stuck mid-animation (opacity 0, the rail still
+  240px wide). Check state with scripts, not screenshots, then.
 - Zag in Svelte: pass props as a getter (`useMachine(m, () => ({…}))`) so they
   stay reactive; controlled `value` then works.
 - Field ids come from `$props.id()`; Zag ids options take functions for

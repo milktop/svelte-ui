@@ -17,10 +17,23 @@ Svelte 5 components on [Zag](https://zagjs.com) state machines, with
 
 ## Components
 
-Button · Input · Textarea · NumberInput · PasswordInput · PinInput · TagsInput ·
-Select · DatePicker · Checkbox · CheckboxGroup · Switch · RadioGroup ·
-Segmented · Slider · Field · Fields · FileUpload · Popover · Card · Page ·
-AppShell · Topbar · Sidebar · NavSection · NavGroup · NavItem · Breadcrumbs
+The same set as imba-ui:
+
+- Actions: Button · CopyButton
+- Display: Avatar · Badge · Card · Table · Pagination · DataList · Stat/Stats ·
+  AreaChart · BarChart · Sparkline · Timeline
+- Feedback: Alert · Banner · Progress · Skeleton · Spinner · EmptyState · Toaster (`toaster`)
+- Inputs: Input · Textarea · NumberInput · PasswordInput · PinInput · TagsInput ·
+  Slider · FileUpload · Attachments · Editor (TipTap)
+- Pickers: Select (one component: searchable, server `load`, `oncreate`,
+  multiple, tags) · DatePicker
+- Choices: Checkbox · CheckboxGroup · Switch · RadioGroup · Segmented · ThemeToggle (`colorScheme`)
+- Forms: Field · Fields
+- Navigation: AppShell · Topbar · Sidebar · NavSection · NavGroup · NavItem ·
+  SidebarUser · Page · Breadcrumbs · Command (⌘K)
+- Overlays: Tooltip · Popover · HoverCard · Dialog · Sheet · ActionBar · Menu ·
+  ContextMenu (with Submenu, MenuItem, MenuGroup, MenuCheckbox, MenuRadioGroup…)
+- Disclosure: Tabs/Tab · Accordion/AccordionItem · Collapsible
 
 ## Every component works the same way
 
@@ -61,9 +74,11 @@ Theme it by setting tokens (see `src/theme.css`):
 ```sh
 npm install
 npm run dev     # the playground, http://localhost:5193
-npm run check   # undefined names, which the build lets through
+npm run check   # compile errors and undefined names, which the build lets through
 ```
 
 Each playground page reads its component's doc comment, props, snippets and
 parts from the source, and its examples are the files in
-`playground/examples/<component>/`, shown with their code.
+`playground/examples/<component>/`, shown with their code. Blocks
+(composed screens) are in `playground/blocks/`; Theming and Installation are
+guide pages.
