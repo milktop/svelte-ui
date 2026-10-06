@@ -1,0 +1,12 @@
+@layer ui {
+  [data-scope=textarea][data-part=root] { display: block; min-width: 0; padding: 0.5rem 0.75rem; box-sizing: border-box;
+    background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: var(--ui-radius);
+    color: var(--ui-text); font-family: var(--ui-font); font-size: 14px;
+    &:focus-within { border-color: var(--ui-ring); outline: 2px solid var(--ui-ring-soft); }
+    &:has([aria-invalid=true]) { border-color: var(--ui-danger); }
+    &:has(:disabled) { opacity: 0.5; } }
+  [data-scope=textarea][data-part=textarea] { display: block; width: 100%; margin: 0; padding: 0; border: none; background: transparent;
+    outline: none; color: inherit; font: inherit; line-height: 1.5; resize: vertical;
+    &::placeholder { color: var(--ui-muted); }
+    &[data-autogrow] { resize: none; overflow: hidden; } }
+}

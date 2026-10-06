@@ -23,12 +23,26 @@
     "svelte": "^5.30.0"
   },
   "dependencies": {
+    "@zag-js/checkbox": "^1.45.0",
+    "@zag-js/combobox": "^1.45.0",
     "@zag-js/date-picker": "^1.45.0",
+    "@zag-js/file-upload": "^1.45.0",
+    "@zag-js/number-input": "^1.45.0",
+    "@zag-js/password-input": "^1.45.0",
+    "@zag-js/pin-input": "^1.45.0",
+    "@zag-js/popover": "^1.45.0",
+    "@zag-js/radio-group": "^1.45.0",
     "@zag-js/select": "^1.45.0",
+    "@zag-js/slider": "^1.45.0",
     "@zag-js/svelte": "^1.45.0",
+    "@zag-js/switch": "^1.45.0",
+    "@zag-js/tags-input": "^1.45.0",
     "iconify-icon": "^3.0.3"
   },
   "devDependencies": {
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
     "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tailwindcss/vite": "^4.3.3",

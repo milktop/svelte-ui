@@ -1,0 +1,14 @@
+@layer ui {
+  /* Zag copies the content's z-index onto its positioner. */
+  [data-scope=popover][data-part=content] { z-index: 50; position: relative; width: 18rem; max-width: calc(100vw - 32px);
+    padding: 1rem; box-sizing: border-box; outline: none; font-weight: 400;
+    background: var(--ui-surface); color: var(--ui-text); font-family: var(--ui-font); font-size: 14px;
+    border: 1px solid var(--ui-border); border-radius: calc(var(--ui-radius) + 2px); box-shadow: var(--ui-shadow); }
+  [data-scope=popover][data-part=header] { padding-right: 1.5rem; margin-bottom: 0.75rem;
+    &:last-child { margin-bottom: 0; } }
+  [data-scope=popover][data-part=title] { font-weight: 600; }
+  [data-scope=popover][data-part=description] { margin: 0.25rem 0 0; color: var(--ui-muted); }
+  [data-scope=popover][data-part=close-trigger] { position: absolute; top: 0.5rem; right: 0.5rem; display: grid; place-items: center;
+    width: 1.75rem; height: 1.75rem; border: none; background: transparent; border-radius: 4px; color: var(--ui-muted); cursor: pointer;
+    &:hover { background: var(--ui-hover); color: var(--ui-text); } }
+}

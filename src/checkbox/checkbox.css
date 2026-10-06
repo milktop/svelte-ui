@@ -1,0 +1,17 @@
+@layer ui {
+  [data-scope=checkbox][data-part=root] { display: inline-flex; align-items: center; gap: 0.5rem; vertical-align: top; cursor: pointer;
+    color: var(--ui-text); font-family: var(--ui-font); font-size: 14px;
+    &[data-disabled] { opacity: 0.5; cursor: not-allowed; } }
+  [data-scope=checkbox][data-part=control] { display: grid; place-items: center; flex-shrink: 0; width: 1rem; height: 1rem; box-sizing: border-box;
+    background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: calc(var(--ui-radius) - 2px); color: var(--ui-accent-text);
+    &:is([data-state=checked], [data-state=indeterminate]) { background: var(--ui-accent); border-color: var(--ui-accent); }
+    &[data-focus-visible] { outline: 2px solid var(--ui-ring-soft); border-color: var(--ui-ring); }
+    &[data-invalid] { border-color: var(--ui-danger); } }
+  [data-scope=checkbox][data-part=indicator] { display: none; font-size: 12px;
+    &:is([data-state=checked], [data-state=indeterminate]) { display: grid; } }
+
+  [data-scope=checkbox-group][data-part=root] { display: block; color: var(--ui-text); font-family: var(--ui-font); }
+  [data-scope=checkbox-group][data-part=label] { display: block; font-size: 14px; font-weight: 500; margin-bottom: 0.375rem; }
+  [data-scope=checkbox-group][data-part=items] { display: flex; flex-direction: column; gap: 0.5rem;
+    &[data-orientation=horizontal] { flex-direction: row; flex-wrap: wrap; gap: 0.5rem 1rem; } }
+}

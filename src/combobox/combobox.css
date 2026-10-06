@@ -1,0 +1,41 @@
+@layer ui {
+  [data-scope=combobox][data-part=root] { display: inline-block; position: relative; min-width: 15rem; color: var(--ui-text); font-family: var(--ui-font);
+    --tag-bg: var(--ui-hover); --tag-text: var(--ui-text); --tag-border: transparent;
+    &[data-variant=accent] { --tag-bg: var(--ui-accent-soft); --tag-text: var(--ui-accent-soft-text); }
+    &[data-variant=outline] { --tag-bg: var(--ui-surface); --tag-border: var(--ui-border); } }
+  [data-scope=combobox][data-part=label] { display: block; font-size: 14px; font-weight: 500; margin-bottom: 0.375rem; }
+  [data-scope=combobox][data-part=control] { display: flex; align-items: center; gap: 0.25rem; min-height: var(--ui-control-height);
+    padding: 0.125rem 0.25rem 0.125rem 0.5rem; box-sizing: border-box; background: var(--ui-surface);
+    border: 1px solid var(--ui-border); border-radius: var(--ui-radius);
+    &:focus-within { border-color: var(--ui-ring); outline: 2px solid var(--ui-ring-soft); }
+    &[data-disabled] { opacity: 0.5; }
+    &[data-invalid], &:has([aria-invalid=true]) { border-color: var(--ui-danger); } }
+  [data-scope=combobox][data-part=tags] { display: flex; flex-wrap: wrap; align-items: center; flex: 1; min-width: 0; gap: 0.375rem; padding: 0.125rem 0; }
+  [data-scope=combobox][data-part=input] { flex: 1; min-width: 4rem; height: 1.625rem; padding: 0; border: none; background: transparent;
+    outline: none; color: inherit; font-family: inherit; font-size: 14px;
+    &::placeholder { color: var(--ui-muted); } }
+  [data-scope=combobox][data-part=tag] { display: flex; align-items: center; gap: 0.25rem; height: 1.625rem; padding: 0 0.25rem 0 0.625rem;
+    box-sizing: border-box; border-radius: calc(var(--ui-radius) - 2px); background: var(--tag-bg); color: var(--tag-text);
+    border: 1px solid var(--tag-border); font-size: 13px; font-weight: 500; line-height: 1; }
+  [data-scope=combobox][data-part=tag-text] { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 12rem; }
+  [data-scope=combobox][data-part=tag-remove] { display: grid; place-items: center; width: 1.125rem; height: 1.125rem; padding: 0; border: none;
+    background: transparent; border-radius: 4px; color: inherit; opacity: 0.6; cursor: pointer;
+    &:hover { opacity: 1; background: rgba(0, 0, 0, 0.08); } }
+  [data-scope=combobox]:is([data-part=clear-trigger], [data-part=trigger]) { display: grid; place-items: center; flex-shrink: 0;
+    width: 1.75rem; height: 1.75rem; border: none; background: transparent; border-radius: 4px; color: var(--ui-muted); cursor: pointer;
+    &:hover { background: var(--ui-hover); color: var(--ui-text); } }
+  [data-scope=combobox][data-part=trigger][data-state=open] { rotate: 180deg; }
+
+  /* Zag copies the content's z-index onto its positioner. */
+  [data-scope=combobox][data-part=content] { z-index: 50; margin: 0; padding: 0.25rem; list-style: none; box-sizing: border-box; outline: none;
+    max-height: min(300px, var(--available-height)); overflow-y: auto; font-weight: 400;
+    background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: calc(var(--ui-radius) + 2px); box-shadow: var(--ui-shadow); }
+  [data-scope=combobox][data-part=empty] { padding: 0.5rem; font-size: 14px; color: var(--ui-muted); }
+  [data-scope=combobox][data-part=item] { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+    padding: 0.375rem 0.5rem; border-radius: 4px; font-size: 14px; cursor: pointer;
+    &[data-highlighted] { background: var(--ui-hover); }
+    &[data-state=checked] { font-weight: 500; }
+    &[data-disabled] { opacity: 0.4; cursor: not-allowed; } }
+  [data-scope=combobox][data-part=item-indicator] { display: none; color: var(--ui-accent);
+    &[data-state=checked] { display: inline-flex; } }
+}

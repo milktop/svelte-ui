@@ -3,7 +3,7 @@
 
   <Button variant="primary" icon="lucide:save" loading={saving}>Save</Button>
 
-  - `variant`: 'default', 'primary', 'danger', 'soft' or 'ghost'
+  - `variant`: 'default', 'primary', 'danger', 'soft', 'ghost' or 'link'
   - `size`: 'sm', 'md' (matching the inputs' height) or 'lg'
   - `icon`, `iconEnd`: Iconify names; with no text it is an icon button, so give it an aria-label
   - `loading`: a spinner in place of the icon; also disables it

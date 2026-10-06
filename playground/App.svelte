@@ -3,8 +3,12 @@
   import Demo from './lib/Demo.svelte'
   import ApiPanel from './lib/ApiPanel.svelte'
   import ThemeSwitch from './lib/ThemeSwitch.svelte'
+  import AppearancePanel from './lib/AppearancePanel.svelte'
+  import { appearance, applyAppearance } from './lib/appearance.svelte.js'
   import { groups, pages, examplesOf, sourceOf } from './registry.js'
   import { apiOf } from './lib/api.js'
+
+  $effect(() => applyAppearance())
 
   let hash = $state(location.hash)
   let showApi = $state(false)
@@ -18,7 +22,7 @@
 
 <svelte:window onhashchange={() => { hash = location.hash; showApi = false; scrollTo(0, 0) }} />
 
-<AppShell inset>
+<AppShell inset={appearance.layout === 'inset'}>
   <Sidebar>
     {#snippet logo()}
       <a href="#/" class="flex items-center gap-2 text-(--ui-text) no-underline">
@@ -43,10 +47,10 @@
 
   <Topbar>
     <Breadcrumbs items={trail} />
-    {#snippet end()}<ThemeSwitch />{/snippet}
+    {#snippet end()}<ThemeSwitch /><AppearancePanel />{/snippet}
   </Topbar>
 
-  <Page>
+  <Page width={appearance.width} align={appearance.align}>
     {#if page}
       {#key page}
         <div class="flex items-center justify-between gap-4">

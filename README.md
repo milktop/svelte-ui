@@ -15,6 +15,13 @@ Svelte 5 components on [Zag](https://zagjs.com) state machines, with
 <Button variant="primary" loading={form.processing}>Save</Button>
 ```
 
+## Components
+
+Button · Input · Textarea · NumberInput · PasswordInput · PinInput · TagsInput ·
+Select · Combobox · DatePicker · Checkbox · CheckboxGroup · Switch · RadioGroup ·
+Segmented · Slider · Field · Fields · FileUpload · Popover · Card · Page ·
+AppShell · Topbar · Sidebar · NavSection · NavGroup · NavItem · Breadcrumbs
+
 ## Every component works the same way
 
 - One package and namespace: `import { Button, DatePicker } from '@milktop/svelte-ui'`.

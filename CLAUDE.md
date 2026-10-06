@@ -33,6 +33,20 @@ props, tokens, part names and look. Read `readme.md` first.
 
 ## Gotchas
 
+- Zag's Svelte adapter maps `onChange` to the `input` event (and `defaultValue`
+  to `value`); a script testing a file input must fire `input`, not just `change`.
+- Inside a Field, a control's own `min-width` must give way (`min-width: 0` on
+  the field's control), or it overflows narrow grid cells.
+- Combobox: `inputBehavior: 'autohighlight'`, or Enter picks nothing until
+  you arrow down. Filter on `reason === 'input-change'` only.
+- Tags input: Zag doesn't always clear the box after a delimiter adds a tag;
+  the component clears it when the value grows.
+- Two inputs bound to one value must agree on its shape (a 6-box and a 4-box
+  PinInput on one string fight over its length).
+
+- Don't name a local `props`: Svelte then reads `$props()` as that store's
+  auto-subscription ("$bindable() can only be used inside a $props() declaration").
+
 - Zag in Svelte: pass props as a getter (`useMachine(m, () => ({…}))`) so they
   stay reactive; controlled `value` then works.
 - Field ids come from `$props.id()`; Zag ids options take functions for
