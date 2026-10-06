@@ -17,7 +17,7 @@
 <script>
   import * as tabs from '@zag-js/tabs'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import { setContext } from 'svelte'
+  import { setContext, untrack } from 'svelte'
   import 'iconify-icon'
   import { cx, partsOf } from '../utils.js'
   import '../theme.css'
@@ -43,9 +43,10 @@
   setContext('ui-tabs', {
     get api() { return api },
     get part() { return part },
+    // Untracked, so a Tab's effect doesn't rerun when the list changes.
     register(tab) {
-      list.push(tab)
-      return () => list.splice(list.indexOf(tab), 1)
+      untrack(() => list.push(tab))
+      return () => untrack(() => list.splice(list.indexOf(tab), 1))
     },
   })
 </script>
