@@ -3,7 +3,7 @@
     display: flex; align-items: center; gap: 0.5rem; min-width: 0; box-sizing: border-box;
     min-height: var(--ui-control-height); padding: 0 0.75rem;
     background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: var(--ui-radius);
-    color: var(--ui-text); font: 14px var(--ui-font);
+    color: var(--ui-text); font-family: var(--ui-font); font-size: 14px;
 
     &:focus-within { border-color: var(--ui-ring); outline: 2px solid var(--ui-ring-soft); }
     &:has([aria-invalid=true]) { border-color: var(--ui-danger); }

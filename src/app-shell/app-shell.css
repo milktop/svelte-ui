@@ -1,0 +1,29 @@
+/* The shell lays out its children by their data-scope: sidebar, topbar, page. */
+@layer ui {
+  [data-scope=app-shell][data-part=root] {
+    display: grid; grid-template-columns: var(--ui-sidebar-width) minmax(0, 1fr); grid-template-rows: auto 1fr;
+    grid-template-areas: "sidebar topbar" "sidebar main"; min-height: 100dvh;
+    background: var(--ui-canvas); color: var(--ui-text); font-family: var(--ui-font);
+
+    > [data-scope=sidebar] { grid-area: sidebar; }
+    > [data-scope=topbar] { grid-area: topbar; }
+    > [data-scope=page] { grid-area: main; }
+
+    /* Inset: the page is a rounded panel on the frame, and the sidebar and top
+       bar sit flat around it. The grey sidebar's items go white. */
+    &[data-inset] { background: var(--ui-frame);
+      > [data-scope=page] { background: var(--ui-canvas); margin: 0 0.75rem 0.75rem; border-radius: calc(var(--ui-radius) + 10px); }
+      > [data-scope=topbar] { background: var(--ui-frame); border-bottom: none; }
+      > [data-scope=sidebar] { background: var(--ui-sidebar-bg); border-right: none;
+        --ui-sidebar-hover: var(--ui-sidebar-inset-hover);
+        --ui-sidebar-active: var(--ui-sidebar-inset-active);
+        --ui-sidebar-active-shadow: var(--ui-sidebar-inset-active-shadow); } }
+  }
+
+  [data-scope=topbar][data-part=root] { display: flex; align-items: center; gap: 0.75rem; height: 3.5rem; padding: 0 1rem;
+    box-sizing: border-box; min-width: 0; position: sticky; top: 0; z-index: 36;
+    background: var(--ui-surface); border-bottom: 1px solid var(--ui-border);
+    @media (min-width: 768px) { padding: 0 1.5rem; } }
+  [data-scope=topbar][data-part=start] { display: flex; align-items: center; gap: 0.75rem; flex-grow: 1; min-width: 0; }
+  [data-scope=topbar][data-part=end] { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+}

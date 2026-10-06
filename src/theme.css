@@ -19,7 +19,9 @@
     --ui-muted: #71717a;
     --ui-surface: white;
     --ui-canvas: #f2f4f7;
+    /* The inset app shell: its sidebar (a lighter shade of the canvas) and the frame round the page. */
     --ui-sidebar-bg: #f8f9fb;
+    --ui-frame: white;
     --ui-border: #e4e4e7;
     --ui-hover: #f4f4f5;
     --ui-accent: #2563eb;
@@ -48,6 +50,11 @@
     --ui-sidebar-active: var(--ui-hover);
     --ui-sidebar-active-text: var(--ui-text);
     --ui-sidebar-active-weight: 500;
+    --ui-sidebar-active-shadow: none;
+    /* The inset layout's sidebar is grey, so its hovered and current items go white. */
+    --ui-sidebar-inset-hover: color-mix(in srgb, var(--ui-surface) 75%, transparent);
+    --ui-sidebar-inset-active: var(--ui-surface);
+    --ui-sidebar-inset-active-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
   }
 
   :root.dark, [data-theme=dark] {
@@ -56,6 +63,7 @@
     --ui-surface: #1c1c21;
     --ui-canvas: #141418;
     --ui-sidebar-bg: #0c0c0e;
+    --ui-frame: #0c0c0e;
     --ui-border: #2b2b31;
     --ui-hover: #27272d;
     --ui-accent: #3b82f6;

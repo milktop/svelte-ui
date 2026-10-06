@@ -6,7 +6,7 @@
   [data-scope=select][data-part=trigger] { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
     width: 100%; height: var(--ui-control-height); padding: 0 0.75rem; box-sizing: border-box;
     background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: var(--ui-radius);
-    color: inherit; font: 14px var(--ui-font); text-align: left; cursor: pointer;
+    color: inherit; font-family: var(--ui-font); font-size: 14px; text-align: left; cursor: pointer;
     &:focus-visible { border-color: var(--ui-ring); outline: 2px solid var(--ui-ring-soft); }
     &[data-disabled] { opacity: 0.5; cursor: not-allowed; }
     &[data-invalid], &[aria-invalid=true] { border-color: var(--ui-danger); }

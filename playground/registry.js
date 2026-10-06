@@ -7,23 +7,26 @@ const modules = import.meta.glob('./examples/**/*.svelte', { eager: true })
 const raws = import.meta.glob('./examples/**/*.svelte', { query: '?raw', import: 'default', eager: true })
 
 export const groups = [
-  { heading: 'Actions', pages: [
-    { slug: 'button', title: 'Button', icon: 'lucide:mouse-pointer-click', files: ['button/Button.svelte'] },
+  { heading: 'Actions', icon: 'lucide:mouse-pointer-click', pages: [
+    { slug: 'button', title: 'Button', about: 'Variants, sizes, icons, loading and counts', files: ['button/Button.svelte'] },
   ] },
-  { heading: 'Forms', pages: [
-    { slug: 'input', title: 'Input', icon: 'lucide:text-cursor-input', files: ['input/Input.svelte'] },
-    { slug: 'select', title: 'Select', icon: 'lucide:chevrons-up-down', files: ['select/Select.svelte'] },
-    { slug: 'date-picker', title: 'Date picker', icon: 'lucide:calendar', files: ['date-picker/DatePicker.svelte'] },
-    { slug: 'field', title: 'Field', icon: 'lucide:form', files: ['field/Field.svelte', 'field/Fields.svelte'] },
+  { heading: 'Inputs', icon: 'lucide:text-cursor-input', pages: [
+    { slug: 'input', title: 'Input', about: 'Text and numbers, with icons and affixes', files: ['input/Input.svelte'] },
+    { slug: 'select', title: 'Select', about: 'Pick one from a list, with typeahead', files: ['select/Select.svelte'] },
+    { slug: 'date-picker', title: 'Date picker', about: 'Type a date or pick it from a calendar', files: ['date-picker/DatePicker.svelte'] },
   ] },
-  { heading: 'Layout', pages: [
-    { slug: 'card', title: 'Card', icon: 'lucide:square', files: ['card/Card.svelte'] },
-    { slug: 'page', title: 'Page', icon: 'lucide:panel-top', files: ['page/Page.svelte'] },
-    { slug: 'sidebar', title: 'Sidebar', icon: 'lucide:panel-left', files: ['sidebar/Sidebar.svelte', 'sidebar/NavSection.svelte', 'sidebar/NavItem.svelte'] },
+  { heading: 'Forms', icon: 'lucide:clipboard-list', pages: [
+    { slug: 'field', title: 'Field', about: 'Labels, hints and errors, on a grid', files: ['field/Field.svelte', 'field/Fields.svelte'] },
+  ] },
+  { heading: 'Layout', icon: 'lucide:layout-dashboard', pages: [
+    { slug: 'card', title: 'Card', about: 'A surface with a header and footer', files: ['card/Card.svelte'] },
+    { slug: 'page', title: 'Page', about: 'A heading, actions and content', files: ['page/Page.svelte'] },
+    { slug: 'app-shell', title: 'App shell', about: 'Sidebar, top bar and page, flat or inset', files: ['app-shell/AppShell.svelte', 'app-shell/Topbar.svelte', 'breadcrumbs/Breadcrumbs.svelte'] },
+    { slug: 'sidebar', title: 'Sidebar', about: 'Sections, groups and items', files: ['sidebar/Sidebar.svelte', 'sidebar/NavSection.svelte', 'sidebar/NavGroup.svelte', 'sidebar/NavItem.svelte'] },
   ] },
 ]
 
-export const pages = groups.flatMap((group) => group.pages)
+export const pages = groups.flatMap((group) => group.pages.map((page) => ({ ...page, group })))
 
 export const sourceOf = (file) => sources[`../src/${file}`] ?? ''
 

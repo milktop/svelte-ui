@@ -1,81 +1,96 @@
 <script>
-  import { Button, Card, Page, Sidebar, NavSection, NavItem } from '@milktop/svelte-ui'
+  import { AppShell, Sidebar, NavSection, NavGroup, NavItem, Topbar, Breadcrumbs, Page } from '@milktop/svelte-ui'
   import Demo from './lib/Demo.svelte'
   import ApiPanel from './lib/ApiPanel.svelte'
+  import ThemeSwitch from './lib/ThemeSwitch.svelte'
   import { groups, pages, examplesOf, sourceOf } from './registry.js'
   import { apiOf } from './lib/api.js'
 
   let hash = $state(location.hash)
-  let dark = $state(matchMedia('(prefers-color-scheme: dark)').matches)
-
-  $effect(() => { document.documentElement.classList.toggle('dark', dark) })
+  let showApi = $state(false)
 
   const page = $derived(pages.find((p) => hash === `#/${p.slug}`))
-  const summary = $derived(page ? apiOf(page.files[0], sourceOf(page.files[0])).summary : '')
+  const intro = $derived(page ? apiOf(page.files[0], sourceOf(page.files[0])).summary : '')
+  const trail = $derived(page
+    ? [{ label: 'Svelte UI', href: '#/' }, { label: page.group.heading }, { label: page.title }]
+    : [{ label: 'Svelte UI', href: '#/' }, { label: 'Overview' }])
 </script>
 
-<svelte:window onhashchange={() => { hash = location.hash; scrollTo(0, 0) }} />
+<svelte:window onhashchange={() => { hash = location.hash; showApi = false; scrollTo(0, 0) }} />
 
-<div class="flex min-h-dvh">
-  <Sidebar style="--ui-sidebar-active: var(--ui-accent-soft); --ui-sidebar-active-text: var(--ui-accent-soft-text)">
-    {#snippet logo()}<a href="#/" class="text-(--ui-text) no-underline">Svelte UI</a>{/snippet}
+<AppShell inset>
+  <Sidebar>
+    {#snippet logo()}
+      <a href="#/" class="flex items-center gap-2 text-(--ui-text) no-underline">
+        <span class="inline-flex h-7 w-7 items-center justify-center rounded-[var(--ui-radius)] bg-(--ui-accent) text-xs font-bold text-(--ui-accent-text)">UI</span>
+        Svelte UI
+      </a>
+    {/snippet}
 
     <NavSection>
       <NavItem icon="lucide:house" href="#/" active={!page}>Overview</NavItem>
     </NavSection>
-    {#each groups as group}
-      <NavSection heading={group.heading}>
-        {#each group.pages as p}
-          <NavItem icon={p.icon} href="#/{p.slug}" active={page === p}>{p.title}</NavItem>
-        {/each}
-      </NavSection>
-    {/each}
-
-    {#snippet footer()}
-      <Button block variant="ghost" icon={dark ? 'lucide:sun' : 'lucide:moon'} onclick={() => (dark = !dark)}>
-        {dark ? 'Light' : 'Dark'} mode
-      </Button>
-    {/snippet}
+    <NavSection heading="Components">
+      {#each groups as group}
+        <NavGroup label={group.heading} icon={group.icon} open={group.pages.some((p) => hash === `#/${p.slug}`)}>
+          {#each group.pages as p}
+            <NavItem href="#/{p.slug}" active={hash === `#/${p.slug}`}>{p.title}</NavItem>
+          {/each}
+        </NavGroup>
+      {/each}
+    </NavSection>
   </Sidebar>
 
-  <main class="flex-1 min-w-0">
+  <Topbar>
+    <Breadcrumbs items={trail} />
+    {#snippet end()}<ThemeSwitch />{/snippet}
+  </Topbar>
+
+  <Page>
     {#if page}
       {#key page}
-        <Page heading={page.title} description={summary} width="wide" align="start">
-          <div class="flex flex-col gap-5">
-            {#each examplesOf(page.slug) as example (example.path)}
-              <Demo {example} />
-            {/each}
-            {#each page.files as file}
-              <ApiPanel {file} />
-            {/each}
+        <div class="flex items-center justify-between gap-4">
+          <h1 class="m-0 text-xl font-bold">{page.title}</h1>
+          <button type="button" aria-pressed={showApi} onclick={() => (showApi = !showApi)}
+            class="inline-flex h-7 shrink-0 cursor-pointer items-center gap-1.5 rounded-md border border-transparent bg-transparent px-2 text-xs text-(--ui-muted) hover:bg-(--ui-hover) hover:text-(--ui-text) aria-pressed:border-(--ui-border) aria-pressed:bg-(--ui-surface) aria-pressed:text-(--ui-text)">
+            <iconify-icon icon="lucide:list-tree"></iconify-icon>Props
+          </button>
+        </div>
+        <p class="mt-1 mb-0 text-sm text-(--ui-muted)">{intro}</p>
+        {#if showApi}
+          <div class="mt-5 flex flex-col gap-4">
+            {#each page.files as file}<ApiPanel {file} />{/each}
           </div>
-        </Page>
+        {/if}
+        {#each examplesOf(page.slug) as example (example.path)}
+          <Demo {example} />
+        {/each}
       {/key}
     {:else}
-      <Page heading="Svelte UI" description="Svelte 5 components on Zag state machines, with imba-ui's API and design." width="wide" align="start">
-        <div class="flex flex-col gap-5">
-          <Card heading="Every component works the same way">
-            <ul class="m-0 flex list-none flex-col gap-3 p-0">
-              <li><code>import {'{'} Button, DatePicker {'}'} from '@milktop/svelte-ui'</code>: one package, one namespace.</li>
-              <li><code>bind:value</code> on every input-like component.</li>
-              <li><code>class</code>: classes for the outer element, joined with the component's own. Utilities always win: the library's CSS sits in <code>@layer ui</code>.</li>
-              <li><code>classes</code>: classes per part, by camelCased part name, e.g. <code>classes={'{{'} prev: 'rounded-full' {'}}'}</code>. Each page lists the parts.</li>
-              <li>Snippets replace a part, e.g. a date picker's <code>prev</code>, and get its props.</li>
-              <li><code>style="--ui-accent: …"</code>: tokens for one instance; set them on <code>:root</code> for the whole app.</li>
-            </ul>
-          </Card>
-          <Card heading="Components">
-            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {#each pages as p}
-                <a href="#/{p.slug}" class="flex items-center gap-2 rounded-md p-2 text-(--ui-text) no-underline hover:bg-(--ui-hover)">
-                  <iconify-icon icon={p.icon} class="text-(--ui-muted)"></iconify-icon>{p.title}
-                </a>
-              {/each}
-            </div>
-          </Card>
+      <h1 class="m-0 text-xl font-bold">Svelte UI</h1>
+      <p class="mt-1 mb-0 text-sm text-(--ui-muted)">Svelte 5 components on Zag state machines, with imba-ui's API and design.</p>
+
+      <h2 class="mt-8 mb-3 text-xs font-semibold tracking-wider text-(--ui-muted) uppercase">Every component works the same way</h2>
+      <ul class="m-0 flex list-none flex-col gap-2 rounded-[calc(var(--ui-radius)+6px)] border border-(--ui-border) bg-(--ui-surface) p-5 text-sm shadow-(--ui-card-shadow)">
+        <li><code class="text-xs">import {'{'} Button, DatePicker {'}'} from '@milktop/svelte-ui'</code>: one package, one namespace.</li>
+        <li><code class="text-xs">bind:value</code> on every input-like component.</li>
+        <li><code class="text-xs">class</code>: classes for the outer element. Utilities always win: the library's CSS sits in <code class="text-xs">@layer ui</code>.</li>
+        <li><code class="text-xs">classes</code>: classes per part, e.g. <code class="text-xs">classes={'{{'} prev: 'rounded-full' {'}}'}</code>. Each page's Props lists the parts.</li>
+        <li>Snippets replace a part, e.g. a date picker's <code class="text-xs">prev</code>, and get its props.</li>
+        <li><code class="text-xs">style="--ui-accent: …"</code>: tokens for one instance; on <code class="text-xs">:root</code> for the whole app.</li>
+      </ul>
+
+      {#each groups as group}
+        <h2 class="mt-8 mb-3 text-xs font-semibold tracking-wider text-(--ui-muted) uppercase">{group.heading}</h2>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {#each group.pages as p}
+            <a href="#/{p.slug}" class="block rounded-lg border border-(--ui-border) bg-(--ui-surface) p-3 text-inherit no-underline shadow-(--ui-card-shadow) hover:border-(--ui-muted)">
+              <strong class="block text-sm font-semibold">{p.title}</strong>
+              <span class="mt-0.5 block text-xs text-(--ui-muted)">{p.about}</span>
+            </a>
+          {/each}
         </div>
-      </Page>
+      {/each}
     {/if}
-  </main>
-</div>
+  </Page>
+</AppShell>
