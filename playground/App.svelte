@@ -77,16 +77,6 @@
       <h1 class="m-0 text-xl font-bold">Svelte UI</h1>
       <p class="mt-1 mb-0 text-sm text-(--ui-muted)">Svelte 5 components on Zag state machines, with imba-ui's API and design.</p>
 
-      <h2 class="mt-8 mb-3 text-xs font-semibold tracking-wider text-(--ui-muted) uppercase">Every component works the same way</h2>
-      <ul class="m-0 flex list-none flex-col gap-2 rounded-[calc(var(--ui-radius)+6px)] border border-(--ui-border) bg-(--ui-surface) p-5 text-sm shadow-(--ui-card-shadow)">
-        <li><code class="text-xs">import {'{'} Button, DatePicker {'}'} from '@milktop/svelte-ui'</code>: one package, one namespace.</li>
-        <li><code class="text-xs">bind:value</code> on every input-like component.</li>
-        <li><code class="text-xs">class</code>: classes for the outer element. Utilities always win: the library's CSS sits in <code class="text-xs">@layer ui</code>.</li>
-        <li><code class="text-xs">classes</code>: classes per part, e.g. <code class="text-xs">classes={'{{'} prev: 'rounded-full' {'}}'}</code>. Each page's Props lists the parts.</li>
-        <li>Snippets replace a part, e.g. a date picker's <code class="text-xs">prev</code>, and get its props.</li>
-        <li><code class="text-xs">style="--ui-accent: …"</code>: tokens for one instance; on <code class="text-xs">:root</code> for the whole app.</li>
-      </ul>
-
       {#each groups as group}
         <h2 class="mt-8 mb-3 text-xs font-semibold tracking-wider text-(--ui-muted) uppercase">{group.heading}</h2>
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
