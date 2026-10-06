@@ -105,6 +105,8 @@ export function examplesOf(slug) {
       const [title, ...rest] = (comment?.[1] ?? '').split('\n')
       return {
         path,
+        // `<n>-<name>.bare.svelte`: no card round it (it brings its own surface).
+        bare: path.endsWith('.bare.svelte'),
         component: modules[path].default,
         title,
         description: rest.map((line) => line.trim()).join(' '),

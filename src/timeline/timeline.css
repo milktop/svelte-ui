@@ -1,0 +1,29 @@
+@layer ui {
+  [data-scope=timeline][data-part=root] { display: block; width: 100%; color: var(--ui-text); font-family: var(--ui-font); font-size: 14px; }
+  [data-scope=timeline][data-part=list] { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+  [data-scope=timeline][data-part=item] { display: flex; gap: 0.75rem; position: relative; --tint: var(--ui-muted); --tint-bg: var(--ui-hover);
+    &[data-color=accent] { --tint: var(--ui-accent); --tint-text: var(--ui-accent-soft-text); --tint-bg: var(--ui-accent-soft); }
+    &[data-color=success] { --tint: var(--ui-success); --tint-bg: color-mix(in srgb, var(--ui-success) 15%, var(--ui-surface)); }
+    &[data-color=warning] { --tint: #f59e0b; --tint-text: #b45309; --tint-bg: #fef3c7; }
+    &[data-color=danger] { --tint: var(--ui-danger); --tint-bg: color-mix(in srgb, var(--ui-danger) 12%, var(--ui-surface)); } }
+  /* The connector runs down the marker column to the next item, behind the markers, and stops at the last. */
+  [data-scope=timeline][data-part=marker] { position: relative; display: flex; justify-content: center; width: 2rem; flex-shrink: 0;
+    &::after { content: ''; position: absolute; top: 0; bottom: 0; left: calc(50% - 0.5px); width: 1px; background: var(--ui-border); }
+    [data-part=item]:last-child > &::after { display: none; } }
+  [data-scope=timeline][data-part=icon] { position: relative; z-index: 1; display: grid; place-items: center; width: 2rem; height: 2rem; box-sizing: border-box;
+    border-radius: 9999px; background: var(--tint-bg); color: var(--tint-text, var(--tint)); font-size: 15px; border: 1px solid var(--ui-border);
+    [data-color]:not([data-color=neutral]) > [data-part=marker] > & { border-color: transparent; }
+    [data-size=sm] & { width: 1.5rem; height: 1.5rem; font-size: 13px; } }
+  /* A dot, ringed in the page colour so the line doesn't touch it. */
+  [data-scope=timeline][data-part=dot] { position: relative; z-index: 1; width: 0.625rem; height: 0.625rem; margin-top: 0.625rem;
+    border-radius: 9999px; background: var(--tint); border: 3px solid var(--ui-surface); box-sizing: content-box; }
+  [data-scope=timeline][data-part=body] { flex-grow: 1; min-width: 0; padding: 0.375rem 0 1.5rem;
+    [data-size=sm] & { padding-bottom: 1rem; }
+    [data-variant=cards] & { padding: 0.75rem; margin-bottom: 0.75rem; border: 1px solid var(--ui-border);
+      border-radius: calc(var(--ui-radius) + 2px); background: var(--ui-surface); } }
+  [data-scope=timeline][data-part=header] { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+  [data-scope=timeline][data-part=heading] { font-weight: 500; }
+  [data-scope=timeline][data-part=time] { font-size: 12px; color: var(--ui-muted); white-space: nowrap; }
+  [data-scope=timeline][data-part=description] { margin-top: 0.125rem; color: var(--ui-muted); }
+  [data-scope=timeline][data-part=content] { margin-top: 0.5rem; }
+}

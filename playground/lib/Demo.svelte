@@ -27,8 +27,12 @@
   {#if showCode}
     <pre class="m-0 overflow-x-auto rounded-[calc(var(--ui-radius)+6px)] border border-(--ui-border) bg-(--ui-surface) p-4 text-xs leading-relaxed [tab-size:2]"><code>{example.code}</code></pre>
   {/if}
+  {#if example.bare}
+    <div class="flex w-full flex-wrap items-start gap-3"><example.component /></div>
+  {:else}
   <div class={['box-border w-full rounded-[calc(var(--ui-radius)+6px)] border border-(--ui-border) bg-(--ui-surface) p-5 shadow-(--ui-card-shadow) md:p-6',
     form ? 'grid grid-cols-1 items-start gap-x-6 gap-y-5 sm:grid-cols-2 [&>*]:min-w-0 [&>p]:col-span-full [&>p]:m-0 [&>p]:text-sm [&>p]:text-(--ui-muted)' : 'flex flex-wrap items-start gap-3']}>
     <example.component />
   </div>
+  {/if}
 </section>

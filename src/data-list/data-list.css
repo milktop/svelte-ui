@@ -1,0 +1,19 @@
+@layer ui {
+  [data-scope=data-list][data-part=root] { display: block; width: 100%; color: var(--ui-text); font-family: var(--ui-font); font-size: 14px; }
+  /* Each item's bottom line overlaps the next (and the last is clipped), so lines only sit between items. */
+  [data-scope=data-list][data-part=list] { display: grid; margin: 0; padding: 0; overflow: hidden;
+    [data-variant=card] > & { background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: calc(var(--ui-radius) + 2px);
+      box-shadow: var(--ui-card-shadow); padding: 0 1rem; }
+    [data-grid] > & { column-gap: 1.5rem; }
+    @media (min-width: 640px) { [data-grid] > & { grid-template-columns: repeat(var(--columns, 2), minmax(0, 1fr)); } } }
+  [data-scope=data-list][data-part=item] {
+    [data-orientation=horizontal] > [data-part=list] > & { display: grid; grid-template-columns: var(--label-width, 10rem) minmax(0, 1fr); gap: 1rem; padding: 0.5rem 0; align-items: baseline; }
+    [data-orientation=vertical] > [data-part=list] > & { display: flex; flex-direction: column; gap: 0.125rem; padding: 0.5rem 0; }
+    :is([data-variant=divided], [data-variant=card]) > [data-part=list] > & { padding: 0.75rem 0; border-bottom: 1px solid var(--ui-border); margin-bottom: -1px; }
+  }
+  [data-scope=data-list][data-part=label] { display: flex; align-items: center; gap: 0.25rem; margin: 0; color: var(--ui-muted); }
+  [data-scope=data-list][data-part=value] { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+  [data-scope=data-list][data-part=info] { display: inline-flex; color: var(--ui-muted); cursor: help; border-radius: 9999px; font-size: 13px;
+    &:hover { color: var(--ui-text); }
+    &:focus-visible { outline: 2px solid var(--ui-ring-soft); } }
+}
