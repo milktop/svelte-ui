@@ -1,0 +1,20 @@
+@layer ui {
+  /* Full width, so the toggle doesn't grow when the content opens. */
+  [data-scope=collapsible][data-part=root] { display: block; width: 100%; color: var(--ui-text); font-family: var(--ui-font); }
+  [data-scope=collapsible][data-part=trigger]:not([data-scope=button]) {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; width: 100%; padding: 0.5rem 0;
+    border: none; background: transparent; color: inherit; font: inherit; font-size: 14px; font-weight: 500; text-align: left;
+    cursor: pointer; outline: none; border-radius: 4px;
+    &:focus-visible { outline: 2px solid var(--ui-ring-soft); outline-offset: 2px; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
+  [data-scope=collapsible][data-part=indicator] { display: inline-flex; color: var(--ui-muted); font-size: 16px; transition: transform 200ms;
+    &[data-state=open] { transform: rotate(180deg); } }
+  /* Zag measures the content into --height and keeps it shown until the closing animation ends. */
+  [data-scope=collapsible][data-part=content] { overflow: hidden;
+    &[data-state=open] { animation: ui-collapsible-open 200ms ease-out; }
+    &[data-state=closed] { animation: ui-collapsible-close 160ms ease-in; } }
+  [data-scope=collapsible][data-part=inner] { padding-top: 0.5rem; font-size: 14px; }
+  @keyframes ui-collapsible-open { from { height: 0; opacity: 0; } to { height: var(--height); opacity: 1; } }
+  @keyframes ui-collapsible-close { from { height: var(--height); opacity: 1; } to { height: 0; opacity: 0; } }
+}

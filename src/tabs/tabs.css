@@ -1,0 +1,25 @@
+@layer ui {
+  [data-scope=tabs][data-part=root] { display: block; width: 100%; color: var(--ui-text); font-family: var(--ui-font); }
+  [data-scope=tabs][data-part=list] { position: relative; display: flex; gap: 0.25rem; overflow-x: auto;
+    [data-variant=line] > & { border-bottom: 1px solid var(--ui-border); }
+    /* Pills: a raised pill behind the selected tab, like Segmented. */
+    [data-variant=pills] > & { display: inline-flex; padding: 0.25rem; background: var(--ui-hover); border-radius: var(--ui-radius); } }
+  [data-scope=tabs][data-part=trigger] {
+    position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 0.5rem; height: var(--ui-control-height); padding: 0 0.75rem;
+    border: none; background: transparent; color: var(--ui-muted); font: inherit; font-size: 14px; font-weight: 500; white-space: nowrap;
+    cursor: pointer; border-radius: var(--ui-radius);
+    &:hover, &[data-selected] { color: var(--ui-text); }
+    &:focus-visible { outline: 2px solid var(--ui-ring-soft); }
+    &[data-disabled] { opacity: 0.4; cursor: not-allowed; }
+    /* Taller than a control, so the underlined tabs have room to breathe. */
+    [data-variant=line] & { border-radius: 0; height: calc(var(--ui-control-height) + 0.5rem); padding: 0 0.875rem; }
+    [data-variant=pills] & { height: calc(var(--ui-control-height) - 8px); border-radius: calc(var(--ui-radius) - 2px); } }
+  [data-scope=tabs][data-part=icon] { display: block; font-size: 16px; }
+  [data-scope=tabs][data-part=indicator] { transition-property: var(--transition-property); transition-duration: 200ms;
+    [data-variant=line] & { position: absolute; bottom: -1px; left: var(--left); width: var(--width); height: 2px; background: var(--ui-accent); }
+    [data-variant=pills] & { position: absolute; z-index: 0; top: var(--top); left: var(--left); width: var(--width); height: var(--height);
+      background: var(--ui-surface); border-radius: calc(var(--ui-radius) - 2px); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); } }
+  [data-scope=tabs][data-part=panels] { padding-top: 1rem; }
+  [data-scope=tabs][data-part=content] { display: block; outline: none;
+    &:focus-visible { outline: 2px solid var(--ui-ring-soft); outline-offset: 4px; border-radius: 4px; } }
+}
