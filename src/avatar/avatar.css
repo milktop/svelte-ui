@@ -1,0 +1,38 @@
+@layer ui {
+  [data-scope=avatar][data-part=root] {
+    position: relative; display: inline-grid; place-items: center; flex-shrink: 0; width: 2.5rem; height: 2.5rem;
+    overflow: hidden; border-radius: 9999px; vertical-align: middle; user-select: none;
+    background: var(--ui-accent-soft); color: var(--ui-accent-soft-text); font-family: var(--ui-font); font-size: 14px; font-weight: 600;
+    &[data-square] { border-radius: var(--ui-radius); }
+    &[data-size=sm] { width: 1.75rem; height: 1.75rem; font-size: 12px; }
+    &[data-size=lg] { width: 3.5rem; height: 3.5rem; font-size: 18px; }
+    &[data-size=xl] { width: 5rem; height: 5rem; font-size: 24px; }
+    /* Custom sizes: the initials grow in step with the named sizes. */
+    &[data-size=custom] { width: var(--avatar-size); height: var(--avatar-size); font-size: calc(6px + 0.2 * var(--avatar-size)); }
+
+    &[data-color=gray] { background: #f4f4f5; color: #3f3f46; }
+    &[data-color=red] { background: #fee2e2; color: #991b1b; }
+    &[data-color=orange] { background: #ffedd5; color: #9a3412; }
+    &[data-color=amber] { background: #fef3c7; color: #92400e; }
+    &[data-color=green] { background: #dcfce7; color: #166534; }
+    &[data-color=teal] { background: #ccfbf1; color: #115e59; }
+    &[data-color=blue] { background: #dbeafe; color: #1e40af; }
+    &[data-color=purple] { background: #f3e8ff; color: #6b21a8; }
+    &[data-color=pink] { background: #fce7f3; color: #9d174d; }
+    :is(.dark, [data-theme=dark]) & {
+      &[data-color=gray] { background: #3f3f46; color: #e4e4e7; }
+      &[data-color=red] { background: #7f1d1d; color: #fecaca; }
+      &[data-color=orange] { background: #7c2d12; color: #fed7aa; }
+      &[data-color=amber] { background: #78350f; color: #fde68a; }
+      &[data-color=green] { background: #14532d; color: #bbf7d0; }
+      &[data-color=teal] { background: #134e4a; color: #99f6e4; }
+      &[data-color=blue] { background: #1e3a8a; color: #bfdbfe; }
+      &[data-color=purple] { background: #581c87; color: #e9d5ff; }
+      &[data-color=pink] { background: #831843; color: #fbcfe8; }
+    }
+  }
+  [data-scope=avatar][data-part=image] { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  [data-scope=avatar][data-part=fallback] { display: grid; place-items: center; width: 100%; height: 100%; line-height: 1; }
+  [data-scope=avatar][data-part=person] { font-size: 1.6em; }
+  [data-scope=avatar][data-part=tooltip-target] { position: absolute; inset: 0; }
+}

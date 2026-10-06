@@ -1,0 +1,14 @@
+@layer ui {
+  [data-scope=empty-state][data-part=root] {
+    display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; box-sizing: border-box;
+    padding: 2.5rem 1.5rem; color: var(--ui-text); font-family: var(--ui-font); font-size: 14px;
+  }
+  [data-scope=empty-state][data-part=icon-wrap] {
+    display: grid; place-items: center; width: 3rem; height: 3rem; margin-bottom: 1rem; border-radius: 9999px;
+    background: var(--ui-hover); color: var(--ui-muted);
+  }
+  [data-scope=empty-state][data-part=icon] { display: block; font-size: 24px; }
+  [data-scope=empty-state][data-part=heading] { margin: 0; font-size: 16px; font-weight: 600; }
+  [data-scope=empty-state][data-part=description] { margin: 0.25rem 0 0; max-width: 28rem; color: var(--ui-muted); }
+  [data-scope=empty-state][data-part=actions] { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-top: 1.25rem; }
+}

@@ -1,0 +1,12 @@
+@layer ui {
+  [data-scope=copy-button][data-part=trigger] {
+    display: inline-flex; align-items: center; gap: 0.375rem; height: 1.75rem; padding: 0 0.5rem; box-sizing: border-box;
+    border: 1px solid var(--ui-border); background: var(--ui-surface); color: var(--ui-text); border-radius: calc(var(--ui-radius) - 2px);
+    font-family: var(--ui-font); font-size: 12px; font-weight: 500; white-space: nowrap; cursor: pointer; outline: none;
+    &:hover { background: var(--ui-hover); }
+    &:focus-visible { outline: 2px solid var(--ui-ring-soft); border-color: var(--ui-ring); }
+    &[data-icon-only] { width: 1.75rem; padding: 0; justify-content: center; }
+  }
+  [data-scope=copy-button][data-part=icon] { font-size: 14px; color: var(--ui-muted);
+    [data-copied] > & { color: #16a34a; } }
+}

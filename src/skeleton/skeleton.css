@@ -1,0 +1,13 @@
+@layer ui {
+  [data-scope=skeleton][data-part=root] {
+    display: block; min-height: 1rem; border-radius: var(--ui-radius); background: var(--ui-skeleton);
+    animation: ui-pulse 1.6s ease-in-out infinite;
+    &[data-circle] { border-radius: 9999px; min-height: 0; }
+    &[data-text] { display: flex; flex-direction: column; gap: 0.5rem; min-height: 0; background: transparent; animation: none; }
+  }
+  [data-scope=skeleton][data-part=line] {
+    display: block; height: 0.75rem; border-radius: 4px; background: var(--ui-skeleton);
+    animation: ui-pulse 1.6s ease-in-out infinite;
+    &[data-last] { width: 60%; }
+  }
+}

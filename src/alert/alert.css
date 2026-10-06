@@ -1,0 +1,26 @@
+@layer ui {
+  [data-scope=alert][data-part=root] {
+    display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem; box-sizing: border-box;
+    border: 1px solid var(--ui-border); border-radius: var(--ui-radius); background: var(--ui-surface);
+    color: var(--ui-text); font-family: var(--ui-font); font-size: 14px; line-height: 1.45;
+    --tint: var(--ui-text);
+    &[data-variant=info] { background: var(--ui-accent-soft); border-color: transparent; --tint: var(--ui-accent-soft-text); }
+    &[data-variant=success] { background: #f0fdf4; border-color: #bbf7d0; --tint: #166534; }
+    &[data-variant=warning] { background: #fffbeb; border-color: #fde68a; --tint: #92400e; }
+    &[data-variant=danger] { background: #fef2f2; border-color: #fecaca; --tint: #991b1b; }
+    :is(.dark, [data-theme=dark]) &[data-variant=success] { background: #052e16; border-color: #14532d; --tint: #86efac; }
+    :is(.dark, [data-theme=dark]) &[data-variant=warning] { background: #1c1004; border-color: #451a03; --tint: #fcd34d; }
+    :is(.dark, [data-theme=dark]) &[data-variant=danger] { background: #1f0505; border-color: #450a0a; --tint: #fca5a5; }
+  }
+  [data-scope=alert][data-part=icon] { flex-shrink: 0; margin-top: 1px; font-size: 18px; color: var(--tint); }
+  [data-scope=alert][data-part=text] { flex: 1; min-width: 0; }
+  [data-scope=alert][data-part=heading] { font-weight: 600; margin-bottom: 0.125rem; color: var(--tint); }
+  [data-scope=alert][data-part=description] { color: var(--ui-muted); }
+  [data-scope=alert][data-part=actions] { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+  [data-scope=alert][data-part=close] {
+    display: grid; place-items: center; flex-shrink: 0; width: 1.5rem; height: 1.5rem; margin: -0.25rem -0.25rem 0 0;
+    border: none; background: transparent; border-radius: 4px; color: var(--ui-muted); cursor: pointer; font-size: 14px;
+    &:hover { background: rgba(0, 0, 0, 0.06); color: var(--ui-text); }
+    &:focus-visible { outline: 2px solid var(--ui-ring-soft); }
+  }
+}
