@@ -10,6 +10,10 @@
   import { appearance, applyAppearance } from './lib/appearance.svelte.js'
   import { groups, pages, examplesOf, sourceOf } from './registry.js'
   import { apiOf } from './lib/api.js'
+  import Theming from './pages/Theming.svelte'
+  import Installation from './pages/Installation.svelte'
+
+  const guides = { '#/theming': 'Theming', '#/installation': 'Installation' }
 
   $effect(() => applyAppearance())
 
@@ -20,6 +24,8 @@
   // ⌘K: every page, then a few actions.
   const commands = [
     ...pages.map((p) => ({ label: p.title, description: p.about, href: `#/${p.slug}`, icon: p.group.icon, group: p.group.heading })),
+    { label: 'Theming', description: 'Tokens and overrides', href: '#/theming', icon: 'lucide:palette', group: 'Guides' },
+    { label: 'Installation', description: 'Install, set up the CSS layers, import', href: '#/installation', icon: 'lucide:download', group: 'Guides' },
     { label: 'GitHub', description: 'Source, releases and issues', href: repo, icon: 'mdi:github', group: 'Guides', keywords: ['repo', 'source'] },
     { label: 'Toggle sidebar', value: 'sidebar', icon: 'lucide:panel-left', shortcut: '⌘B', group: 'Playground' },
     { label: 'Light theme', value: 'light', icon: 'lucide:sun', group: 'Playground', keywords: ['appearance', 'mode'] },
@@ -38,7 +44,7 @@
   const intro = $derived(page ? apiOf(page.files[0], sourceOf(page.files[0])).summary : '')
   const trail = $derived(page
     ? [{ label: 'Svelte UI', href: '#/' }, { label: page.group.heading }, { label: page.title }]
-    : [{ label: 'Svelte UI', href: '#/' }, { label: 'Overview' }])
+    : [{ label: 'Svelte UI', href: '#/' }, { label: guides[hash] ?? 'Overview' }])
 </script>
 
 <svelte:window onhashchange={() => { hash = location.hash; showApi = false; scrollTo(0, 0) }} />
@@ -71,7 +77,9 @@
     {/snippet}
 
     <NavSection>
-      <NavItem icon="lucide:house" href="#/" active={!page}>Overview</NavItem>
+      <NavItem icon="lucide:house" href="#/" active={!page && !guides[hash]}>Overview</NavItem>
+      <NavItem icon="lucide:palette" href="#/theming" active={hash === '#/theming'}>Theming</NavItem>
+      <NavItem icon="lucide:download" href="#/installation" active={hash === '#/installation'}>Installation</NavItem>
     </NavSection>
     <NavSection heading="Components">
       {#each groups as group}
@@ -124,6 +132,10 @@
           <Demo {example} form={page.form ?? !!page.group.form} />
         {/each}
       {/key}
+    {:else if hash === '#/theming'}
+      <Theming />
+    {:else if hash === '#/installation'}
+      <Installation {repo} />
     {:else}
       <h1 class="m-0 text-xl font-bold">Svelte UI</h1>
       <p class="mt-1 mb-0 text-sm text-(--ui-muted)">Svelte 5 components on Zag state machines, with imba-ui's API and design.</p>
