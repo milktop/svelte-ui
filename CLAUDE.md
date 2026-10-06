@@ -11,11 +11,16 @@ props, tokens, part names and look. Read `readme.md` first.
   examples are `playground/examples/<slug>/<n>-<name>.svelte`, with a leading
   `<!-- Title\n  description -->` comment. The API panel parses the
   component's source (`lib/api.js`), so keep the doc comment format.
+  Pages in a `form` group (Inputs, Pickers, Choices) lay their examples on a
+  two-column grid, so an example is just the components, each with its own
+  `label`, plus a `<p>` readout (spanning both columns) where binding matters.
+  Only the Field page wraps examples in Fields.
 
 ## Every component
 
 - Starts with a doc comment: a summary line, a usage example, then one bullet
   per prop: ``- `name`: what it does``.
+- Form controls take `label` (skipped inside a Field).
 - Props: `class` (outer element), `classes` (per part), `...rest` onto the
   natural element (the button, the input), and `$bindable()` for its value.
 - `const part = partsOf('<scope>', () => classes)` and `{...part('name')}` on

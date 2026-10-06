@@ -1,5 +1,7 @@
 @layer ui {
-  [data-scope=textarea][data-part=root] { display: block; min-width: 0; padding: 0.5rem 0.75rem; box-sizing: border-box;
+  [data-scope=textarea][data-part=root] { display: block; min-width: 0; color: var(--ui-text); font-family: var(--ui-font); }
+  [data-scope=textarea][data-part=label] { display: block; font-size: 14px; font-weight: 500; margin-bottom: 0.375rem; }
+  [data-scope=textarea][data-part=control] { display: block; min-width: 0; padding: 0.5rem 0.75rem; box-sizing: border-box;
     background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: var(--ui-radius);
     color: var(--ui-text); font-family: var(--ui-font); font-size: 14px;
     &:focus-within { border-color: var(--ui-ring); outline: 2px solid var(--ui-ring-soft); }

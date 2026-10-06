@@ -4,6 +4,7 @@
 
   <Textarea bind:value={notes} rows={3} maxRows={8} placeholder="Notes" />
 
+  - `label`: a label above it (skipped inside a Field)
   - `value`: bindable
   - `rows`: the starting height in lines
   - `maxRows`: grow up to this many lines, then scroll
@@ -15,13 +16,15 @@
   import './textarea.css'
 
   let {
-    value = $bindable(''), rows = 3, maxRows = null, autogrow = true,
+    label = null, value = $bindable(''), rows = 3, maxRows = null, autogrow = true,
     class: className = '', classes = {}, ...rest
   } = $props()
 
   const field = useField()
   const part = partsOf('textarea', () => classes)
   let el = $state()
+  const ownId = $props.id()
+  const id = $derived(field?.id ?? `${ownId}-textarea`)
 
   // Fits the height to the content, capped at maxRows.
   $effect(() => {
@@ -37,6 +40,9 @@
 </script>
 
 <div {...part('root')} class={cx(className)}>
-  <textarea {...part('textarea')} bind:this={el} bind:value {rows} id={field?.id} data-autogrow={autogrow || undefined}
-    {...rest} {...fieldAttrs(field)}></textarea>
+  {#if label && !field}<label {...part('label')} for={id}>{label}</label>{/if}
+  <div {...part('control')}>
+    <textarea {...part('textarea')} bind:this={el} bind:value {rows} {id} data-autogrow={autogrow || undefined}
+      {...rest} {...fieldAttrs(field)}></textarea>
+  </div>
 </div>

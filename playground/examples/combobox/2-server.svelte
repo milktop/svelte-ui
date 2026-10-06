@@ -1,7 +1,7 @@
 <!-- Server search
   `load` is an async function(query) returning items: here a fake API with a delay. It's debounced, shows "Loading…", and only the latest answer counts. -->
 <script>
-  import { Fields, Field, Combobox } from '@milktop/svelte-ui'
+  import { Combobox } from '@milktop/svelte-ui'
 
   const all = ['Aberdeen', 'Bath', 'Belfast', 'Brighton', 'Bristol', 'Cambridge', 'Cardiff', 'Edinburgh', 'Glasgow', 'Leeds', 'Liverpool', 'London', 'Manchester', 'Norwich', 'Oxford', 'York']
     .map((name, id) => ({ id, name }))
@@ -13,8 +13,5 @@
   let cityId = $state(null)
 </script>
 
-<Fields class="w-full">
-  <Field label="City" span={6} hint="Bound: {cityId ?? '—'}">
-    <Combobox load={search} labelKey="name" valueKey="id" bind:value={cityId} placeholder="Search cities…" />
-  </Field>
-</Fields>
+<Combobox label="City" load={search} labelKey="name" valueKey="id" bind:value={cityId} placeholder="Search cities…" />
+<p>{cityId ?? '—'}</p>

@@ -1,4 +1,4 @@
-// The playground's pages. Each one lists the component files its API panel reads,
+// The playground's pages: each lists the component files its API panel reads,
 // and its examples are whatever is in examples/<slug>/ (sorted by file name),
 // so nothing here needs updating when a component or example changes.
 
@@ -10,7 +10,7 @@ export const groups = [
   { heading: 'Actions', icon: 'lucide:mouse-pointer-click', pages: [
     { slug: 'button', title: 'Button', about: 'Variants, sizes, icons, loading and counts', files: ['button/Button.svelte'] },
   ] },
-  { heading: 'Inputs', icon: 'lucide:text-cursor-input', pages: [
+  { heading: 'Inputs', form: true, icon: 'lucide:text-cursor-input', pages: [
     { slug: 'input', title: 'Input', about: 'Text and numbers, with icons and affixes', files: ['input/Input.svelte'] },
     { slug: 'textarea', title: 'Textarea', about: 'Grows with its content', files: ['textarea/Textarea.svelte'] },
     { slug: 'number-input', title: 'Number input', about: 'Step buttons, arrow keys, limits and formatting', files: ['number-input/NumberInput.svelte'] },
@@ -18,12 +18,12 @@ export const groups = [
     { slug: 'pin-input', title: 'Pin input', about: 'One box per character, for codes', files: ['pin-input/PinInput.svelte'] },
     { slug: 'tags-input', title: 'Tags input', about: 'Type, press Enter, get a tag', files: ['tags-input/TagsInput.svelte'] },
   ] },
-  { heading: 'Pickers', icon: 'lucide:list-checks', pages: [
+  { heading: 'Pickers', form: true, icon: 'lucide:list-checks', pages: [
     { slug: 'select', title: 'Select', about: 'Pick one from a list, with typeahead', files: ['select/Select.svelte'] },
     { slug: 'combobox', title: 'Combobox', about: 'Type to filter, pick one or several', files: ['combobox/Combobox.svelte'] },
     { slug: 'date-picker', title: 'Date picker', about: 'Type a date or pick it from a calendar', files: ['date-picker/DatePicker.svelte'] },
   ] },
-  { heading: 'Choices', icon: 'lucide:square-check', pages: [
+  { heading: 'Choices', form: true, icon: 'lucide:square-check', pages: [
     { slug: 'checkbox', title: 'Checkbox', about: 'On its own or in a group', files: ['checkbox/Checkbox.svelte', 'checkbox/CheckboxGroup.svelte'] },
     { slug: 'switch', title: 'Switch', about: 'On or off', files: ['switch/Switch.svelte'] },
     { slug: 'radio-group', title: 'Radio group', about: 'Pick one, with descriptions', files: ['radio-group/RadioGroup.svelte'] },
@@ -48,6 +48,9 @@ export const groups = [
 export const pages = groups.flatMap((group) => group.pages.map((page) => ({ ...page, group })))
 
 export const sourceOf = (file) => sources[`../src/${file}`] ?? ''
+
+// Pages in a `form` group show their examples on a two-column grid, so the
+// examples are just the components.
 
 // An example's title and description come from its leading comment:
 // <!-- Title
