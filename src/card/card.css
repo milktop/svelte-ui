@@ -1,0 +1,21 @@
+/* A card holds other components, so its rules use > to stay off them. */
+@layer ui {
+  [data-scope=card][data-part=root] {
+    display: flex; flex-direction: column; width: 100%; min-width: 0; box-sizing: border-box;
+    background: var(--ui-surface); color: var(--ui-text); font: 14px var(--ui-font);
+    border: 1px solid var(--ui-border); border-radius: calc(var(--ui-radius) + 4px); box-shadow: var(--ui-card-shadow);
+    &[data-flush] { overflow: hidden; }
+  }
+  [data-scope=card][data-part=header] { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+    padding: 1.25rem 1.25rem 0;
+    [data-flush] > & { padding-bottom: 1rem; border-bottom: 1px solid var(--ui-border); } }
+  [data-scope=card][data-part=titles] { min-width: 0; }
+  [data-scope=card][data-part=heading] { margin: 0; font-size: 16px; font-weight: 600; }
+  [data-scope=card][data-part=description] { margin: 0.25rem 0 0; color: var(--ui-muted); }
+  [data-scope=card][data-part=actions] { display: flex; gap: 0.5rem; flex-shrink: 0; }
+  [data-scope=card][data-part=body] { padding: 1.25rem;
+    [data-part=header] + & { padding-top: 1rem; }
+    [data-flush] > & { padding: 0; } }
+  [data-scope=card][data-part=footer] { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem;
+    padding: 0.75rem 1.25rem; border-top: 1px solid var(--ui-border); }
+}

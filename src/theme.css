@@ -1,0 +1,75 @@
+/* Design tokens (imba-ui's), and a few base rules. Override any token in your
+   app, on :root for everything or on an element for what's inside it:
+
+     :root { --ui-accent: #e11d48; }
+     <DatePicker style="--ui-radius: 12px" />
+
+   Dark values apply under html.dark or [data-theme=dark].
+
+   All the library's CSS sits in @layer ui, so your CSS (and Tailwind's
+   utilities) beat it without !important. With Tailwind, declare the order
+   first in your app's CSS, so its reset stays below the library:
+
+     @layer theme, base, ui, components, utilities;
+     @import "tailwindcss"; */
+
+@layer ui {
+  :root {
+    --ui-text: #18181b;
+    --ui-muted: #71717a;
+    --ui-surface: white;
+    --ui-canvas: #f2f4f7;
+    --ui-sidebar-bg: #f8f9fb;
+    --ui-border: #e4e4e7;
+    --ui-hover: #f4f4f5;
+    --ui-accent: #2563eb;
+    --ui-accent-text: white;
+    --ui-accent-soft: #dbeafe;
+    --ui-accent-soft-text: #1e40af;
+    --ui-ring: #3b82f6;
+    --ui-ring-soft: #3b82f633;
+    --ui-danger: #dc2626;
+    --ui-success: #16a34a;
+    --ui-radius: 6px;
+    --ui-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.25);
+    --ui-card-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+    --ui-font: inherit;
+    /* One height for buttons and inputs, so they line up in a row. */
+    --ui-control-height: 2.25rem;
+    --ui-control-height-sm: 2rem;
+    --ui-control-height-lg: 2.75rem;
+    /* Sidebar and its items. */
+    --ui-sidebar-width: 15rem;
+    --ui-sidebar-item-height: 2.125rem;
+    --ui-sidebar-item-padding: 0 0.5rem 0 0.75rem;
+    --ui-sidebar-item-radius: var(--ui-radius);
+    --ui-sidebar-item-text: var(--ui-muted);
+    --ui-sidebar-hover: var(--ui-hover);
+    --ui-sidebar-active: var(--ui-hover);
+    --ui-sidebar-active-text: var(--ui-text);
+    --ui-sidebar-active-weight: 500;
+  }
+
+  :root.dark, [data-theme=dark] {
+    --ui-text: #fafafa;
+    --ui-muted: #a1a1aa;
+    --ui-surface: #1c1c21;
+    --ui-canvas: #141418;
+    --ui-sidebar-bg: #0c0c0e;
+    --ui-border: #2b2b31;
+    --ui-hover: #27272d;
+    --ui-accent: #3b82f6;
+    --ui-accent-soft: #1e3a8a;
+    --ui-accent-soft-text: #bfdbfe;
+    --ui-ring: #60a5fa;
+    --ui-ring-soft: #60a5fa33;
+    --ui-danger: #f87171;
+    --ui-success: #4ade80;
+  }
+
+  /* Zag hides closed parts with `hidden`; that beats any display a component sets. */
+  [data-scope][hidden] { display: none !important; }
+  [data-scope]:focus:not(:focus-visible) { outline: none; }
+
+  @keyframes ui-spin { to { rotate: 360deg; } }
+}

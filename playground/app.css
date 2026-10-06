@@ -1,0 +1,7 @@
+/* The library sits between Tailwind's reset and its utilities, so utility
+   classes beat it without !important. */
+@layer theme, base, ui, components, utilities;
+@import "tailwindcss";
+
+body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--ui-canvas); color: var(--ui-text); }
+code, pre { font-family: ui-monospace, 'SF Mono', Menlo, monospace; }

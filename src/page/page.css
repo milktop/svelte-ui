@@ -1,0 +1,17 @@
+/* A page holds other components, so its rules use > to stay off them. */
+@layer ui {
+  [data-scope=page][data-part=root] { display: block; min-width: 0; box-sizing: border-box; padding: 1rem;
+    color: var(--ui-text); font-family: var(--ui-font);
+    @media (min-width: 768px) { padding: 2rem; } }
+  [data-scope=page][data-part=inner] { margin: 0 auto; max-width: 56rem;
+    [data-align=start] > & { margin-left: 0; }
+    [data-width=narrow] > & { max-width: 40rem; }
+    [data-width=wide] > & { max-width: 80rem; }
+    [data-width=full] > & { max-width: none; } }
+  [data-scope=page][data-part=header] { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+  [data-scope=page][data-part=breadcrumbs] { font-size: 14px; color: var(--ui-muted); }
+  [data-scope=page][data-part=titles] { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  [data-scope=page][data-part=heading] { margin: 0; font-size: 24px; font-weight: 700; line-height: 1.2; }
+  [data-scope=page][data-part=description] { margin: 0.25rem 0 0; color: var(--ui-muted); font-size: 14px; }
+  [data-scope=page][data-part=actions] { display: flex; gap: 0.5rem; flex-shrink: 0; }
+}
