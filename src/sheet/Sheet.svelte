@@ -41,15 +41,15 @@
 {@render trigger?.(api.getTriggerProps())}
 {#if presence.present}
   <div {@attach portal} style="display: contents">
-    <div {...part('backdrop')} {...api.getBackdropProps()} hidden={false}></div>
-    <div {...part('positioner')} {...api.getPositionerProps()} data-side={side}>
-      <div {...rest} {...part('content')} {...api.getContentProps()} hidden={false} class={cx(className)} data-side={side} data-size={size}
+    <div {...api.getBackdropProps()} {...part('backdrop')} hidden={false}></div>
+    <div {...api.getPositionerProps()} {...part('positioner')} data-side={side}>
+      <div {...rest} {...api.getContentProps()} {...part('content')} hidden={false} class={cx(className)} data-side={side} data-size={size}
         onanimationend={presence.done}>
-        {#if closable}<button {...part('close-trigger')} {...api.getCloseTriggerProps()} aria-label="Close"><iconify-icon icon="lucide:x"></iconify-icon></button>{/if}
+        {#if closable}<button {...api.getCloseTriggerProps()} {...part('close-trigger')} aria-label="Close"><iconify-icon icon="lucide:x"></iconify-icon></button>{/if}
         {#if heading || description}
           <div {...part('header')}>
-            {#if heading}<h2 {...part('title')} {...api.getTitleProps()}>{heading}</h2>{/if}
-            {#if description}<p {...part('description')} {...api.getDescriptionProps()}>{description}</p>{/if}
+            {#if heading}<h2 {...api.getTitleProps()} {...part('title')}>{heading}</h2>{/if}
+            {#if description}<p {...api.getDescriptionProps()} {...part('description')}>{description}</p>{/if}
           </div>
         {/if}
         <div {...part('body')}>{@render children?.()}</div>

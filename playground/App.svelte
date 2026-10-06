@@ -1,7 +1,7 @@
 <script>
   import {
     AppShell, Sidebar, NavSection, NavGroup, NavItem, Topbar, Breadcrumbs, Page, Toaster, toaster, colorScheme,
-    SidebarUser, MenuItem, Submenu, MenuRadioGroup, MenuRadio, MenuSeparator,
+    SidebarUser, Command, formatHotkey, MenuItem, Submenu, MenuRadioGroup, MenuRadio, MenuSeparator,
   } from '@milktop/svelte-ui'
   import Demo from './lib/Demo.svelte'
   import ApiPanel from './lib/ApiPanel.svelte'
@@ -12,6 +12,24 @@
   import { apiOf } from './lib/api.js'
 
   $effect(() => applyAppearance())
+
+  // Where it'll live once pushed (it isn't yet).
+  const repo = 'https://github.com/milktop/svelte-ui'
+  let shell = $state()
+
+  // ⌘K: every page, then a few actions.
+  const commands = [
+    ...pages.map((p) => ({ label: p.title, description: p.about, href: `#/${p.slug}`, icon: p.group.icon, group: p.group.heading })),
+    { label: 'GitHub', description: 'Source, releases and issues', href: repo, icon: 'mdi:github', group: 'Guides', keywords: ['repo', 'source'] },
+    { label: 'Toggle sidebar', value: 'sidebar', icon: 'lucide:panel-left', shortcut: '⌘B', group: 'Playground' },
+    { label: 'Light theme', value: 'light', icon: 'lucide:sun', group: 'Playground', keywords: ['appearance', 'mode'] },
+    { label: 'Dark theme', value: 'dark', icon: 'lucide:moon', group: 'Playground', keywords: ['appearance', 'mode'] },
+  ]
+
+  function run(command) {
+    if (command === 'sidebar') dispatchEvent(new KeyboardEvent('keydown', { key: 'b', metaKey: true, ctrlKey: true }))
+    else if (command === 'light' || command === 'dark') colorScheme.value = command
+  }
 
   let hash = $state(location.hash)
   let showApi = $state(false)
@@ -68,7 +86,22 @@
 
   <Topbar>
     <Breadcrumbs items={trail} />
-    {#snippet end()}<ThemeSwitch /><AppearancePanel />{/snippet}
+    {#snippet end()}
+      <Command items={commands} onselect={run}>
+        {#snippet trigger(props)}
+          <button {...props} type="button" class="flex h-8 cursor-pointer items-center gap-2 rounded-(--ui-radius) border border-(--ui-border) bg-(--ui-surface) px-2.5 text-sm text-(--ui-muted) hover:border-(--ui-muted) hover:text-(--ui-text) md:w-56 md:pr-1.5">
+            <iconify-icon icon="lucide:search" aria-hidden="true"></iconify-icon>
+            <span class="hidden flex-1 text-left md:block">Search</span>
+            <kbd class="hidden h-5 items-center rounded border border-(--ui-border) bg-(--ui-hover) px-1.5 font-[inherit] text-[11px] md:inline-flex">{formatHotkey()}</kbd>
+          </button>
+        {/snippet}
+      </Command>
+      <a href={repo} target="_blank" rel="noopener" aria-label="GitHub repository"
+        class="inline-flex h-(--ui-control-height-sm) w-(--ui-control-height-sm) items-center justify-center rounded-(--ui-radius) text-lg text-(--ui-muted) hover:bg-(--ui-hover) hover:text-(--ui-text)">
+        <iconify-icon icon="mdi:github" aria-hidden="true"></iconify-icon>
+      </a>
+      <ThemeSwitch /><AppearancePanel />
+    {/snippet}
   </Topbar>
 
   <Page width={appearance.width} align={appearance.align}>
