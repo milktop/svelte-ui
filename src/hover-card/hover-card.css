@@ -1,0 +1,19 @@
+@layer ui {
+  /* Zag copies the content's z-index onto its positioner. */
+  [data-scope=hover-card][data-part=content] {
+    z-index: 50; font-weight: 400; width: 18rem; max-width: calc(100vw - 32px); padding: 1rem; box-sizing: border-box; outline: none;
+    background: var(--ui-surface); color: var(--ui-text); font-family: var(--ui-font); font-size: 14px;
+    border: 1px solid var(--ui-border); border-radius: calc(var(--ui-radius) + 2px); box-shadow: var(--ui-shadow);
+    --arrow-size: 12px; --arrow-background: var(--ui-surface); transform-origin: var(--transform-origin);
+    /* Comes in from the trigger's side. */
+    &[data-placement^=bottom] { --dy: -4px; }
+    &[data-placement^=top] { --dy: 4px; }
+    &[data-placement^=right] { --dx: -4px; }
+    &[data-placement^=left] { --dx: 4px; }
+    &[data-state=open] { animation: ui-hover-card-in 150ms ease-out; }
+    &[data-state=closed] { animation: ui-hover-card-out 120ms ease-in forwards; }
+  }
+  [data-scope=hover-card][data-part=arrow-tip] { border-top: 1px solid var(--ui-border); border-left: 1px solid var(--ui-border); }
+  @keyframes ui-hover-card-in { from { opacity: 0; transform: translateY(var(--dy, 0)) translateX(var(--dx, 0)) scale(0.97); } }
+  @keyframes ui-hover-card-out { to { opacity: 0; transform: scale(0.97); } }
+}

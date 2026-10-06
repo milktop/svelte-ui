@@ -53,6 +53,15 @@
     return () => query.removeEventListener('change', update)
   })
 
+  // Where the main area starts, for things fixed to the viewport that centre
+  // over it (ActionBar).
+  $effect(() => {
+    if (!shortcut) return
+    const left = mobile ? '0px' : rail ? 'var(--ui-sidebar-rail-width)' : 'var(--ui-sidebar-width)'
+    document.documentElement.style.setProperty('--ui-main-left', left)
+    return () => document.documentElement.style.removeProperty('--ui-main-left')
+  })
+
   function toggle() {
     if (mobile) return (drawerOpen = !drawerOpen)
     collapsed = !collapsed
@@ -68,7 +77,8 @@
   })
 
   function onkeydown(e) {
-    if (shortcut && (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'b') {
+    // Not in rich text editors, where it means bold.
+    if (shortcut && (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'b' && !e.target.isContentEditable) {
       e.preventDefault()
       toggle()
     } else if (e.key === 'Escape' && drawerOpen) drawerOpen = false
