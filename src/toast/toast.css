@@ -1,0 +1,33 @@
+@layer ui {
+  [data-scope=toast][data-part=root] {
+    display: flex; align-items: flex-start; gap: 0.75rem; width: 22rem; max-width: calc(100vw - 2rem); padding: 0.75rem 2.5rem 0.75rem 0.75rem; box-sizing: border-box;
+    background: var(--ui-surface); color: var(--ui-text); font-family: var(--ui-font); font-size: 14px;
+    border: 1px solid var(--ui-border); border-radius: calc(var(--ui-radius) + 2px); box-shadow: var(--ui-shadow); outline: none;
+    /* Zag positions each toast through these variables. Toasts behind the
+       front one shrink a little (Zag's own --scale would mirror them). */
+    translate: var(--x) var(--y); scale: calc(2 - (var(--base-scale, 1)));
+    z-index: var(--z-index); height: var(--height); opacity: var(--opacity);
+    transition: translate 400ms, transform 400ms, opacity 400ms, height 400ms;
+    transition-timing-function: cubic-bezier(0.21, 1.02, 0.73, 1);
+    &[data-state=closed] { transition: translate 400ms, transform 400ms, opacity 200ms; transition-timing-function: cubic-bezier(0.06, 0.71, 0.55, 1); }
+    &:focus-visible { outline: 2px solid var(--ui-ring-soft); }
+  }
+  [data-scope=toast][data-part=icon] { flex-shrink: 0; margin-top: 2px; font-size: 18px; color: var(--ui-muted);
+    [data-type=success] > & { color: #16a34a; }
+    [data-type=warning] > & { color: #d97706; }
+    [data-type=error] > & { color: var(--ui-danger); }
+    [data-type=info] > & { color: var(--ui-accent); } }
+  [data-scope=toast][data-part=spinner] { display: block; width: 1rem; height: 1rem; margin-top: 2px; box-sizing: border-box; flex-shrink: 0;
+    border: 2px solid currentColor; border-top-color: transparent; border-radius: 9999px; animation: ui-spin 0.7s linear infinite; }
+  [data-scope=toast][data-part=text] { flex: 1; min-width: 0; }
+  [data-scope=toast][data-part=title] { font-weight: 600; }
+  [data-scope=toast][data-part=description] { color: var(--ui-muted);
+    [data-part=title] + & { margin-top: 0.125rem; } }
+  [data-scope=toast][data-part=action-trigger] { align-self: center; flex-shrink: 0; height: 1.75rem; padding: 0 0.625rem;
+    border: 1px solid var(--ui-border); background: var(--ui-surface); color: var(--ui-text); border-radius: 6px;
+    font: inherit; font-size: 12px; font-weight: 500; cursor: pointer;
+    &:hover { background: var(--ui-hover); } }
+  [data-scope=toast][data-part=close-trigger] { position: absolute; top: 0.5rem; right: 0.5rem; display: grid; place-items: center; width: 1.75rem; height: 1.75rem;
+    border: none; background: transparent; border-radius: 4px; color: var(--ui-muted); cursor: pointer; font-size: 14px;
+    &:hover { background: var(--ui-hover); color: var(--ui-text); } }
+}

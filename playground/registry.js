@@ -71,7 +71,7 @@ const all = [
     { slug: 'sheet', title: 'Sheet', about: 'Panels that slide in from an edge', files: ['sheet/Sheet.svelte'] },
     { slug: 'action-bar', title: 'Action bar', about: 'Actions for a selection', files: ['action-bar/ActionBar.svelte'] },
     { slug: 'menu', title: 'Menu', about: 'Dropdowns and context menus', files: ['menu/Menu.svelte', 'menu/ContextMenu.svelte'] },
-    { slug: 'toast', title: 'Toast', about: 'Notifications', files: ['toast/Toaster.svelte', 'toast/toast.js'] },
+    { slug: 'toast', title: 'Toast', about: 'Notifications', files: ['toast/Toaster.svelte'] },
   ] },
   { heading: 'Disclosure', icon: 'lucide:chevrons-up-down', pages: [
     { slug: 'tabs', title: 'Tabs', about: 'Panels behind tabs', files: ['tabs/Tabs.svelte'] },

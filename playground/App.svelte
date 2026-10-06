@@ -1,5 +1,5 @@
 <script>
-  import { AppShell, Sidebar, NavSection, NavGroup, NavItem, Topbar, Breadcrumbs, Page } from '@milktop/svelte-ui'
+  import { AppShell, Sidebar, NavSection, NavGroup, NavItem, Topbar, Breadcrumbs, Page, Toaster } from '@milktop/svelte-ui'
   import Demo from './lib/Demo.svelte'
   import ApiPanel from './lib/ApiPanel.svelte'
   import ThemeSwitch from './lib/ThemeSwitch.svelte'
@@ -91,3 +91,4 @@
     {/if}
   </Page>
 </AppShell>
+<Toaster />
