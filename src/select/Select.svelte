@@ -7,6 +7,9 @@
   - `items`: strings, or objects (see `labelKey`, `valueKey`, `disabledKey`)
   - `value`: bindable; the item's own value (not Zag's string), or an array of them when `multiple`
   - `multiple`: pick several (the list stays open)
+  - `hideSelected`: with `multiple`, picked items leave the list
+  - `deselectable`: clicking the picked item again clears it (single only)
+  - `closeOnSelect`: close the list after a pick (on by default, except with `multiple`)
   - `clearable`: a button to clear it
   - `placeholder`: shown while nothing is selected
   - `name`: also renders a hidden native <select>, so plain form posts work
@@ -25,7 +28,7 @@
   let {
     label = null, items = [], value = $bindable(null), placeholder = 'Select…',
     labelKey = 'label', valueKey = 'value', disabledKey = 'disabled',
-    name = null, size = 'md', multiple = false, clearable = false, placement = 'bottom-start', disabled = false, item: itemSnippet = null,
+    name = null, size = 'md', multiple = false, hideSelected = false, deselectable = false, closeOnSelect = undefined, clearable = false, placement = 'bottom-start', disabled = false, item: itemSnippet = null,
     class: className = '', classes = {}, ...rest
   } = $props()
 
@@ -35,16 +38,23 @@
   const labelOf = (item) => (typeof item === 'object' ? item[labelKey] : String(item))
   const valueOf = (item) => (typeof item === 'object' ? item[valueKey] : item)
 
+  const selectedKeys = $derived(multiple ? (value ?? []).map(String) : value == null ? [] : [String(value)])
+  const isSelected = (item) => selectedKeys.includes(String(valueOf(item)))
+  // With hideSelected the picked items aren't rendered, but stay in Zag's
+  // collection (for their labels), disabled so the keys skip them.
+  const hidden = (item) => hideSelected && multiple && isSelected(item)
+  const listed = $derived(items.filter((item) => !hidden(item)))
+
   const collection = $derived(select.collection({
     items,
     itemToString: labelOf,
     itemToValue: (item) => String(valueOf(item)),
-    isItemDisabled: (item) => typeof item === 'object' && !!item[disabledKey],
+    isItemDisabled: (item) => hidden(item) || (typeof item === 'object' && !!item[disabledKey]),
   }))
 
   const id = $props.id()
   const service = useMachine(select.machine, () => ({
-    id, collection, name, disabled, multiple,
+    id, collection, name, disabled, multiple, deselectable, closeOnSelect: closeOnSelect ?? !multiple,
     invalid: !!field?.invalid,
     // Inside a Field, its label points at our trigger.
     ids: field ? { trigger: field.id, label: field.labelId } : undefined,
@@ -73,13 +83,15 @@
 
   <div {...part('positioner')} {...api.getPositionerProps()}>
     <ul {...part('content')} {...api.getContentProps()}>
-      {#each items as item (valueOf(item))}
+      {#each listed as item (valueOf(item))}
         <li {...part('item')} {...api.getItemProps({ item })}>
           <span {...part('item-text')} {...api.getItemTextProps({ item })}>
             {#if itemSnippet}{@render itemSnippet(item)}{:else}{labelOf(item)}{/if}
           </span>
           <span {...part('item-indicator')} {...api.getItemIndicatorProps({ item })}><iconify-icon icon="lucide:check"></iconify-icon></span>
         </li>
+      {:else}
+        <li {...part('empty')}>All picked</li>
       {/each}
     </ul>
   </div>

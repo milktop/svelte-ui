@@ -7,6 +7,8 @@
   - `items`: strings, or objects (see `labelKey`, `valueKey`, `disabledKey`)
   - `value`: bindable; the item's own value, or an array of them when `multiple`
   - `multiple`: pick several; they show as tags (`variant`: 'subtle', 'accent' or 'outline')
+  - `hideSelected`: with `multiple`, picked items leave the list
+  - `closeOnSelect`: close the list after a pick (on by default, except with `multiple`)
   - `load`: an async function(query) returning items, for server search
     (debounced by `debounce` ms; `loadingText` shows meanwhile)
   - `placeholder`, `emptyText` (shown when nothing matches)
@@ -24,7 +26,7 @@
 
   let {
     label = null, items = [], value = $bindable(null), multiple = false, placeholder = 'Search…', emptyText = 'No matches',
-    load = null, debounce = 200, loadingText = 'Loading…', placement = 'bottom-start',
+    hideSelected = false, closeOnSelect = undefined, load = null, debounce = 200, loadingText = 'Loading…', placement = 'bottom-start',
     labelKey = 'label', valueKey = 'value', disabledKey = 'disabled', variant = 'subtle', name = null, disabled = false,
     item: itemSnippet = null, class: className = '', classes = {}, ...rest
   } = $props()
@@ -71,22 +73,36 @@
     const label = (item) => labelOf(item).toLowerCase()
     return [...items.filter((item) => label(item).startsWith(q)), ...items.filter((item) => !label(item).startsWith(q) && label(item).includes(q))]
   })
-  const picked = $derived(multiple ? (value ?? []).map((v) => pool.find((item) => valueOf(item) === v)).filter((item) => item !== undefined) : [])
+  const selectedKeys = $derived(multiple ? (value ?? []).map(String) : value == null ? [] : [String(value)])
+  const isSelected = (item) => selectedKeys.includes(keyOf(item))
+  const picked = $derived(multiple ? selectedKeys.map(byKey).filter((item) => item !== undefined) : [])
+
+  // The list as shown, and the selected items it doesn't show (left out by a
+  // search or `hideSelected`). Zag still needs those to know their labels, so
+  // they stay in its collection, disabled so the keys skip them, but unrendered.
+  const listed = $derived(hideSelected && multiple ? shown.filter((item) => !isSelected(item)) : shown)
+  const offList = $derived(selectedKeys.filter((key) => !listed.some((item) => keyOf(item) === key)).map(byKey).filter((item) => item !== undefined))
 
   const collection = $derived(combobox.collection({
-    items: shown, itemToString: labelOf, itemToValue: keyOf,
-    isItemDisabled: (item) => typeof item === 'object' && !!item[disabledKey],
+    items: [...listed, ...offList], itemToString: labelOf, itemToValue: keyOf,
+    isItemDisabled: (item) => offList.includes(item) || (typeof item === 'object' && !!item[disabledKey]),
   }))
 
   const id = $props.id()
   const service = useMachine(combobox.machine, () => ({
     id, collection, name, disabled, multiple, placeholder, openOnClick: true, inputBehavior: 'autohighlight',
+    closeOnSelect: closeOnSelect ?? !multiple,
     selectionBehavior: multiple ? 'clear' : 'replace',
     invalid: !!field?.invalid,
     ids: field ? { input: field.id, label: field.labelId } : undefined,
     value: multiple ? (value ?? []).map(String) : value == null ? [] : [String(value)],
     positioning: { placement, sameWidth: true },
-    onInputValueChange: (details) => { query = details.reason === 'input-change' ? details.inputValue : '' },
+    // Typing filters; a pick resets the filter (the server's results stay, so
+    // the picked item keeps its place).
+    onInputValueChange: (details) => {
+      if (details.reason === 'input-change') query = details.inputValue
+      else if (!load || details.reason === 'clear-trigger') query = ''
+    },
     // Zag's values are strings; map them back to the items' own.
     onValueChange: (details) => {
       const chosen = details.value.map(byKey).filter((item) => item !== undefined).map(valueOf)
@@ -94,9 +110,17 @@
     },
   }))
   const api = $derived(combobox.connect(service, normalizeProps))
+
+  // Zag reverts stray text only while the list is open; when focus leaves
+  // the whole combobox, put the selected item's label back (or nothing).
+  function revert(e) {
+    if (e.currentTarget.contains(e.relatedTarget)) return
+    const text = multiple ? '' : selectedKeys.length ? labelOf(byKey(selectedKeys[0]) ?? '') : ''
+    queueMicrotask(() => { if (!api.open && api.inputValue !== text) api.setInputValue(text) })
+  }
 </script>
 
-<div {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)} data-variant={variant}>
+<div {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)} data-variant={variant} onfocusout={revert}>
   {#if label && !field}<label {...part('label')} {...api.getLabelProps()}>{label}</label>{/if}
   <div {...part('control')} {...api.getControlProps()}>
     <div {...part('tags')}>
@@ -115,7 +139,7 @@
 
   <div {...part('positioner')} {...api.getPositionerProps()}>
     <ul {...part('content')} {...api.getContentProps()}>
-      {#each shown as item (keyOf(item))}
+      {#each listed as item (keyOf(item))}
         <li {...part('item')} {...api.getItemProps({ item })}>
           <span {...part('item-text')} {...api.getItemTextProps({ item })}>
             {#if itemSnippet}{@render itemSnippet(item)}{:else}{labelOf(item)}{/if}

@@ -1,5 +1,5 @@
 <!-- Pick one or several
-  Type to filter (labels starting with it come first). `multiple` shows the picks as tags and binds an array. -->
+  Type to filter (labels starting with it come first). `multiple` shows the picks as tags and binds an array; `hideSelected` takes them out of the list. -->
 <script>
   import { Combobox } from '@milktop/svelte-ui'
 
@@ -14,5 +14,5 @@
 </script>
 
 <Combobox label="Student" items={students} labelKey="name" valueKey="id" bind:value={studentId} />
-<Combobox label="Subjects" items={subjects} multiple variant="accent" bind:value={picked} placeholder="Add a subject…" />
+<Combobox label="Subjects" items={subjects} multiple hideSelected variant="accent" bind:value={picked} placeholder="Add a subject…" />
 <p>{studentId ?? '—'}, {JSON.stringify(picked)}</p>
