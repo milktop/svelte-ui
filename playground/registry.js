@@ -35,7 +35,7 @@ const all = [
     { slug: 'password-input', title: 'Password input', about: 'Show or hide what was typed', files: ['password-input/PasswordInput.svelte'] },
     { slug: 'number-input', title: 'Number input', about: 'Step buttons, arrow keys, limits and formatting', files: ['number-input/NumberInput.svelte'] },
     { slug: 'textarea', title: 'Textarea', about: 'Grows with its content', files: ['textarea/Textarea.svelte'] },
-    { slug: 'editor', title: 'Editor', about: 'Rich text on TipTap', files: ['editor/Editor.svelte'] },
+    { slug: 'editor', form: false, title: 'Editor', about: 'Rich text on TipTap', files: ['editor/Editor.svelte'] },
     { slug: 'tags-input', title: 'Tags input', about: 'Type, press Enter, get a tag', files: ['tags-input/TagsInput.svelte'] },
     { slug: 'pin-input', title: 'Pin input', about: 'One box per character, for codes', files: ['pin-input/PinInput.svelte'] },
     { slug: 'slider', title: 'Slider', about: 'A number or a range', files: ['slider/Slider.svelte'] },

@@ -25,6 +25,11 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.4",
+    "@tiptap/core": "^3.31.4",
+    "@tiptap/extension-image": "^3.31.4",
+    "@tiptap/extensions": "^3.31.4",
+    "@tiptap/pm": "^3.31.4",
+    "@tiptap/starter-kit": "^3.31.4",
     "@zag-js/accordion": "^1.45.0",
     "@zag-js/avatar": "^1.45.0",
     "@zag-js/checkbox": "^1.45.0",
