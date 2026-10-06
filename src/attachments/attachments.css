@@ -1,0 +1,79 @@
+@layer ui {
+  [data-scope=attachments][data-part=root] { display: block; position: relative; width: 100%; color: var(--ui-text); font-family: var(--ui-font); font-size: 14px;
+    --tile-radius: calc(var(--ui-radius) + 2px); }
+  [data-scope=attachments][data-part=empty] { margin: 0; color: var(--ui-muted); }
+  [data-scope=attachments][data-part=files] { margin: 0; padding: 0; list-style: none;
+    /* Grid: tiles with a 4:3 preview and the name under it. Rows share a height, so the add tile matches. */
+    [data-layout=grid] > & { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); grid-auto-rows: 1fr; gap: 0.75rem; }
+    /* With `columns`: at most that many, fewer when tiles would drop below 7rem. */
+    [data-layout=grid][data-fixed] > & { grid-template-columns: repeat(auto-fill, minmax(max(7rem, calc((100% - (var(--columns) - 1) * 0.75rem) / var(--columns))), 1fr)); }
+    [data-layout=grid][data-add-wide] > & { grid-auto-rows: auto; }
+    /* List: rows with a small preview, the name and size, and the actions. */
+    [data-layout=list] > & { display: flex; flex-direction: column; background: var(--ui-surface); border: 1px solid var(--ui-border);
+      border-radius: var(--tile-radius); box-shadow: var(--ui-card-shadow); overflow: hidden; } }
+  [data-scope=attachments][data-part=file] { position: relative; min-width: 0;
+    [data-layout=grid] & { background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: var(--tile-radius); overflow: hidden; box-shadow: var(--ui-card-shadow); }
+    [data-layout=grid] &[data-add] { border: none; background: transparent; box-shadow: none; overflow: visible; }
+    [data-layout=grid]:is([data-add-wide], [data-empty]) &[data-add] { grid-column: 1 / -1; }
+    [data-layout=list] & { display: flex; align-items: center; border-bottom: 1px solid var(--ui-border);
+      &:last-child, &[data-add] { border-bottom: none; } } }
+  [data-scope=attachments][data-part=open] { display: flex; width: 100%; padding: 0; border: none; background: transparent; color: inherit; font: inherit;
+    text-align: left; cursor: pointer; border-radius: inherit;
+    &:focus-visible { outline: 2px solid var(--ui-ring-soft); outline-offset: 2px; }
+    [data-layout=grid] & { flex-direction: column; height: 100%; }
+    [data-layout=list] & { align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; flex-grow: 1; min-width: 0;
+      &:hover { background: color-mix(in srgb, var(--ui-hover) 60%, transparent); } } }
+  [data-scope=attachments][data-part=thumb] { position: relative; display: grid; place-items: center; overflow: hidden; background: var(--ui-hover); color: var(--ui-muted);
+    & img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    [data-layout=grid] & { aspect-ratio: 4 / 3; width: 100%; }
+    [data-layout=list] & { width: 2.5rem; height: 2.5rem; flex-shrink: 0; border-radius: var(--ui-radius); } }
+  [data-scope=attachments][data-part=icon] { font-size: 26px; [data-layout=list] & { font-size: 18px; } }
+  [data-scope=attachments][data-part=ext] { position: absolute; bottom: 0.375rem; left: 50%; transform: translateX(-50%); padding: 0 0.375rem; border-radius: 4px;
+    background: var(--ui-surface); font-size: 10px; font-weight: 600; letter-spacing: 0.04em; color: var(--ui-muted);
+    [data-layout=list] & { display: none; } }
+  [data-scope=attachments][data-part=meta] { display: flex; flex-direction: column; min-width: 0; [data-layout=grid] & { padding: 0.5rem 0.625rem; } }
+  [data-scope=attachments][data-part=name] { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  [data-scope=attachments][data-part=size] { font-size: 12px; color: var(--ui-muted); }
+  /* Download and remove: over the tile's corner, shown on hover or focus. */
+  [data-scope=attachments][data-part=actions] { position: absolute; display: flex; gap: 0.25rem;
+    [data-layout=grid] & { top: 0.375rem; right: 0.375rem; opacity: 0; transition: opacity 120ms; }
+    [data-layout=grid] [data-part=file]:is(:hover, :focus-within) > & { opacity: 1; }
+    [data-layout=list] & { position: static; padding-right: 0.75rem; } }
+  [data-scope=attachments][data-part=action] { display: grid; place-items: center; width: 1.75rem; height: 1.75rem; padding: 0;
+    border: 1px solid var(--ui-border); border-radius: var(--ui-radius); background: var(--ui-surface); color: var(--ui-muted); cursor: pointer;
+    text-decoration: none; box-shadow: var(--ui-card-shadow); font-size: 14px;
+    &:hover { color: var(--ui-text); }
+    &:focus-visible { outline: 2px solid var(--ui-ring-soft); }
+    [data-layout=list] & { border: none; box-shadow: none; background: transparent; &:hover { background: var(--ui-hover); } } }
+  [data-scope=attachments][data-part=add-input] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  [data-scope=attachments][data-part=add-tile] { display: flex; align-items: center; box-sizing: border-box; color: var(--ui-muted); cursor: pointer;
+    &:hover { color: var(--ui-text); }
+    &:focus-within { outline: 2px solid var(--ui-ring-soft); outline-offset: 2px; }
+    [data-layout=grid] & { flex-direction: column; justify-content: center; gap: 0.5rem; height: 100%; min-height: 6rem; padding: 0.75rem; text-align: center;
+      border: 1.5px dashed var(--ui-border); border-radius: var(--tile-radius);
+      &:hover { border-color: var(--ui-muted); background: var(--ui-surface); } }
+    [data-layout=grid][data-add-wide] & { flex-direction: row; min-height: 3rem; height: auto; padding-block: 0.625rem; gap: 0.75rem; }
+    [data-layout=grid][data-empty] & { min-height: 7rem; }
+    [data-layout=list] & { flex-grow: 1; gap: 0.75rem; padding: 0.625rem 0.75rem;
+      &:hover { background: color-mix(in srgb, var(--ui-hover) 60%, transparent); } } }
+  [data-scope=attachments][data-part=add-icon] { display: grid; place-items: center; flex-shrink: 0; font-size: 18px;
+    [data-layout=grid] & { width: 2.25rem; height: 2.25rem; border-radius: 9999px; background: var(--ui-hover); }
+    [data-layout=grid][data-add-wide] & { width: 1.75rem; height: 1.75rem; }
+    /* The add row lines its icon up with the files' previews. */
+    [data-layout=list] & { width: 2.5rem; height: 2.5rem; border-radius: var(--ui-radius); border: 1.5px dashed var(--ui-border); box-sizing: border-box; } }
+  [data-scope=attachments][data-part=add-text] { display: flex; flex-direction: column; min-width: 0;
+    [data-layout=grid] & { align-items: center; gap: 0.125rem; }
+    :is([data-layout=list], [data-add-wide]) & { flex-direction: row; gap: 0.5rem; align-items: baseline; } }
+  [data-scope=attachments][data-part=add-label] { font-weight: 500; }
+  [data-scope=attachments][data-part=limit] { font-size: 12px; color: var(--ui-muted); opacity: 0.8; }
+  [data-scope=attachments][data-part=rejected] { display: flex; flex-direction: column; gap: 0.125rem; margin: 0.5rem 0 0; padding: 0; list-style: none; font-size: 12px; color: var(--ui-danger); }
+  /* While files are dragged over: a tinted overlay saying what dropping does. */
+  [data-scope=attachments][data-part=drop-hint] { position: absolute; inset: -0.375rem; z-index: 5; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 0.375rem; border-radius: calc(var(--ui-radius) + 4px); border: 2px dashed var(--ui-accent);
+    background: color-mix(in srgb, var(--ui-accent-soft) 85%, transparent); color: var(--ui-accent-soft-text); font-weight: 500; pointer-events: none; font-size: 20px;
+    & span { font-size: 14px; } }
+  [data-scope=attachments][data-part=preview] { display: block; max-width: 100%; max-height: 70vh; margin: 0 auto; border-radius: var(--ui-radius); }
+  [data-scope=attachments][data-part=download-link] { display: inline-flex; align-items: center; height: var(--ui-control-height-sm); padding: 0 0.75rem;
+    border-radius: var(--ui-radius); border: 1px solid var(--ui-border); color: var(--ui-text); text-decoration: none; font-size: 14px;
+    &:hover { background: var(--ui-hover); } }
+}

@@ -39,8 +39,8 @@ const all = [
     { slug: 'tags-input', title: 'Tags input', about: 'Type, press Enter, get a tag', files: ['tags-input/TagsInput.svelte'] },
     { slug: 'pin-input', title: 'Pin input', about: 'One box per character, for codes', files: ['pin-input/PinInput.svelte'] },
     { slug: 'slider', title: 'Slider', about: 'A number or a range', files: ['slider/Slider.svelte'] },
-    { slug: 'file-upload', title: 'File upload', about: 'Drop or browse, with previews', files: ['file-upload/FileUpload.svelte'] },
-    { slug: 'attachments', title: 'Attachments', about: 'Files added to a page or form', files: ['attachments/Attachments.svelte'] },
+    { slug: 'file-upload', form: false, title: 'File upload', about: 'Drop or browse, with previews', files: ['file-upload/FileUpload.svelte'] },
+    { slug: 'attachments', form: false, title: 'Attachments', about: 'Files added to a page or form', files: ['attachments/Attachments.svelte'] },
   ] },
   { heading: 'Pickers', form: true, icon: 'lucide:list-checks', pages: [
     { slug: 'select', title: 'Select', about: 'Pick one or several; search, load or create', files: ['select/Select.svelte'] },
@@ -89,7 +89,7 @@ export const pages = groups.flatMap((group) => group.pages.map((page) => ({ ...p
 
 export const sourceOf = (file) => sources[`../src/${file}`] ?? ''
 
-// Pages in a `form` group show their examples on a two-column grid, so the
+// Pages in a `form` group (unless the page sets `form: false`) show their examples on a two-column grid, so the
 // examples are just the components.
 
 // An example's title and description come from its leading comment:

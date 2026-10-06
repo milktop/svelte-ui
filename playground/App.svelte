@@ -121,7 +121,7 @@
           </div>
         {/if}
         {#each examplesOf(page.slug) as example (example.path)}
-          <Demo {example} form={!!page.group.form} />
+          <Demo {example} form={page.form ?? !!page.group.form} />
         {/each}
       {/key}
     {:else}
