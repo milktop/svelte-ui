@@ -52,6 +52,8 @@
     "@zag-js/tags-input": "^1.45.0",
     "@zag-js/toast": "^1.45.0",
     "@zag-js/tooltip": "^1.45.0",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
     "iconify-icon": "^3.0.3"
   },
   "devDependencies": {

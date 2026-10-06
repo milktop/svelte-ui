@@ -1,0 +1,30 @@
+@layer ui {
+  [data-scope=chart][data-part=root] { display: block; position: relative; width: 100%; min-width: 0; color: var(--ui-text); font-family: var(--ui-font); font-size: 14px; }
+  [data-scope=chart][data-part=frame] { position: relative; width: 100%; }
+  [data-scope=chart][data-part=svg] { display: block; overflow: visible; }
+  [data-scope=chart][data-part=grid] { stroke: var(--ui-border); stroke-dasharray: 3 3; }
+  [data-scope=chart][data-part=tick] { fill: var(--ui-muted); font-size: 11px; }
+  [data-scope=chart][data-part=line] { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  [data-scope=chart][data-part=cursor] { stroke: var(--ui-muted); stroke-width: 1; stroke-dasharray: 3 3; }
+  [data-scope=chart][data-part=dot] { stroke: var(--ui-surface); stroke-width: 2; }
+  [data-scope=chart][data-part=bar] { transition: opacity 120ms; &[data-dim] { opacity: 0.45; } }
+  [data-scope=chart][data-part=band] { fill: var(--ui-hover); }
+  /* The tooltip sits beside the hovered point (to its left near the right edge), clear of the line and dots. */
+  [data-scope=chart][data-part=tooltip] { position: absolute; top: 0; z-index: 5; min-width: 8rem; padding: 0.5rem 0.625rem;
+    background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: var(--ui-radius); box-shadow: var(--ui-shadow);
+    font-size: 12px; pointer-events: none; white-space: nowrap; transform: translateX(12px);
+    &[data-flip] { transform: translateX(calc(-100% - 12px)); } }
+  [data-scope=chart][data-part=tooltip-label] { font-weight: 600; margin-bottom: 0.25rem; }
+  [data-scope=chart][data-part=tooltip-row] { display: flex; align-items: center; gap: 0.5rem; line-height: 1.6; }
+  [data-scope=chart][data-part=tooltip-name] { color: var(--ui-muted); flex-grow: 1; }
+  [data-scope=chart][data-part=tooltip-value] { font-weight: 500; }
+  [data-scope=chart][data-part=swatch] { display: inline-block; width: 0.625rem; height: 0.625rem; border-radius: 9999px; flex-shrink: 0; }
+  [data-scope=chart][data-part=legend] { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.5rem; font-size: 12px; color: var(--ui-muted); }
+  [data-scope=chart][data-part=legend-item] { display: inline-flex; align-items: center; gap: 0.375rem; }
+  [data-scope=chart][data-part=sr-only] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  [data-scope=sparkline][data-part=root] { display: block; width: 100%; min-width: 4rem; }
+  [data-scope=sparkline][data-part=svg] { display: block; width: 100%; height: 100%; overflow: visible; }
+  /* Strokes keep their width though the drawing is stretched to fit. */
+  [data-scope=sparkline][data-part=line] { stroke-width: 1.75; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+}
