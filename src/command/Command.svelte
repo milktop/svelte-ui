@@ -178,9 +178,10 @@
     <div {...api.getBackdropProps()} {...part('backdrop')} hidden={false}></div>
     <div {...api.getPositionerProps()} {...part('positioner')}>
       <div {...rest} {...api.getContentProps()} {...part('content')} hidden={false} class={cx(className)} onanimationend={presence.done}>
-        <h2 {...api.getTitleProps()} {...part('sr-only')}>{label}</h2>
+        <!-- Hidden, yet still the dialog's and list's names: aria-labelledby reads hidden elements. -->
+        <h2 {...api.getTitleProps()} {...part('title')} hidden>{label}</h2>
         <div {...part('root')} {...list.getRootProps()}>
-          <span {...part('sr-only')} {...list.getLabelProps()}>{label}</span>
+          <span {...list.getLabelProps()} {...part('list-label')} hidden>{label}</span>
           <div {...part('search')}>
             <iconify-icon {...part('search-icon')} icon="lucide:search" aria-hidden="true"></iconify-icon>
             <input {...part('input')} {...list.getInputProps({ autoHighlight: true })} bind:this={inputEl} type="text" {placeholder}

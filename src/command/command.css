@@ -1,7 +1,6 @@
 /* The listbox parts keep Zag's names (root, input, content, item,
    item-group…), so they're styled inside the command's own content. */
 @layer ui {
-  [data-scope=command][data-part=sr-only] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: -1px; padding: 0; border: 0; }
   [data-scope=command][data-part=backdrop] { position: fixed; inset: 0; z-index: 100; background: rgba(0, 0, 0, 0.45);
     &[data-state=open] { animation: ui-fade-in 120ms ease-out; }
     &[data-state=closed] { animation: ui-fade-out 100ms ease-in forwards; } }
