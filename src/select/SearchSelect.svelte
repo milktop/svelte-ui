@@ -105,6 +105,8 @@
     // Typing filters; a pick resets the filter (the server's results stay, so
     // the picked item keeps its place).
     onInputValueChange: (details) => {
+      // Emptying the input clears a single pick; partial edits revert on blur.
+      if (details.reason === 'input-change' && !details.inputValue && !multiple && selectedKeys.length) queueMicrotask(() => api.clearValue())
       if (details.reason === 'input-change') query = details.inputValue
       else if (!load || details.reason === 'clear-trigger') query = ''
     },
@@ -151,11 +153,18 @@
   }
 
   // Zag reverts stray text only while the list is open; when focus leaves
-  // the whole combobox, put the selected item's label back (or nothing).
+  // the whole combobox, put the selected item's label back (or nothing). An
+  // emptied input has already cleared the pick (see onInputValueChange).
   function revert(e) {
     if (e.currentTarget.contains(e.relatedTarget)) return
     const text = multiple ? '' : selectedKeys.length ? labelOf(byKey(selectedKeys[0]) ?? '') : ''
-    queueMicrotask(() => { if (!api.open && api.inputValue !== text) api.setInputValue(text) })
+    const root = e.currentTarget
+    // After Zag has handled the blur (closing the list, if a search left it open).
+    setTimeout(() => {
+      if (root.contains(document.activeElement)) return
+      if (api.inputValue !== text) api.setInputValue(text)
+      query = ''
+    }, 0)
   }
 </script>
 

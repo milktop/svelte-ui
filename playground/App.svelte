@@ -10,6 +10,7 @@
   import { appearance, applyAppearance } from './lib/appearance.svelte.js'
   import { groups, pages, examplesOf, sourceOf } from './registry.js'
   import { apiOf } from './lib/api.js'
+  import pkg from '../package.json'
   import Theming from './pages/Theming.svelte'
   import Installation from './pages/Installation.svelte'
   import BlockPage from './lib/BlockPage.svelte'
@@ -63,6 +64,8 @@
       <a href="#/" class="flex items-center gap-2 text-(--ui-text) no-underline">
         <span class="inline-flex h-7 w-7 items-center justify-center rounded-[var(--ui-radius)] bg-(--ui-accent) text-xs font-bold text-(--ui-accent-text)">UI</span>
         Svelte UI
+        <!-- The version, as a quiet pill after the name. -->
+        <span title="Version" class="rounded-full bg-(--ui-hover) px-1.5 py-0.5 text-[11px] leading-none font-medium text-(--ui-muted) tabular-nums">v{pkg.version}</span>
       </a>
     {/snippet}
     {#snippet footer()}
