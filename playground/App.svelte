@@ -14,6 +14,7 @@
   import Theming from './pages/Theming.svelte'
   import Installation from './pages/Installation.svelte'
   import BlockPage from './lib/BlockPage.svelte'
+  import Consultation from './demo/Consultation.svelte'
   import { blocks } from './blocks/registry.js'
 
   const guides = { '#/theming': 'Theming', '#/installation': 'Installation' }
@@ -28,6 +29,7 @@
   const commands = [
     ...pages.map((p) => ({ label: p.title, description: p.about, href: `#/${p.slug}`, icon: p.group.icon, group: p.group.heading })),
     ...blocks.map((b) => ({ label: b.title, description: b.about, href: `#/blocks/${b.slug}`, icon: b.icon, group: 'Blocks' })),
+    { label: 'Consultation (perigovet)', description: 'A real app page, with its own shell', href: '#/demo/consultation', icon: 'lucide:stethoscope', group: 'Blocks' },
     { label: 'Theming', description: 'Tokens and overrides', href: '#/theming', icon: 'lucide:palette', group: 'Guides' },
     { label: 'Installation', description: 'Install, set up the CSS layers, import', href: '#/installation', icon: 'lucide:download', group: 'Guides' },
     { label: 'GitHub', description: 'Source, releases and issues', href: repo, icon: 'mdi:github', group: 'Guides', keywords: ['repo', 'source'] },
@@ -55,6 +57,10 @@
 
 <svelte:window onhashchange={() => { hash = location.hash; showApi = false; scrollTo(0, 0) }} />
 
+<!-- A demo app page fills the window, with its own shell. -->
+{#if hash === '#/demo/consultation'}
+  <Consultation />
+{:else}
 <AppShell inset={appearance.layout === 'inset'} persist="svelte-ui:sidebar">
   <Sidebar accordion>
     {#snippet logoCollapsed()}
@@ -105,6 +111,7 @@
           {#each blocks.filter((b) => b.group === group) as b}
             <NavItem href="#/blocks/{b.slug}" active={hash === `#/blocks/${b.slug}`}>{b.title}</NavItem>
           {/each}
+          {#if group === 'Pages'}<NavItem href="#/demo/consultation">Consultation (perigovet)</NavItem>{/if}
         </NavGroup>
       {/each}
     </NavSection>
@@ -175,4 +182,5 @@
     {/if}
   </Page>
 </AppShell>
+{/if}
 <Toaster />
