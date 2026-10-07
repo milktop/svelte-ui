@@ -36,3 +36,26 @@
   [data-scope=avatar][data-part=person] { font-size: 1.6em; }
   [data-scope=avatar][data-part=tooltip-target] { position: absolute; inset: 0; }
 }
+
+/* A stack: each overlaps the one before, ringed in --ui-avatar-ring so the
+   edges read. Later ones sit on top. */
+@layer ui {
+  [data-scope=avatar-group][data-part=root] { display: inline-flex; align-items: center; vertical-align: middle;
+    --ui-avatar-ring: var(--ui-surface); --overlap-size: 0.625rem; --overlap-scale: 1;
+    --overlap: calc(var(--overlap-size) * var(--overlap-scale));
+    &[data-size=sm] { --overlap-size: 0.5rem; }
+    &[data-size=lg] { --overlap-size: 0.875rem; }
+    &[data-size=xl] { --overlap-size: 1.25rem; }
+    &[data-spacing=tight] { --overlap-scale: 1.5; }
+    &[data-spacing=loose] { --overlap-scale: 0.4; }
+    & > :is([data-scope=avatar], [data-part=more]) { box-shadow: 0 0 0 2px var(--ui-avatar-ring); }
+    & > :is([data-scope=avatar], [data-part=more]):not(:first-child) { margin-left: calc(var(--overlap) * -1); } }
+  [data-scope=avatar-group][data-part=more] {
+    display: inline-grid; place-items: center; flex-shrink: 0; width: 2.5rem; height: 2.5rem; border-radius: 9999px; box-sizing: border-box;
+    background: var(--ui-hover); color: var(--ui-muted); font-family: var(--ui-font); font-size: 12px; font-weight: 600; cursor: default;
+    [data-size=sm] > & { width: 1.75rem; height: 1.75rem; font-size: 11px; }
+    [data-size=lg] > & { width: 3.5rem; height: 3.5rem; font-size: 15px; }
+    [data-size=xl] > & { width: 5rem; height: 5rem; font-size: 20px; }
+    [data-size=custom] > & { width: var(--avatar-size); height: var(--avatar-size); font-size: calc(4px + 0.2 * var(--avatar-size)); }
+    &[data-square] { border-radius: var(--ui-radius); } }
+}

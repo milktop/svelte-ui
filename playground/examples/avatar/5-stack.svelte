@@ -1,11 +1,9 @@
-<!-- Stacked, with tooltips -->
+<!-- Stacked, with tooltips
+  AvatarGroup overlaps them, rings each in the page colour, and folds the rest into a "+N" (its tooltip lists them). -->
 <script>
-  import { Avatar } from '@milktop/svelte-ui'
+  import { AvatarGroup } from '@milktop/svelte-ui'
+
+  const team = ['Ada Lovelace', 'Alan Turing', 'Grace Hopper', 'Katherine Johnson', 'Margaret Hamilton', 'Tim Berners-Lee']
 </script>
 
-<div class="flex [&>*]:shadow-[0_0_0_2px_var(--ui-surface)] [&>*:not(:first-child)]:-ml-2">
-  <Avatar tooltip name="Ada Lovelace" />
-  <Avatar tooltip name="Alan Turing" />
-  <Avatar tooltip name="Grace Hopper" />
-  <Avatar tooltip="Katherine Johnson (owner)" name="Katherine Johnson" />
-</div>
+<AvatarGroup items={team} max={4} tooltip color="auto" />

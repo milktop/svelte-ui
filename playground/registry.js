@@ -13,7 +13,7 @@ const all = [
     { slug: 'copy-button', title: 'Copy button', about: 'Copy text with feedback', files: ['copy-button/CopyButton.svelte'] },
   ] },
   { heading: 'Display', icon: 'lucide:layout-grid', pages: [
-    { slug: 'avatar', title: 'Avatar', about: 'Images with initials fallback', files: ['avatar/Avatar.svelte'] },
+    { slug: 'avatar', title: 'Avatar', about: 'Images with initials fallback', files: ['avatar/Avatar.svelte', 'avatar/AvatarGroup.svelte'] },
     { slug: 'badge', title: 'Badge', about: 'Statuses and counts', files: ['badge/Badge.svelte'] },
     { slug: 'card', title: 'Card', about: 'A surface with a header and footer', files: ['card/Card.svelte'] },
     { slug: 'table', title: 'Table', about: 'Sorting, selection, paging', files: ['table/Table.svelte', 'pagination/Pagination.svelte'] },

@@ -101,5 +101,5 @@
   }
 
   @keyframes ui-spin { to { rotate: 360deg; } }
-  @keyframes ui-pulse { 50% { opacity: 0.5; } }
+  @keyframes ui-skeleton-pulse { 50% { opacity: 0.5; } }
 }

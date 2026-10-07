@@ -54,10 +54,10 @@
     [data-icon-only] > &[data-dot] { translate: 15% -15%; }
     /* A copy of the badge's colour that grows and fades behind it. */
     &[data-pulse]::after { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: 9999px; background: inherit;
-      animation: ui-pulse 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
+      animation: ui-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
     font-family: var(--ui-font); font-size: 11px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; pointer-events: none;
     [data-round][data-icon-only] > & { translate: 25% -25%; } }
   [data-scope=button][data-part=spoken] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  @keyframes ui-pulse { from { scale: 1; opacity: 0.7; } 75%, to { scale: 2.2; opacity: 0; } }
+  @keyframes ui-ping { from { scale: 1; opacity: 0.7; } 75%, to { scale: 2.2; opacity: 0; } }
   @media (prefers-reduced-motion: reduce) { [data-scope=button][data-part=badge]::after { animation: none; } }
 }
