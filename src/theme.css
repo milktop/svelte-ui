@@ -55,6 +55,13 @@
     --ui-sidebar-item-padding: 0 0.5rem 0 0.75rem;
     --ui-sidebar-item-radius: var(--ui-radius);
     --ui-sidebar-item-text: var(--ui-muted);
+    /* The sidebar itself (outside the inset layout, which uses --ui-sidebar-bg),
+       its section headings, its own icon buttons, and hovered items' text.
+       With the item tokens, enough for a coloured sidebar. */
+    --ui-sidebar-surface: var(--ui-surface);
+    --ui-sidebar-heading: var(--ui-muted);
+    --ui-sidebar-icon: var(--ui-muted);
+    --ui-sidebar-hover-text: var(--ui-text);
     --ui-sidebar-hover: var(--ui-hover);
     --ui-sidebar-active: var(--ui-hover);
     --ui-sidebar-active-text: var(--ui-text);

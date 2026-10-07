@@ -40,7 +40,7 @@
 
 <button {...rest} {...part('root')} class={cx(className)} {type} disabled={disabled || loading} aria-label={label}
   data-variant={variant} data-size={size} data-round={round || undefined} data-block={block || undefined}
-  data-loading={loading || undefined} data-icon-only={!children || undefined} aria-busy={loading || undefined}>
+  data-loading={loading || undefined} data-icon-only={(!children && !(icon && iconEnd)) || undefined} aria-busy={loading || undefined}>
   {#if loading}
     <span {...part('spinner')} aria-hidden="true"></span>
   {:else if icon}
