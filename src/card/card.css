@@ -2,20 +2,40 @@
 @layer ui {
   [data-scope=card][data-part=root] {
     display: flex; flex-direction: column; width: 100%; min-width: 0; box-sizing: border-box;
-    background: var(--ui-surface); color: var(--ui-text); font-family: var(--ui-font); font-size: 14px;
+    background: var(--ui-surface); color: var(--ui-text); font-family: var(--ui-font); font-size: 14px; text-decoration: none;
     border: 1px solid var(--ui-border); border-radius: calc(var(--ui-radius) + 4px); box-shadow: var(--ui-card-shadow);
+    --card-pad: 1.25rem;
+    /* Clipped only when flush, so a picker's popup inside isn't cut off. */
     &[data-flush] { overflow: hidden; }
+    &[data-size=sm] { --card-pad: 0.875rem; }
+    &[data-size=lg] { --card-pad: 1.75rem; }
+    /* Lifted off the page: a soft shadow does the border's work. */
+    &[data-variant=elevated] { border-color: transparent;
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 4px 12px -2px rgba(16, 24, 40, 0.08); }
+    &[data-variant=outline] { background: transparent; box-shadow: none; }
+    /* A tinted fill, for a panel inside a page or another card. */
+    &[data-variant=subtle] { background: color-mix(in srgb, var(--ui-hover) 70%, var(--ui-surface)); border-color: transparent; box-shadow: none; }
+    :is(.dark, [data-theme=dark]) &[data-variant=elevated] { border-color: var(--ui-border); box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.6); }
+    /* A link: lifts and darkens its border on hover. */
+    &[data-link] { cursor: pointer; transition: border-color 150ms, box-shadow 150ms, translate 150ms;
+      &:hover { border-color: color-mix(in srgb, var(--ui-muted) 50%, var(--ui-border)); translate: 0 -1px;
+        box-shadow: 0 2px 4px rgba(16, 24, 40, 0.06), 0 8px 20px -6px rgba(16, 24, 40, 0.12); }
+      &:focus-visible { outline: 2px solid var(--ui-ring); outline-offset: 2px; } }
   }
-  [data-scope=card][data-part=header] { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
-    padding: 1.25rem 1.25rem 0;
-    [data-flush] > & { padding-bottom: 1rem; border-bottom: 1px solid var(--ui-border); } }
-  [data-scope=card][data-part=titles] { min-width: 0; }
-  [data-scope=card][data-part=heading] { margin: 0; font-size: 16px; font-weight: 600; }
+  [data-scope=card][data-part=header] { display: flex; align-items: flex-start; gap: 0.75rem; padding: var(--card-pad) var(--card-pad) 0;
+    [data-divided] > &, [data-flush] > & { padding-bottom: calc(var(--card-pad) * 0.8); border-bottom: 1px solid var(--ui-border); } }
+  [data-scope=card][data-part=icon] { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; flex-shrink: 0; margin-top: -0.125rem;
+    border-radius: var(--ui-radius); background: var(--ui-accent-soft); color: var(--ui-accent-soft-text); font-size: 18px; }
+  [data-scope=card][data-part=titles] { flex: 1; min-width: 0; }
+  [data-scope=card][data-part=heading] { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.35; }
   [data-scope=card][data-part=description] { margin: 0.25rem 0 0; color: var(--ui-muted); }
   [data-scope=card][data-part=actions] { display: flex; gap: 0.5rem; flex-shrink: 0; }
-  [data-scope=card][data-part=body] { padding: 1.25rem;
-    [data-part=header] + & { padding-top: 1rem; }
+  [data-scope=card][data-part=body] { padding: var(--card-pad); flex-grow: 1;
+    [data-part=header] + & { padding-top: calc(var(--card-pad) * 0.8); }
     [data-flush] > & { padding: 0; } }
+  /* The footer on a faint band, so actions read as the card's own. */
   [data-scope=card][data-part=footer] { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem;
-    padding: 0.75rem 1.25rem; border-top: 1px solid var(--ui-border); }
+    padding: calc(var(--card-pad) * 0.6) var(--card-pad); border-top: 1px solid var(--ui-border);
+    background: color-mix(in srgb, var(--ui-hover) 55%, var(--ui-surface)); border-radius: 0 0 calc(var(--ui-radius) + 3px) calc(var(--ui-radius) + 3px);
+    [data-variant=outline] > &, [data-variant=subtle] > & { background: transparent; } }
 }
