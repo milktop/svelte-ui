@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "dev": "vite playground --port 5193",
-    "build:playground": "vite build playground",
+    "build": "vite build playground",
     "check": "node scripts/check.js"
   },
   "peerDependencies": {

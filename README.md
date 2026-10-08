@@ -82,3 +82,24 @@ parts from the source, and its examples are the files in
 `playground/examples/<component>/`, shown with their code. Blocks
 (composed screens) are in `playground/blocks/`; Theming and Installation are
 guide pages.
+
+## Deploy the playground
+
+`npm run build` writes a static, client-side site to `playground/dist`, which
+any static host can serve. It's on **Cloudflare Pages** at
+https://svelte-ui.pages.dev:
+
+1. **Workers & Pages → Create**, then the Pages option ("Looking to deploy
+   Pages? Get started") → **Import an existing Git repository**, and pick
+   `milktop/svelte-ui`.
+2. Framework preset None; build command `npm run build`; build output
+   directory `playground/dist`. `.nvmrc` sets Node 22.
+3. Deploy. Every push to `main` redeploys; other branches get preview URLs.
+   For a custom subdomain, use **Custom domains** in the project and add the
+   CNAME it asks for at your DNS host.
+
+The playground routes on the URL hash, so it needs no SPA fallback. The site
+is public but kept out of search results: a `noindex` meta tag in
+`index.html`, and an `X-Robots-Tag` header on every file from
+`playground/public/_headers`. To make it private instead, turn on
+**Cloudflare Access** for the project.
