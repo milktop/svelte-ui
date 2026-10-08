@@ -32,7 +32,7 @@
   const text = $derived(api.copied ? copiedLabel : label)
 </script>
 
-<button {...rest} {...part('trigger')} {...api.getTriggerProps()} class={cx(className)}
+<button {...rest} {...api.getTriggerProps()} {...part('trigger')} class={cx(className)}
   data-icon-only={iconOnly || undefined} aria-label={iconOnly ? text : undefined}>
   <iconify-icon {...part('icon')} icon={api.copied ? 'lucide:check' : 'lucide:copy'} aria-hidden="true"></iconify-icon>
   {#if !iconOnly}<span {...part('text')} aria-live="polite">{text}</span>{/if}
