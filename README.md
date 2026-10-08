@@ -3,6 +3,9 @@
 Svelte 5 components on [Zag](https://zagjs.com) state machines, with
 [imba-ui](https://github.com/milktop/imba-ui)'s API, tokens and design.
 
+**Playground:** https://svelte-ui.pages.dev, with every component, its props and
+examples.
+
 ```svelte
 <script>
   import { Field, Select, DatePicker, Button } from '@milktop/svelte-ui'
