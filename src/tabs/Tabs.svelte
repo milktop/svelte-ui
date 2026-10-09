@@ -12,7 +12,10 @@
 
   - `value`: bindable; the selected Tab's value
   - `variant`: 'line' (default, an underline) or 'pills'
-  - `trigger` snippet: a tab's content, given the tab ({ value, label, icon })
+  - `counts`: where the tabs' counts sit: 'inline' (default, after the label)
+    or 'corner' (top right, like a button's)
+  - `trigger` snippet: a tab's content, given the tab ({ value, label, icon });
+    its count still follows
 -->
 <script>
   import * as tabs from '@zag-js/tabs'
@@ -23,7 +26,7 @@
   import '../theme.css'
   import './tabs.css'
 
-  let { value = $bindable(null), variant = 'line', trigger = null, class: className = '', classes = {}, children, ...rest } = $props()
+  let { value = $bindable(null), variant = 'line', counts = 'inline', trigger = null, class: className = '', classes = {}, children, ...rest } = $props()
 
   const part = partsOf('tabs', () => classes)
   const id = $props.id()
@@ -51,7 +54,7 @@
   })
 </script>
 
-<div {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)} data-variant={variant}>
+<div {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)} data-variant={variant} data-counts={counts}>
   <div {...part('list')} {...api.getListProps()}>
     {#each list as tab (tab.value)}
       <button {...part('trigger')} {...api.getTriggerProps({ value: String(tab.value), disabled: !!tab.disabled })}>
@@ -59,6 +62,11 @@
         {:else}
           {#if tab.icon}<iconify-icon {...part('icon')} icon={tab.icon} aria-hidden="true"></iconify-icon>{/if}
           <span>{tab.label}</span>
+        {/if}
+        {#if tab.badge != null}
+          <span {...part('count')} aria-hidden="true" data-dot={tab.badge === '' || undefined} data-pulse={tab.pulse || undefined}
+            data-color={tab.countColor}>{tab.badge}</span>
+          {#if tab.spoken}<span {...part('sr-only')}>, {tab.spoken}</span>{/if}
         {/if}
       </button>
     {/each}
