@@ -27,7 +27,8 @@
     &[data-type=checkbox] { display: block; font-size: 14px; color: var(--ui-accent); }
     &[data-type=radio] { display: block; width: 6px; height: 6px; border-radius: 9999px; background: var(--ui-accent); box-shadow: 0 0 0 3px var(--ui-accent-soft); } }
   [data-scope=menu][data-part=chevron] { display: block; font-size: 14px; margin-left: auto; color: var(--ui-muted); }
-  [data-scope=menu][data-part=separator] { display: block; height: 1px; margin: 0.25rem -0.25rem; background: var(--ui-border); }
+  /* A div or an <hr> (Ark's): no border of its own. */
+  [data-scope=menu][data-part=separator] { display: block; height: 1px; margin: 0.25rem -0.25rem; border: none; background: var(--ui-border); }
   [data-scope=menu]:is([data-part=group-label], [data-part=item-group-label], [data-part=menu-label]) {
     padding: 0.5rem 0.5rem 0.25rem; font-size: 12px; font-weight: 500; color: var(--ui-muted); }
   /* The menu's own label reads a little stronger than its group headings. */
