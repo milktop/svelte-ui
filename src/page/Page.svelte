@@ -13,7 +13,7 @@
   - `actions`, `breadcrumbs` snippets
 -->
 <script>
-  import { cx, partsOf } from '../utils.js'
+  import { cx, partsOf, provideShell } from '../utils.js'
   import '../theme.css'
   import './page.css'
 
@@ -24,6 +24,10 @@
   } = $props()
 
   const part = partsOf('page', () => classes)
+
+  // What's inside a page isn't the shell's: a Sidebar shown in it (as an
+  // example, say) doesn't collapse or turn into a drawer with the app's.
+  provideShell(null)
 </script>
 
 <div {...rest} {...part('root')} class={cx(className)} data-width={width} data-align={align}>

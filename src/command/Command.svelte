@@ -35,7 +35,7 @@
   import * as dialog from '@zag-js/dialog'
   import * as listbox from '@zag-js/listbox'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import { tick } from 'svelte'
+  import { tick, untrack } from 'svelte'
   import 'iconify-icon'
   import { cx, partsOf } from '../utils.js'
   import { Presence, portal } from '../presence.svelte.js'
@@ -101,10 +101,7 @@
   const service = useMachine(dialog.machine, () => ({
     id, open,
     initialFocusEl: () => inputEl,
-    onOpenChange: (details) => {
-      open = details.open
-      if (details.open) reset()
-    },
+    onOpenChange: (details) => { open = details.open },
   }))
   const api = $derived(dialog.connect(service, normalizeProps))
   const presence = new Presence(() => api.open)
@@ -117,7 +114,10 @@
   }))
   const list = $derived(listbox.connect(listService, normalizeProps))
 
-  // Each time it opens: an empty search over all the commands, the first highlighted.
+  // Each time it opens (from the trigger, the hotkey or `open`; Zag only
+  // reports the trigger's): an empty search over all the commands, the first
+  // highlighted.
+  $effect(() => { if (open) untrack(() => tick().then(reset)) })
   async function reset() {
     search('')
     if (inputEl) inputEl.value = ''

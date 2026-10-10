@@ -39,11 +39,11 @@
           <button {...part('more')} type="button" aria-label="Show {items.length - max + 1} more" onclick={() => (unfolded = true)}>…</button>
         {:else if item.href && !current}
           <a {...part('link')} href={item.href}>
-            {#if item.icon}<iconify-icon {...part('icon')} icon={item.icon} aria-hidden="true"></iconify-icon>{/if}{item.label}
+            {#if item.icon}<iconify-icon {...part('icon')} icon={item.icon} aria-hidden="true"></iconify-icon>{/if}<span {...part('text')}>{item.label}</span>
           </a>
         {:else}
           <span {...part('link')} data-current={current || undefined} aria-current={current ? 'page' : undefined}>
-            {#if item.icon}<iconify-icon {...part('icon')} icon={item.icon} aria-hidden="true"></iconify-icon>{/if}{item.label}
+            {#if item.icon}<iconify-icon {...part('icon')} icon={item.icon} aria-hidden="true"></iconify-icon>{/if}<span {...part('text')}>{item.label}</span>
           </span>
         {/if}
       </li>
