@@ -1,5 +1,5 @@
 <!-- Folding long trails
-  With `max`, the middle crumbs fold into a … button that shows them. -->
+  With `max`, the middle crumbs fold into a … button that lists them in a menu. -->
 <script>
   import { Breadcrumbs, Button } from '@milktop/svelte-ui'
   import { lesson } from './lesson.js'
