@@ -121,8 +121,11 @@
     selected = on ? [...others, ...keys] : others
   }
 
+  // Not when the click was on a control in the row (a link, a menu…); only
+  // the row's own contents count, not what the table sits in (a Card).
   function rowClicked(e, row) {
-    if (e.target.closest('a, button, input, label, select, textarea, [data-scope]:not([data-scope=table])')) return
+    const control = e.target.closest('a, button, input, label, select, textarea, [data-scope]:not([data-scope=table])')
+    if (control && e.currentTarget.contains(control)) return
     onrowclick?.(row)
   }
 
