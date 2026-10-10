@@ -17,6 +17,6 @@
     border: none; border-radius: var(--ui-radius); background: transparent; color: var(--ui-muted); cursor: pointer; font-size: 14px;
     &:hover { background: var(--ui-hover); color: var(--ui-text); }
     &:focus-visible { outline: 2px solid var(--ui-ring-soft); } }
-  @keyframes ui-action-bar-in { from { opacity: 0; transform: translateY(12px) scale(0.97); } }
-  @keyframes ui-action-bar-out { to { opacity: 0; transform: translateY(12px) scale(0.97); } }
+  @keyframes ui-action-bar-in { from { opacity: 0; transform: translateY(12px); } }
+  @keyframes ui-action-bar-out { to { opacity: 0; transform: translateY(12px); } }
 }
