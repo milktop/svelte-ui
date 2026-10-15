@@ -2,7 +2,7 @@
 <script>
   import * as toast from '@zag-js/toast'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
+  import '../icons.js'
 
   let { toast: data, index, parent, part } = $props()
 

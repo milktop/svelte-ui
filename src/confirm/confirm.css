@@ -1,0 +1,5 @@
+@layer ui {
+  [data-scope=confirm][data-part=body] { display: flex; flex-direction: column; gap: 0.75rem; font-size: 14px; }
+  [data-scope=confirm][data-part=type] { display: flex; flex-direction: column; gap: 0.375rem; }
+  [data-scope=confirm][data-part=type-label] { color: var(--ui-muted); }
+}

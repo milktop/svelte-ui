@@ -17,14 +17,16 @@
 <script>
   import * as pagination from '@zag-js/pagination'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
+  import { formatNumber } from '../format/format.js'
   import '../theme.css'
   import './pagination.css'
 
   let {
-    count = 0, pageSize = 10, page = $bindable(1), siblingCount = 1, summary = false, noun = 'items', firstLast = true,
-    label = 'Pagination', class: className = '', classes = {}, ...rest
+    count = 0, pageSize = 10, page = $bindable(1), siblingCount = 1, summary = false, noun = undefined, firstLast = true,
+    label = null, class: className = '', classes = {}, ...rest
   } = $props()
 
   const part = partsOf('pagination', () => classes)
@@ -34,6 +36,7 @@
 
   const service = useMachine(pagination.machine, () => ({
     id, count, pageSize, siblingCount, page, type: 'button',
+    ...(uiLocale.zag('pagination') && { translations: uiLocale.zag('pagination') }),
     onPageChange: (details) => { page = details.page },
   }))
   const api = $derived(pagination.connect(service, normalizeProps))
@@ -43,8 +46,8 @@
   const edges = $derived(firstLast && api.pages.some((item) => item.type === 'ellipsis'))
 </script>
 
-<nav {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)} aria-label={label}>
-  {#if summary}<span {...part('summary')}>Showing {from}–{to} of {count}{noun ? ` ${noun}` : ''}</span>{/if}
+<nav {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)} aria-label={label ?? uiLocale.messages.pagination.label}>
+  {#if summary}<span {...part('summary')}>{uiLocale.messages.pagination.showing(formatNumber(from), formatNumber(to), formatNumber(count), noun ?? uiLocale.messages.pagination.noun)}</span>{/if}
   <div {...part('pages')}>
     {#if edges}<button {...part('nav-button')} {...api.getFirstTriggerProps()}><iconify-icon icon="lucide:chevrons-left"></iconify-icon></button>{/if}
     <button {...part('nav-button')} {...api.getPrevTriggerProps()}><iconify-icon icon="lucide:chevron-left"></iconify-icon></button>

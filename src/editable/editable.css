@@ -1,0 +1,25 @@
+@layer ui {
+  [data-scope=editable][data-part=root] { display: block; min-width: 0; color: var(--ui-text); font-family: var(--ui-font); font-size: 14px; }
+  [data-scope=editable][data-part=label] { display: block; margin-bottom: 0.25rem; font-size: 14px; font-weight: 500; }
+  [data-scope=editable][data-part=row] { display: flex; align-items: center; gap: 0.25rem; min-width: 0; }
+  [data-scope=editable][data-part=area] { flex: 1; min-width: 0; }
+  /* As text until clicked: a faint box on hover says it can be edited. */
+  [data-scope=editable][data-part=preview] { display: block; margin: 0 -0.375rem; padding: 0.25rem 0.375rem; border-radius: calc(var(--ui-radius) - 2px);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: text;
+    &:hover { background: var(--ui-hover); }
+    &[data-placeholder-shown] { color: var(--ui-muted); }
+    [data-disabled] & { cursor: default; background: transparent; } }
+  [data-scope=editable][data-part=input] { width: 100%; box-sizing: border-box; margin: 0 -0.375rem; padding: 0.25rem 0.375rem;
+    border: 1px solid var(--ui-ring); border-radius: calc(var(--ui-radius) - 2px); outline: 2px solid var(--ui-ring-soft);
+    background: var(--ui-surface); color: inherit; font: inherit; }
+  [data-scope=editable][data-part=control] { display: flex; gap: 0.125rem; flex-shrink: 0; }
+  [data-scope=editable]:is([data-part=edit-trigger], [data-part=submit-trigger], [data-part=cancel-trigger]) {
+    display: grid; place-items: center; width: 1.75rem; height: 1.75rem; padding: 0; border: none; border-radius: calc(var(--ui-radius) - 2px);
+    background: transparent; color: var(--ui-muted); font-size: 14px; cursor: pointer;
+    &:hover { background: var(--ui-hover); color: var(--ui-text); }
+    &:focus-visible { outline: 2px solid var(--ui-ring-soft); } }
+  /* The pencil shows on hover (and when focused), to keep the text clean. */
+  [data-scope=editable][data-part=edit-trigger] { opacity: 0;
+    [data-part=root]:hover &, &:focus-visible { opacity: 1; } }
+  [data-scope=editable][data-part=submit-trigger] { color: var(--ui-accent); }
+}

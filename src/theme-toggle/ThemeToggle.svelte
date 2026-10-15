@@ -23,7 +23,7 @@
   - `onchange`: called with 'light', 'dark' or 'system'
 -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import Segmented from '../segmented/Segmented.svelte'
   import Menu from '../menu/Menu.svelte'
   import MenuRadioGroup from '../menu/MenuRadioGroup.svelte'
@@ -31,12 +31,13 @@
   import Tooltip from '../tooltip/Tooltip.svelte'
   import { colorScheme } from '../color-scheme.svelte.js'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './theme-toggle.css'
 
   let {
     variant = 'segmented', mobile = null, breakpoint = 768, options = ['system', 'light', 'dark'], system = true,
-    labels = { light: 'Light', dark: 'Dark', system: 'System' }, label = 'Colour scheme', placement = null,
+    labels = {}, label = null, placement = null,
     size = 'md', keepOpen = null, iconOnly = false, onchange = null, class: className = '', classes = {}, ...rest
   } = $props()
 
@@ -55,7 +56,9 @@
 
   const mode = $derived(mobile && narrow ? mobile : variant)
   const offersSystem = $derived(system && options.includes('system'))
-  const items = $derived(options.filter((s) => icons[s] && (s !== 'system' || system)).map((s) => ({ value: s, label: labels[s], icon: icons[s] })))
+  const names = $derived({ ...uiLocale.messages.themeToggle, ...labels })
+  const groupLabel = $derived(label ?? uiLocale.messages.themeToggle.label)
+  const items = $derived(options.filter((s) => icons[s] && (s !== 'system' || system)).map((s) => ({ value: s, label: names[s], icon: icons[s] })))
   // Without the system option, show what the OS currently resolves to.
   const value = $derived(offersSystem ? colorScheme.value : colorScheme.dark ? 'dark' : 'light')
   const shown = $derived(colorScheme.dark ? 'dark' : 'light')
@@ -67,12 +70,12 @@
   }
 </script>
 
-<div {...rest} {...part('root')} class={cx(className)} role="group" aria-label={label} data-variant={mode} data-size={size}
+<div {...rest} {...part('root')} class={cx(className)} role="group" aria-label={groupLabel} data-variant={mode} data-size={size}
   data-icon-only={(iconOnly && mode === 'menu') || undefined}>
   {#if mode === 'menu'}
     <Menu placement={placement ?? (iconOnly ? 'bottom' : 'bottom-end')} keepOpen={keepOpen ?? false}>
       {#snippet trigger(props)}
-        <button {...props} {...part('trigger')} type="button" aria-label="{label}: {labels[value]}">
+        <button {...props} {...part('trigger')} type="button" aria-label="{groupLabel}: {names[value]}">
           <iconify-icon {...part('trigger-icon')} icon={icons[value]} aria-hidden="true"></iconify-icon>
         </button>
       {/snippet}
@@ -82,9 +85,9 @@
     </Menu>
   {:else if mode === 'toggle'}
     <!-- Flips what's showing, so 'system' becomes an explicit choice. -->
-    <Tooltip content={labels[shown]}>
+    <Tooltip content={names[shown]}>
       {#snippet trigger(props)}
-        <button {...props} {...part('trigger')} type="button" aria-label={labels.dark} aria-pressed={colorScheme.dark}
+        <button {...props} {...part('trigger')} type="button" aria-label={names.dark} aria-pressed={colorScheme.dark}
           onclick={(e) => { props.onclick?.(e); pick(colorScheme.dark ? 'light' : 'dark') }}>
           <iconify-icon {...part('trigger-icon')} icon={icons[shown]} aria-hidden="true"></iconify-icon>
         </button>

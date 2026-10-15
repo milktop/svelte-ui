@@ -16,4 +16,9 @@
   }
   [data-scope=badge][data-part=icon] { display: block; width: 1em; height: 1em; }
   [data-scope=badge][data-part=dot] { width: 0.375rem; height: 0.375rem; border-radius: 9999px; background: currentColor; }
+  /* A tag's ✕: a small round button at the end. */
+  [data-scope=badge][data-part=remove] { display: inline-grid; place-items: center; width: 1rem; height: 1rem; margin-right: -0.25rem; padding: 0;
+    border: none; border-radius: 9999px; background: transparent; color: inherit; font-size: 11px; cursor: pointer; opacity: 0.65;
+    &:hover { opacity: 1; background: color-mix(in srgb, currentColor 14%, transparent); }
+    &:focus-visible { outline: 2px solid var(--ui-ring-soft); opacity: 1; } }
 }

@@ -18,14 +18,15 @@
   - `type`: 'button' by default (pass 'submit' for forms)
 -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './button.css'
 
   let {
     variant = 'default', size = 'md', icon = null, iconEnd = null, loading = false,
-    round = false, block = false, count = null, max = 99, dot = false, pulse = false, countColor = 'danger', countLabel = 'new',
+    round = false, block = false, count = null, max = 99, dot = false, pulse = false, countColor = 'danger', countLabel = null,
     type = 'button', disabled = false,
     class: className = '', classes = {}, children, ...rest
   } = $props()
@@ -33,7 +34,7 @@
   const part = partsOf('button', () => classes)
   const badge = $derived(count > 0 ? (count > max ? `${max}+` : String(count)) : dot ? '' : null)
   // Read after the label by assistive tech: "Inbox, 3 new".
-  const spoken = $derived(count > 0 ? `${count} ${countLabel}` : dot ? countLabel : '')
+  const spoken = $derived(count > 0 ? `${count} ${countLabel ?? uiLocale.messages.button.countLabel}` : dot ? countLabel ?? uiLocale.messages.button.countLabel : '')
   // An aria-label hides the button's text from assistive tech, so the count joins the label.
   const label = $derived(rest['aria-label'] && spoken ? `${rest['aria-label']}, ${spoken}` : rest['aria-label'])
 </script>

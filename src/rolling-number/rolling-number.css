@@ -1,0 +1,10 @@
+@layer ui {
+  [data-scope=rolling-number][data-part=root] { display: inline-flex; align-items: baseline; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  /* One digit: a window a line tall over a column of 0–9. */
+  [data-scope=rolling-number][data-part=digit] { position: relative; display: inline-block; height: 1lh; overflow: hidden; }
+  [data-scope=rolling-number][data-part=sizer] { visibility: hidden; }
+  [data-scope=rolling-number][data-part=strip] { position: absolute; left: 0; top: 0; display: flex; flex-direction: column;
+    translate: 0 calc(var(--digit) * -1lh); transition: translate var(--duration) cubic-bezier(0.2, 0.7, 0.2, 1);
+    & > span { height: 1lh; }
+    @media (prefers-reduced-motion: reduce) { transition: none; } }
+}

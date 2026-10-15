@@ -37,6 +37,18 @@
   [data-scope=avatar][data-part=tooltip-target] { position: absolute; inset: 0; }
 }
 
+/* A status dot on the corner: the avatar stops clipping (its image rounds itself), so the dot can sit over the edge. */
+@layer ui {
+  [data-scope=avatar][data-part=root][data-has-status] { overflow: visible;
+    & > :is([data-part=image], [data-part=fallback]) { border-radius: inherit; overflow: hidden; } }
+  [data-scope=avatar][data-part=status] { position: absolute; right: 0; bottom: 0; width: 28%; height: 28%; min-width: 0.5rem; min-height: 0.5rem;
+    box-sizing: border-box; border-radius: 9999px; box-shadow: 0 0 0 2px var(--ui-avatar-ring, var(--ui-surface));
+    &[data-status=online] { background: #22c55e; }
+    &[data-status=away] { background: #f59e0b; }
+    &[data-status=busy] { background: var(--ui-danger); }
+    &[data-status=offline] { background: var(--ui-muted); } }
+}
+
 /* A stack: each overlaps the one before, ringed in --ui-avatar-ring so the
    edges read. Later ones sit on top. */
 @layer ui {

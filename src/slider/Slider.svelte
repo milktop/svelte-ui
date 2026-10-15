@@ -15,6 +15,7 @@
   import * as slider from '@zag-js/slider'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './slider.css'
 
@@ -27,7 +28,7 @@
   const field = useField()
   const part = partsOf('slider', () => classes)
   const range = $derived(Array.isArray(value))
-  const formatter = $derived(new Intl.NumberFormat(locale, formatOptions))
+  const formatter = $derived(new Intl.NumberFormat(locale ?? uiLocale.locale, formatOptions))
   const format = (n) => formatter.format(n)
   const markOf = (mark) => (typeof mark === 'object' ? mark : { value: mark, label: format(mark) })
 

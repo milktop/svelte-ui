@@ -14,13 +14,13 @@
 <script>
   import * as menu from '@zag-js/menu'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import MenuItems from './MenuItems.svelte'
   import { provideMenu, useMenu } from './context.js'
   import { cx } from '../utils.js'
   import { Presence } from '../presence.svelte.js'
 
-  let { label, icon = null, items = [], keepOpen = null, class: className = '', children, ...rest } = $props()
+  let { label, icon = null, items = [], keepOpen = null, indicator = null, class: className = '', children, ...rest } = $props()
 
   const outer = useMenu()
   const part = outer.part
@@ -48,6 +48,7 @@
     service, part,
     get keys() { return outer.keys },
     get keepOpen() { return keepOpen ?? outer.keepOpen },
+    get indicator() { return indicator ?? outer.indicator },
     get onchange() { return outer.onchange },
     remember: outer.remember,
     select: outer.select,

@@ -31,6 +31,10 @@
   - `trigger` snippet: spread its props onto your button
   - `placement`: 'bottom-start' (default), 'bottom-end', …
   - `label`: a small label above the items
+  - `indicator`: where checkbox and radio items show they're checked: 'end'
+    (default; a tick after the label, so labels line up with the other
+    items) or 'start' (a tick, or a dot for radios, before it); submenus
+    follow their menu's unless they set one
   - `keepOpen`: stay open after an item is chosen (to tick several); an
     item's own `keepOpen` overrides it
   - `context`: open on right-click (or long-press) of the trigger, at the
@@ -51,7 +55,7 @@
 
   let {
     items = [], labelKey = 'label', valueKey = 'value', disabledKey = 'disabled', placement = 'bottom-start',
-    label = null, keepOpen = false, context = false, open = $bindable(false), onselect = null, onchange = null,
+    label = null, indicator = 'end', keepOpen = false, context = false, open = $bindable(false), onselect = null, onchange = null,
     trigger = null, class: className = '', classes = {}, children, ...rest
   } = $props()
 
@@ -80,6 +84,7 @@
     service, part,
     get keys() { return { labelKey, valueKey, disabledKey } },
     get keepOpen() { return keepOpen },
+    get indicator() { return indicator },
     get onchange() { return onchange },
     remember: (key, value) => values.set(key, value),
     select,

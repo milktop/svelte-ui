@@ -19,7 +19,7 @@
   - `flush`: no padding round the body, for content that runs edge to edge (a table, a list)
 -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf } from '../utils.js'
   import '../theme.css'
   import './card.css'

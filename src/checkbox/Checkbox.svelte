@@ -12,7 +12,7 @@
 <script>
   import * as checkbox from '@zag-js/checkbox'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
   import '../theme.css'
   import './checkbox.css'

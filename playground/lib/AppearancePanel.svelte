@@ -2,7 +2,7 @@
      tokens, as in imba-ui's playground. -->
 <script>
   import { Popover, Button, Fields, Field, Segmented, Select, colorScheme } from '@milktop/svelte-ui'
-  import { appearance, reset, isDark, accents, fonts, radii, densities, layouts, canvases, sidebars, widths, aligns, options } from './appearance.svelte.js'
+  import { appearance, reset, isDark, accents, fonts, radii, densities, layouts, canvases, sidebars, widths, aligns, languages, options } from './appearance.svelte.js'
 
   const themes = [
     { value: 'light', label: 'Light', icon: 'lucide:sun' },
@@ -34,6 +34,7 @@
     <Field label="Width" hint="Page's width"><Segmented size="sm" items={options(widths)} bind:value={appearance.width} /></Field>
     <Field label="Page" hint="Page's align"><Segmented size="sm" items={options(aligns)} bind:value={appearance.align} /></Field>
     <Field label="Density" hint="Sets --ui-control-height"><Segmented size="sm" items={options(densities)} bind:value={appearance.density} /></Field>
+    <Field label="Language" hint="uiLocale.set(…): dates, numbers, words"><Select size="sm" items={options(languages)} bind:value={appearance.language} /></Field>
   </Fields>
   <div class="mt-4 flex justify-end"><Button variant="link" size="sm" onclick={reset}>Reset</Button></div>
 </Popover>

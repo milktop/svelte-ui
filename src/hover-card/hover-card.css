@@ -1,5 +1,7 @@
 @layer ui {
-  /* Zag copies the content's z-index onto its positioner. */
+  /* The positioner carries the z-index itself. Zag sets it inline as
+     var(--z-index) but doesn't always fill in the variable, so set both. */
+  [data-scope=hover-card][data-part=positioner] { z-index: 50; --z-index: 50; }
   [data-scope=hover-card][data-part=content] {
     z-index: 50; font-weight: 400; width: 18rem; max-width: calc(100vw - 32px); padding: 1rem; box-sizing: border-box; outline: none;
     background: var(--ui-surface); color: var(--ui-text); font-family: var(--ui-font); font-size: 14px;

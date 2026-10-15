@@ -9,6 +9,9 @@
     indeterminate when only some are (disabled items keep their state)
   - `label`: a label above it (skipped inside a Field)
   - `orientation`: 'vertical' or 'horizontal'
+  - `variant`: 'list' (default); 'cards': each a bordered card (with the
+    item's `description` and `icon`), ticked ones outlined; 'chips': pills
+    that toggle, e.g. quick filters above a table
   - `name`: each checkbox posts its value with plain forms
 
   Shift-clicking a checkbox ticks (or clears) every item between it and the
@@ -16,12 +19,13 @@
 -->
 <script>
   import Checkbox from './Checkbox.svelte'
+  import '../icons.js'
   import { cx, partsOf, useField } from '../utils.js'
   import '../theme.css'
   import './checkbox.css'
 
   let {
-    items = [], value = $bindable([]), label = null, selectAll = null, orientation = 'vertical',
+    items = [], value = $bindable([]), label = null, selectAll = null, orientation = 'vertical', variant = 'list',
     labelKey = 'label', valueKey = 'value', disabledKey = 'disabled', name = null, disabled = false,
     class: className = '', classes = {}, ...rest
   } = $props()
@@ -31,6 +35,8 @@
   const id = $props.id()
   const labelOf = (item) => (typeof item === 'object' ? item[labelKey] : String(item))
   const valueOf = (item) => (typeof item === 'object' ? item[valueKey] : item)
+  // As a card: the item's icon and description with its label.
+  const asCard = (item) => variant === 'cards' && typeof item === 'object' && !!(item.icon || item.description)
   const isSelected = (item) => (value ?? []).includes(valueOf(item))
   const isLocked = (item) => disabled || (typeof item === 'object' && !!item[disabledKey])
   const select = (list) => (value = list.map(valueOf))
@@ -65,7 +71,7 @@
   })
 </script>
 
-<div {...rest} {...part('root')} class={cx(className)} role="group"
+<div {...rest} {...part('root')} class={cx(className)} role="group" data-variant={variant}
   aria-labelledby={field ? field.labelId : label ? `${id}-label` : undefined} aria-describedby={field?.describedBy}>
   {#if label && !field}<span {...part('label')} id="{id}-label">{label}</span>{/if}
   {#if selectAll}
@@ -74,8 +80,18 @@
   <div {...part('items')} data-orientation={orientation} data-indented={selectAll ? '' : undefined}
     onpointerdowncapture={noteShift} onmousedowncapture={noteShift} onkeydowncapture={noteShift}>
     {#each items as item (valueOf(item))}
-      <Checkbox label={labelOf(item)} {name} value={String(valueOf(item))} disabled={isLocked(item)}
-        bind:checked={() => isSelected(item), (checked) => toggle(item, checked === true)} />
+      {#if asCard(item)}
+        <Checkbox {name} value={String(valueOf(item))} disabled={isLocked(item)}
+          bind:checked={() => isSelected(item), (checked) => toggle(item, checked === true)}>
+          <span {...part('card-text')}>
+            {#if item.icon}<iconify-icon {...part('icon')} icon={item.icon} aria-hidden="true"></iconify-icon>{/if}
+            <span><span {...part('card-label')}>{labelOf(item)}</span>{#if item.description}<span {...part('description')}>{item.description}</span>{/if}</span>
+          </span>
+        </Checkbox>
+      {:else}
+        <Checkbox label={labelOf(item)} {name} value={String(valueOf(item))} disabled={isLocked(item)}
+          bind:checked={() => isSelected(item), (checked) => toggle(item, checked === true)} />
+      {/if}
     {/each}
   </div>
 </div>

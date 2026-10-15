@@ -10,11 +10,12 @@
 
   In the rail only its icon shows, and its items open beside it as a flyout:
   on hover, or on click for keyboard and touch. Escape, leaving it or
-  following a link closes it.
+  following a link closes it. It moves up when it would run past the bottom
+  of the window, and scrolls when taller than it.
 -->
 <script>
   import { getContext, setContext } from 'svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf, useShell, useSidebar } from '../utils.js'
   import '../theme.css'
   import './sidebar.css'
@@ -42,6 +43,14 @@
   let root = $state()
   let toggleEl = $state()
   let position = $state({ top: 0, left: 0 })
+  let childrenEl = $state()
+
+  // Moved up when it would run past the bottom of the window.
+  $effect(() => {
+    if (!(rail && flyout) || !childrenEl) return
+    const top = Math.max(8, Math.min(position.top, innerHeight - childrenEl.offsetHeight - 8))
+    if (top !== position.top) position = { ...position, top }
+  })
 
   function showFlyout() {
     if (!rail) return
@@ -80,7 +89,7 @@
     <iconify-icon {...part('indicator')} icon="lucide:chevron-down" aria-hidden="true"></iconify-icon>
   </button>
   {#if rail ? flyout : open}
-    <div {...part('children')} id="{id}-panel" style:--flyout-top="{position.top}px" style:--flyout-left="{position.left}px"
+    <div {...part('children')} bind:this={childrenEl} id="{id}-panel" style:--flyout-top="{position.top}px" style:--flyout-left="{position.left}px"
       onclick={(e) => e.target.closest('a') && (flyout = false)} role="presentation">
       <div {...part('panel')}>
         {#if rail}<div {...part('flyout-heading')} aria-hidden="true">{label}</div>{/if}

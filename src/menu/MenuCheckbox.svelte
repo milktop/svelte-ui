@@ -7,7 +7,7 @@
   - `value`, `icon`, `shortcut`, `disabled` and `keepOpen`: as on MenuItem
 -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import { useMenu, closeFor } from './context.js'
 
   let { checked = $bindable(false), value = undefined, icon = null, shortcut = null, disabled = false, keepOpen = null, children } = $props()
@@ -25,7 +25,7 @@
 </script>
 
 <div {...part('item')} {...menu.api.getOptionItemProps(props)}>
-  <span {...part('indicator')}>
+  <span {...part('indicator')} data-side={menu.indicator}>
     <span {...part('mark')} {...menu.api.getItemIndicatorProps(props)} data-type="checkbox"><iconify-icon icon="lucide:check" aria-hidden="true"></iconify-icon></span>
   </span>
   {#if icon}<iconify-icon {...part('icon')} {icon} aria-hidden="true"></iconify-icon>{/if}

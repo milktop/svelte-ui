@@ -37,14 +37,17 @@ export const canvases = {
 export const sidebars = { shaded: ['Shaded'], white: ['White'] }
 export const widths = { default: ['Default'], wide: ['Wide'], full: ['Full'] }
 export const aligns = { center: ['Centred'], start: ['Left'] }
+// The components' locale (dates, numbers) and words: uiLocale.set(…).
+export const languages = { 'en-GB': ['English (UK)'], 'en-US': ['English (US)'], 'fr-FR': ['Français'] }
 
 // Options for a Segmented or Select: [{ value, label }].
 export const options = (map) => Object.entries(map).map(([value, option]) => ({ value, label: Array.isArray(option) ? option[0] : option.label }))
 
 const KEY = 'svelte-ui:appearance'
-import { colorScheme } from '@milktop/svelte-ui'
+import { untrack } from 'svelte'
+import { colorScheme, appearance as library, accents as scaledAccents, uiLocale } from '@milktop/svelte-ui'
 
-export const defaults = { accent: 'blue', font: 'jakarta', radius: 'default', density: 'default', layout: 'inset', canvas: 'cool', sidebar: 'shaded', width: 'default', align: 'center' }
+export const defaults = { accent: 'blue', font: 'jakarta', radius: 'default', density: 'default', layout: 'inset', canvas: 'cool', sidebar: 'shaded', width: 'default', align: 'center', language: 'en-GB' }
 
 function load() {
   try { return { ...defaults, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') } } catch { return { ...defaults } }
@@ -58,6 +61,8 @@ export const reset = () => {
 }
 
 export const isDark = () => colorScheme.dark
+
+let lastAccent = null
 
 // Applies it to <html> and saves it. Call it from an $effect, which re-runs
 // when anything it reads changes.
@@ -74,7 +79,23 @@ export function applyAppearance() {
     '--ui-control-height': md, '--ui-control-height-sm': sm, '--ui-control-height-lg': lg,
     '--ui-font': (fonts[appearance.font] ?? fonts.jakarta).family,
   }
+  // The library's own accents go through `appearance` (its scale recolours
+  // the accent tokens, and <Appearance> shows the same choice); the
+  // playground's extra ones (amber, neutral) set the tokens directly.
+  if (appearance.accent in scaledAccents) {
+    for (const name of ['--ui-accent', '--ui-accent-text', '--ui-accent-soft', '--ui-accent-soft-text', '--ui-ring', '--ui-ring-soft']) {
+      delete tokens[name]
+      root.style.removeProperty(name)
+    }
+    // Only when this panel's accent changes, so its other settings leave a
+    // choice made in <Appearance> alone
+    if (appearance.accent !== lastAccent) library.load({ accent: appearance.accent, custom: null })
+  }
+  lastAccent = appearance.accent
   for (const [name, value] of Object.entries(tokens)) root.style.setProperty(name, value)
+  // Only when the panel's Language changes (an example may set another for a while).
+  const language = appearance.language
+  untrack(() => { if (uiLocale.locale !== language) uiLocale.set(language) })
 
   // Backgrounds: light mode only, so dark mode's own values apply there.
   const [, canvas, shade] = canvases[appearance.canvas] ?? canvases.cool

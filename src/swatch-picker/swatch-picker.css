@@ -1,0 +1,39 @@
+@layer ui {
+  [data-scope=swatch-picker][data-part=root] { display: block; color: var(--ui-text); font-family: var(--ui-font); --size: 1.75rem;
+    &[data-size=sm] { --size: 1.375rem; }
+    &[data-size=lg] { --size: 2.25rem; } }
+  [data-scope=swatch-picker][data-part=label] { display: block; margin-bottom: 0.375rem; font-size: 14px; font-weight: 500; }
+  [data-scope=swatch-picker][data-part=items] { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+  [data-scope=swatch-picker][data-part=item] { display: inline-flex; cursor: pointer;
+    &[data-disabled] { opacity: 0.4; cursor: not-allowed; } }
+  /* A round swatch; chosen: a ring round it and a tick in it. */
+  [data-scope=swatch-picker][data-part=swatch] { display: grid; place-items: center; width: var(--size); height: var(--size); box-sizing: border-box;
+    border-radius: 9999px; background: var(--swatch); color: white; font-size: calc(var(--size) * 0.5);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, black 12%, transparent); transition: transform 100ms;
+    & iconify-icon { opacity: 0; }
+    [data-part=item]:hover > & { transform: scale(1.08); }
+    &[data-state=checked] { box-shadow: 0 0 0 2px var(--ui-surface), 0 0 0 4px var(--swatch);
+      & iconify-icon { opacity: 1; } }
+    &[data-focus-visible] { outline: 2px solid var(--ui-ring); outline-offset: 3px; } }
+  /* The colour's name, for assistive tech (and the title on hover). */
+  [data-scope=swatch-picker][data-part=item-text] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  /* The popover variant: a field showing the colour, like our inputs. */
+  [data-scope=swatch-picker][data-part=field] { display: block; min-width: 0; color: var(--ui-text); font-family: var(--ui-font); }
+  [data-scope=swatch-picker][data-part=trigger] { display: flex; align-items: center; gap: 0.5rem; width: 100%; min-width: 0; box-sizing: border-box;
+    height: var(--ui-control-height); padding: 0 0.625rem; border: 1px solid var(--ui-field-border); border-radius: var(--ui-radius);
+    background: var(--ui-field-bg); color: var(--ui-text); font: inherit; font-size: 14px; text-align: left; cursor: pointer;
+    &:hover { border-color: var(--ui-field-border-hover); }
+    &:focus-visible, &[aria-expanded=true] { border-color: var(--ui-ring); outline: 2px solid var(--ui-ring-soft); }
+    &[aria-invalid=true] { border-color: var(--ui-danger); }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+    [data-size=sm] > & { height: var(--ui-control-height-sm); font-size: 13px; } }
+  [data-scope=swatch-picker][data-part=chip] { flex-shrink: 0; width: 1.125rem; height: 1.125rem; border-radius: 9999px; background: var(--swatch);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, black 12%, transparent);
+    &[data-empty] { background: repeating-linear-gradient(-45deg, var(--ui-border) 0 2px, transparent 2px 5px); } }
+  [data-scope=swatch-picker][data-part=value] { flex-grow: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    &[data-placeholder] { color: var(--ui-muted); } }
+  [data-scope=swatch-picker][data-part=indicator] { flex-shrink: 0; color: var(--ui-muted); font-size: 16px; }
+  /* In the popover: as wide as its swatches, a few to a row, room around the rings. */
+  [data-scope=popover][data-part=content][data-swatches] { width: auto; padding: 0.75rem; }
+  [data-scope=swatch-picker][data-part=root][data-variant=popover] > [data-part=items] { max-width: 16rem; padding: 0.25rem; }
+}

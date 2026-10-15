@@ -10,13 +10,14 @@
   - `label`: what assistive tech calls the nav ('Breadcrumb')
 -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import Menu from '../menu/Menu.svelte'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './breadcrumbs.css'
 
-  let { items = [], separator = null, max = null, label = 'Breadcrumb', class: className = '', classes = {}, ...rest } = $props()
+  let { items = [], separator = null, max = null, label = null, class: className = '', classes = {}, ...rest } = $props()
 
   const part = partsOf('breadcrumbs', () => classes)
   // The first crumb, a "…" for the folded middle, and the last max - 1.
@@ -27,7 +28,7 @@
     : [items[0], { fold: true }, ...items.slice(items.length - (max - 1))])
 </script>
 
-<nav {...rest} {...part('root')} class={cx(className)} aria-label={label}>
+<nav {...rest} {...part('root')} class={cx(className)} aria-label={label ?? uiLocale.messages.breadcrumbs.label}>
   <ol {...part('list')}>
     {#each shown as item, i}
       {@const current = i === shown.length - 1}
@@ -39,7 +40,7 @@
         {#if item.fold}
           <!-- The folded crumbs, in a menu of links. -->
           <Menu items={hidden.map((crumb, j) => ({ label: crumb.label, value: j, href: crumb.href, icon: crumb.icon }))}>
-            {#snippet trigger(props)}<button {...props} {...part('more')} type="button" aria-label="{hidden.length} more">…</button>{/snippet}
+            {#snippet trigger(props)}<button {...props} {...part('more')} type="button" aria-label={uiLocale.messages.breadcrumbs.more(hidden.length)}>…</button>{/snippet}
           </Menu>
         {:else if item.href && !current}
           <a {...part('link')} href={item.href}>

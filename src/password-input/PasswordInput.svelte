@@ -11,8 +11,9 @@
 <script>
   import * as passwordInput from '@zag-js/password-input'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './password-input.css'
 
@@ -26,6 +27,7 @@
   const id = $props.id()
   const service = useMachine(passwordInput.machine, () => ({
     id, disabled, visible,
+    ...(uiLocale.zag('passwordInput') && { translations: uiLocale.zag('passwordInput') }),
     invalid: !!field?.invalid,
     ids: field ? { input: field.id } : undefined,
     onVisibilityChange: (details) => { visible = details.visible },

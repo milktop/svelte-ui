@@ -8,7 +8,7 @@
   - `color`: tints the marker: 'accent', 'success', 'warning' or 'danger' (grey by default)
 -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf } from '../utils.js'
   import '../theme.css'
   import './timeline.css'

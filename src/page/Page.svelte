@@ -11,9 +11,13 @@
   - `width`: 'narrow', 'default', 'wide' or 'full'
   - `align`: 'center' or 'start'
   - `actions`, `breadcrumbs` snippets
+
+  When the shell scrolls the page rather than the window, the page can take
+  focus (so the keyboard scrolls it) and is marked `scroll-region`, so
+  Inertia resets and restores its scroll on visits as it does the window's.
 -->
 <script>
-  import { cx, partsOf, provideShell } from '../utils.js'
+  import { cx, partsOf, provideShell, useShell } from '../utils.js'
   import '../theme.css'
   import './page.css'
 
@@ -25,12 +29,15 @@
 
   const part = partsOf('page', () => classes)
 
+  const shell = useShell()
+  const scrolling = $derived(shell?.pageScroll ? { tabindex: -1, 'scroll-region': '' } : {})
+
   // What's inside a page isn't the shell's: a Sidebar shown in it (as an
   // example, say) doesn't collapse or turn into a drawer with the app's.
   provideShell(null)
 </script>
 
-<div {...rest} {...part('root')} class={cx(className)} data-width={width} data-align={align}>
+<div {...scrolling} {...rest} {...part('root')} class={cx(className)} data-width={width} data-align={align}>
   <div {...part('inner')}>
     {#if heading || description || actions || breadcrumbs}
       <header {...part('header')}>

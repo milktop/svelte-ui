@@ -1,14 +1,19 @@
 @layer ui {
   [data-scope=sidebar][data-part=root] { display: flex; flex-direction: column; width: var(--ui-sidebar-width); height: 100dvh;
     position: sticky; top: 0; z-index: 35; flex-shrink: 0; box-sizing: border-box; overflow: hidden;
-    background: var(--ui-sidebar-surface); border-right: 1px solid var(--ui-border); font-size: 14px; }
+    background: var(--ui-sidebar-surface); color: var(--ui-sidebar-text); border-right: 1px solid var(--ui-sidebar-border); font-size: 14px; }
   [data-scope=sidebar][data-part=root] {
     transition: width 200ms ease;
+    /* Sticky makes it a stacking context (z-index 35: over the page, under the
+       top bar's popups), so its flyouts can't rise out of it. While it's in
+       use it goes over the top bar, which would otherwise cover those near
+       the top. They're its children, so hovering one still counts. */
+    &:is(:hover, :focus-within) { z-index: 37; }
     /* The rail: icons only. */
     &[data-rail] { width: var(--ui-sidebar-rail-width); }
     /* The drawer, on phones. */
     &[data-mobile] { position: fixed; left: 0; top: 0; bottom: 0; z-index: 50; width: min(18rem, 85vw); display: none;
-      box-shadow: var(--ui-shadow); background: var(--ui-surface); }
+      box-shadow: var(--ui-shadow); background: var(--ui-sidebar-surface); }
     &[data-mobile][data-open] { display: flex; animation: ui-drawer-in 200ms ease-out; } }
   @keyframes ui-drawer-in { from { translate: -100% 0; } }
   [data-scope=sidebar][data-part=header] { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
@@ -21,10 +26,17 @@
     &:focus-visible { outline: 2px solid var(--ui-ring-soft); }
     [data-part=footer] > & { margin: 0 auto; } }
   [data-scope=sidebar][data-part=nav] { display: flex; flex-direction: column; gap: 1rem; flex-grow: 1; overflow-y: auto; padding: 0.5rem; }
-  [data-scope=sidebar][data-part=footer] { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.75rem 0.5rem; flex-shrink: 0; }
+  /* A faint line above the footer (SidebarUser), like the top bar's. */
+  [data-scope=sidebar][data-part=footer] { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.75rem 0.5rem; flex-shrink: 0;
+    border-top: 1px solid var(--ui-sidebar-divider); }
 
   [data-scope=nav-section][data-part=root] { display: flex; flex-direction: column; gap: 0.125rem; }
-  [data-scope=nav-section][data-part=heading-row] { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; height: 1.5rem; padding-right: 0.25rem; }
+  [data-scope=nav-section][data-part=heading-row] { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; height: 1.5rem; padding-right: 0.25rem;
+    transition: height 150ms, margin 150ms;
+    /* In the rail the heading row shrinks to a divider that keeps sections
+       apart (none above the first), rather than leaving its height as a gap. */
+    [data-rail] & { height: 1px; margin: 0.375rem 0.5rem; background: var(--ui-sidebar-divider); overflow: hidden; }
+    [data-rail] [data-part=root]:first-child > & { display: none; } }
   [data-scope=nav-section][data-part=heading] { display: flex; align-items: center; flex-grow: 1; padding: 0 0.75rem;
     font-size: 12px; font-weight: 600; color: var(--ui-sidebar-heading); white-space: nowrap; overflow: hidden; }
   [data-scope=nav-section][data-part=collapse-all] { display: grid; place-items: center; width: 1.5rem; height: 1.5rem; padding: 0;
@@ -48,7 +60,8 @@
     &:focus-visible { outline: 2px solid var(--ui-ring-soft); outline-offset: -2px; }
     [data-active] > & { background: var(--ui-sidebar-active); color: var(--ui-sidebar-active-text);
       font-weight: var(--ui-sidebar-active-weight); box-shadow: var(--ui-sidebar-active-shadow); } }
-  [data-scope=nav-item][data-part=icon] { font-size: 16px; width: 1rem; height: 1rem; flex-shrink: 0; }
+  [data-scope=nav-item][data-part=icon] { font-size: 16px; width: 1rem; height: 1rem; flex-shrink: 0;
+    [data-active] > [data-part=link] > & { color: var(--ui-sidebar-active-icon); } }
   [data-scope=nav-item][data-part=text] { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; }
   [data-scope=nav-item][data-part=badge] { flex-shrink: 0; min-width: 1.25rem; height: 1.25rem; padding: 0 0.375rem; box-sizing: border-box;
     display: inline-flex; align-items: center; justify-content: center; border-radius: 9999px;
@@ -70,20 +83,25 @@
     [data-flyout] > & { background: var(--ui-sidebar-active); color: var(--ui-sidebar-active-text); box-shadow: var(--ui-sidebar-active-shadow); } }
   [data-scope=nav-group][data-part=icon] { font-size: 16px; width: 1rem; height: 1rem; flex-shrink: 0; }
   [data-scope=nav-group][data-part=text] { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; }
-  [data-scope=nav-group][data-part=indicator] { color: var(--ui-muted); font-size: 14px; transition: rotate 200ms;
+  [data-scope=nav-group][data-part=indicator] { color: var(--ui-sidebar-muted); font-size: 14px; transition: rotate 200ms;
     [data-open] > [data-part=trigger] > & { rotate: 180deg; } }
   [data-scope=nav-group][data-part=panel] { display: flex; flex-direction: column; gap: 0.125rem;
-    margin: 0.125rem 0 0 1.25rem; padding-left: 0.5rem; border-left: 1px solid var(--ui-border); }
+    margin: 0.125rem 0 0 1.25rem; padding-left: 0.5rem; border-left: 1px solid var(--ui-sidebar-border); }
 
   /* In the rail: a panel beside the toggle. The wrapper's left padding
      bridges the gap, so the pointer can cross to it without closing it. */
   [data-scope=nav-group][data-part=children] {
     [data-rail] > & { position: fixed; top: var(--flyout-top); left: var(--flyout-left); z-index: 50; padding-left: 0.5rem; } }
   [data-scope=nav-group][data-part=panel] {
-    [data-rail] > [data-part=children] > & { margin: 0; padding: 0.375rem; min-width: 11rem; border: 1px solid var(--ui-border);
-      border-radius: calc(var(--ui-radius) + 2px); background: var(--ui-surface); box-shadow: var(--ui-shadow); animation: ui-flyout-in 120ms ease-out;
-      /* On the white flyout, the plain (not inset) colours again. */
-      --ui-sidebar-hover: var(--ui-hover); --ui-sidebar-active: var(--ui-hover); --ui-sidebar-active-shadow: none; } }
+    [data-rail] > [data-part=children] > & { margin: 0; padding: 0.375rem; min-width: 11rem; max-height: calc(100vh - 16px); box-sizing: border-box;
+      overflow-y: auto; border: 1px solid var(--ui-border); border-radius: calc(var(--ui-radius) + 2px); background: var(--ui-surface);
+      box-shadow: var(--ui-shadow); animation: ui-flyout-in 120ms ease-out;
+      /* On the white flyout, the plain (not inset) colours again, and the
+         page's text colours, should the sidebar be coloured. */
+      --ui-sidebar-hover: var(--ui-hover); --ui-sidebar-active: var(--ui-hover); --ui-sidebar-active-shadow: none;
+      --ui-sidebar-text: var(--ui-text); --ui-sidebar-muted: var(--ui-muted); --ui-sidebar-border: var(--ui-border); --ui-sidebar-divider: var(--ui-border);
+      --ui-sidebar-item-text: var(--ui-muted); --ui-sidebar-hover-text: var(--ui-text); --ui-sidebar-active-text: var(--ui-text);
+      color: var(--ui-text); } }
   [data-scope=nav-group][data-part=flyout-heading] { padding: 0.25rem 0.75rem 0.375rem; font-size: 12px; font-weight: 600; color: var(--ui-muted); }
   /* Inside the flyout, items show their labels again. */
   [data-scope=sidebar][data-rail] [data-part=panel] :is([data-scope=nav-item][data-part=link]) { justify-content: flex-start; padding: var(--ui-sidebar-item-padding); }
@@ -92,7 +110,7 @@
 
   [data-scope=sidebar-user][data-part=root] { display: block; width: 100%; }
   [data-scope=sidebar-user][data-part=trigger] { display: flex; align-items: center; gap: 0.625rem; width: 100%; padding: 0.375rem; box-sizing: border-box;
-    border: none; border-radius: var(--ui-radius); background: transparent; color: var(--ui-text); font-family: inherit; font-size: 13px;
+    border: none; border-radius: var(--ui-radius); background: transparent; color: var(--ui-sidebar-text); font-family: inherit; font-size: 13px;
     text-align: left; white-space: nowrap; cursor: pointer;
     &:hover { background: var(--ui-sidebar-hover); }
     &:focus-visible { outline: 2px solid var(--ui-ring-soft); outline-offset: -2px; }
@@ -101,9 +119,52 @@
   [data-scope=sidebar-user][data-part=text] { display: flex; flex-direction: column; flex-grow: 1; min-width: 0; line-height: 1.3;
     [data-rail] > [data-part=trigger] > & { display: none; } }
   [data-scope=sidebar-user][data-part=name] { font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
-  [data-scope=sidebar-user][data-part=description] { font-size: 12px; color: var(--ui-muted); overflow: hidden; text-overflow: ellipsis; }
-  [data-scope=sidebar-user][data-part=indicator] { flex-shrink: 0; color: var(--ui-muted); font-size: 14px;
+  [data-scope=sidebar-user][data-part=description] { font-size: 12px; color: var(--ui-sidebar-muted); overflow: hidden; text-overflow: ellipsis; }
+  [data-scope=sidebar-user][data-part=indicator] { flex-shrink: 0; color: var(--ui-sidebar-muted); font-size: 14px;
     [data-rail] > [data-part=trigger] > & { display: none; } }
   /* As wide as the trigger when it opens upwards, and never narrower than 13rem. */
   [data-scope=sidebar-user] [data-scope=menu][data-part=content] { min-width: max(13rem, var(--reference-width)); }
+
+  /* The sidebar styles `appearance` sets (data-ui-sidebar-style on <html>):
+     the sidebar tokens for both layouts (the plain one's surface and the
+     inset one's background), in light mode. They're set on the sidebar
+     itself, so they win over tokens set on <html>. */
+  /* Grey, the current page's icon in the accent (neutral-accent: the old
+     name, which a page may still paint before the bundle loads). */
+  :root:not(.dark):is([data-ui-sidebar-style=neutral], [data-ui-sidebar-style=neutral-accent]) [data-scope=sidebar][data-part=root] {
+    --ui-sidebar-hover: #eef0f3; --ui-sidebar-inset-hover: #eef0f3;
+    --ui-sidebar-active: #e6e9ee; --ui-sidebar-inset-active: #e6e9ee; --ui-sidebar-inset-active-shadow: none;
+    --ui-sidebar-active-icon: var(--ui-accent); }
+  :root:not(.dark)[data-ui-sidebar-style=soft] [data-scope=sidebar][data-part=root] {
+    --ui-sidebar-hover: var(--ui-accent-soft); --ui-sidebar-inset-hover: var(--ui-accent-soft);
+    --ui-sidebar-active: var(--ui-accent-soft); --ui-sidebar-inset-active: var(--ui-accent-soft); --ui-sidebar-inset-active-shadow: none; }
+  :root:not(.dark)[data-ui-sidebar-style=tint] [data-scope=sidebar][data-part=root] {
+    --ui-sidebar-surface: var(--ui-accent-50); --ui-sidebar-bg: var(--ui-accent-50);
+    --ui-sidebar-hover: color-mix(in srgb, var(--ui-accent-100) 60%, transparent);
+    --ui-sidebar-inset-hover: color-mix(in srgb, var(--ui-accent-100) 60%, transparent);
+    --ui-sidebar-active: var(--ui-accent-100); --ui-sidebar-inset-active: var(--ui-accent-100); --ui-sidebar-inset-active-shadow: none;
+    --ui-sidebar-active-text: var(--ui-accent-800); }
+  /* The coloured ones: white text and translucent white hovers. */
+  :root:not(.dark):is([data-ui-sidebar-style=accent], [data-ui-sidebar-style=dark], [data-ui-sidebar-style=deep]) [data-scope=sidebar][data-part=root] {
+    --ui-sidebar-text: white; --ui-sidebar-muted: rgba(255, 255, 255, 0.6);
+    --ui-sidebar-border: transparent; --ui-sidebar-divider: rgba(255, 255, 255, 0.12);
+    --ui-sidebar-item-text: rgba(255, 255, 255, 0.88); --ui-sidebar-heading: rgba(255, 255, 255, 0.55); --ui-sidebar-icon: rgba(255, 255, 255, 0.7);
+    --ui-sidebar-hover-text: white; --ui-sidebar-active-text: white;
+    --ui-sidebar-hover: rgba(255, 255, 255, 0.08); --ui-sidebar-inset-hover: rgba(255, 255, 255, 0.08);
+    --ui-sidebar-active-shadow: none; --ui-sidebar-inset-active-shadow: none; }
+  :root:not(.dark)[data-ui-sidebar-style=accent] [data-scope=sidebar][data-part=root] {
+    --ui-sidebar-surface: var(--ui-accent-600); --ui-sidebar-bg: var(--ui-accent-600);
+    --ui-sidebar-item-text: white; --ui-sidebar-heading: rgba(255, 255, 255, 0.7); --ui-sidebar-icon: rgba(255, 255, 255, 0.85);
+    /* Like the dark ones (below), a little stronger on the lighter colour. */
+    --ui-sidebar-hover: rgba(255, 255, 255, 0.1); --ui-sidebar-inset-hover: rgba(255, 255, 255, 0.1);
+    --ui-sidebar-active: rgba(255, 255, 255, 0.18); --ui-sidebar-inset-active: rgba(255, 255, 255, 0.18); }
+  /* The dark ones: the current page a stronger version of the hover, so it
+     stays quiet whatever the accent. */
+  :root:not(.dark):is([data-ui-sidebar-style=dark], [data-ui-sidebar-style=deep]) [data-scope=sidebar][data-part=root] {
+    --ui-sidebar-hover: rgba(255, 255, 255, 0.06); --ui-sidebar-inset-hover: rgba(255, 255, 255, 0.06);
+    --ui-sidebar-active: rgba(255, 255, 255, 0.12); --ui-sidebar-inset-active: rgba(255, 255, 255, 0.12); }
+  :root:not(.dark)[data-ui-sidebar-style=dark] [data-scope=sidebar][data-part=root] {
+    --ui-sidebar-surface: var(--ui-accent-900); --ui-sidebar-bg: var(--ui-accent-900); }
+  :root:not(.dark)[data-ui-sidebar-style=deep] [data-scope=sidebar][data-part=root] {
+    --ui-sidebar-surface: var(--ui-accent-950); --ui-sidebar-bg: var(--ui-accent-950); }
 }

@@ -10,6 +10,13 @@
 
   - `inset`: the page as a rounded panel on a frame, with a grey sidebar
     whose hovered and current items go white (the `--ui-sidebar-inset-*` tokens)
+  - `scroll`: what scrolls on wide screens: 'window' (default) or 'page',
+    where the shell fills the viewport and only the page scrolls. `inset`
+    always scrolls the page there. Phones scroll the window either way, so
+    the browser can hide its toolbars. The page then takes focus, so Space
+    and the arrow keys scroll it straight away, prints in full, and is marked
+    `scroll-region` for Inertia's scroll resets. Listen for scrolling on the
+    page (`useShell().scroller()` in the shell's parts), not the window.
   - `collapsed`: bindable; the sidebar as an icon rail
   - `persist`: a localStorage key to remember `collapsed`
   - `breakpoint`: below this width (768px) the sidebar is a drawer, opened
@@ -25,7 +32,7 @@
   import './app-shell.css'
 
   let {
-    inset = false, collapsed = $bindable(false), persist = null, breakpoint = 768, shortcut = true,
+    inset = false, scroll = 'window', collapsed = $bindable(false), persist = null, breakpoint = 768, shortcut = true,
     class: className = '', classes = {}, children, ...rest
   } = $props()
 
@@ -41,6 +48,10 @@
   let mobile = $state(false)
   let drawerOpen = $state(false)
   const rail = $derived(collapsed && !mobile)
+  // Only the page scrolls (see `scroll`).
+  const pageScroll = $derived(!mobile && (inset || scroll === 'page'))
+  let root = $state()
+  const page = () => root?.querySelector(':scope > [data-scope=page]') ?? null
 
   $effect(() => {
     const query = matchMedia(`(max-width: ${breakpoint - 1}px)`)
@@ -72,6 +83,8 @@
     get rail() { return rail },
     get mobile() { return mobile },
     get drawerOpen() { return drawerOpen },
+    get pageScroll() { return pageScroll },
+    scroller: () => (pageScroll && page()) || document.scrollingElement,
     toggle,
     close: () => (drawerOpen = false),
   })
@@ -82,13 +95,37 @@
       e.preventDefault()
       toggle()
     } else if (e.key === 'Escape' && drawerOpen) drawerOpen = false
+    else if (pageScroll && !e.defaultPrevented) {
+      const el = page()
+      if (el) scrollKey(e, el)
+    }
+  }
+
+  // The keys that scroll the window do nothing for the page while nothing is
+  // focused, and Chrome ignores them on the page itself (focusable, see Page):
+  // they scroll it here, and focus it. Focus inside the page leaves them to
+  // the browser (fields, nested scrollers).
+  function scrollKey(e, page) {
+    if (![null, document.body, document.documentElement, page].includes(document.activeElement)) return
+    if (e.altKey || e.ctrlKey || e.metaKey) return
+    const step = page.clientHeight * 0.875
+    const top = {
+      ArrowDown: 40, ArrowUp: -40, PageDown: step, PageUp: -step,
+      ' ': e.shiftKey ? -step : step,
+      Home: -page.scrollTop, End: page.scrollHeight,
+    }[e.key]
+    if (top === undefined) return
+    e.preventDefault()
+    page.focus({ preventScroll: true })
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches
+    page.scrollBy({ top, behavior: still ? 'auto' : 'smooth' })
   }
 </script>
 
 <svelte:window {onkeydown} />
 
-<div {...rest} {...part('root')} class={cx(className)} data-inset={inset || undefined}
-  data-rail={rail || undefined} data-mobile={mobile || undefined}>
+<div bind:this={root} {...rest} {...part('root')} class={cx(className)} data-inset={inset || undefined}
+  data-page-scroll={pageScroll || undefined} data-rail={rail || undefined} data-mobile={mobile || undefined}>
   {@render children?.()}
   {#if mobile && drawerOpen}<div {...part('backdrop')} role="presentation" onclick={() => (drawerOpen = false)}></div>{/if}
 </div>

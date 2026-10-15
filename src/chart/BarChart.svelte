@@ -15,7 +15,7 @@
   import { partsOf } from '../utils.js'
 
   let {
-    data = [], x = 'label', y = null, series = null, height = 240, format = null, label = 'Chart', grid = true,
+    data = [], x = 'label', y = null, series = null, height = 240, format = null, label = null, grid = true,
     stacked = false, classes = {}, ...rest
   } = $props()
 

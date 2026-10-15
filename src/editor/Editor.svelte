@@ -50,12 +50,13 @@
   import { Editor } from '@tiptap/core'
   import StarterKit from '@tiptap/starter-kit'
   import { Placeholder, CharacterCount } from '@tiptap/extensions'
-  import 'iconify-icon'
+  import '../icons.js'
   import { RichImage } from './image.js'
   import Popover from '../popover/Popover.svelte'
   import Input from '../input/Input.svelte'
   import Button from '../button/Button.svelte'
   import { cx, partsOf, useField } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './editor.css'
 
@@ -202,14 +203,14 @@
 <div {...rest} {...part('root')} class={cx(className)} data-focused={focused || undefined} data-disabled={disabled || undefined}
   data-invalid={field?.invalid || undefined}>
   {#if toolbar && !disabled}
-    <div {...part('toolbar')} role="toolbar" aria-label="Formatting">
+    <div {...part('toolbar')} role="toolbar" aria-label={uiLocale.messages.editor.toolbar}>
       {#each tools as name, i (name === '|' ? `d${i}` : name)}
         {#if name === '|'}
           <span {...part('divider')}></span>
         {:else if name === 'link'}
           <Popover placement="bottom-start" bind:open={linkOpen}>
             {#snippet trigger(props)}
-              <button {...props} {...part('tool')} type="button" aria-label="Link" aria-pressed={linkActive} onmousedown={(e) => e.preventDefault()}>
+              <button {...props} {...part('tool')} type="button" aria-label={uiLocale.messages.editor.link} aria-pressed={linkActive} onmousedown={(e) => e.preventDefault()}>
                 <iconify-icon icon="lucide:link" aria-hidden="true"></iconify-icon>
               </button>
             {/snippet}
@@ -223,7 +224,7 @@
           </Popover>
         {:else if name === 'image'}
           {#if uploadImage}
-            <label {...part('tool')} aria-label="Image" onmousedown={(e) => e.preventDefault()}>
+            <label {...part('tool')} aria-label={uiLocale.messages.editor.image} onmousedown={(e) => e.preventDefault()}>
               <input {...part('image-input')} type="file" accept="image/*" multiple onchange={pickedImages} />
               <iconify-icon icon="lucide:image" aria-hidden="true"></iconify-icon>
             </label>
@@ -239,6 +240,6 @@
     </div>
   {/if}
   <div {...part('content')} bind:this={contentEl} style:--min-height={minHeight} style:--max-height={maxHeight ?? 'none'}></div>
-  {#if uploading}<div {...part('uploading')}>Uploading…</div>{/if}
+  {#if uploading}<div {...part('uploading')}>{uiLocale.messages.editor.uploading}</div>{/if}
   {#if maxLength}<div {...part('count')} data-over={characters >= maxLength || undefined}>{characters} / {maxLength}</div>{/if}
 </div>

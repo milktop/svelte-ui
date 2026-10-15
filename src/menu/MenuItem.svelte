@@ -9,7 +9,7 @@
   - `onclick`: runs when it's chosen, by pointer or keyboard
 -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import { useMenu, closeFor } from './context.js'
   import { cx } from '../utils.js'
 

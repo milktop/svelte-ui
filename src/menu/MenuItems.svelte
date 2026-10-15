@@ -1,7 +1,7 @@
 <!-- Renders a menu's `items` array: actions, links, separators, group
      headings, checkbox and radio entries, and submenus. Internal. -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import Submenu from './Submenu.svelte'
   import { useMenu, labelOf, valueOf, disabledOf, isOption, isSubmenu, closeFor } from './context.js'
 
@@ -52,9 +52,9 @@
   {:else if isOption(item)}
     {@const props = optionProps(item)}
     <div {...part('item')} {...menu.api.getOptionItemProps(props)} data-danger={item.danger || undefined}>
-      <span {...part('indicator')}>
+      <span {...part('indicator')} data-side={menu.indicator}>
         <span {...part('mark')} {...menu.api.getItemIndicatorProps(props)} data-type={item.type}>
-          {#if item.type === 'checkbox'}<iconify-icon icon="lucide:check" aria-hidden="true"></iconify-icon>{/if}
+          {#if item.type === 'checkbox' || menu.indicator === 'end'}<iconify-icon icon="lucide:check" aria-hidden="true"></iconify-icon>{/if}
         </span>
       </span>
       {#if item.icon}<iconify-icon {...part('icon')} icon={item.icon} aria-hidden="true"></iconify-icon>{/if}

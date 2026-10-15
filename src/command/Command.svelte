@@ -36,15 +36,16 @@
   import * as listbox from '@zag-js/listbox'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
   import { tick, untrack } from 'svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import { Presence, portal } from '../presence.svelte.js'
   import '../theme.css'
   import './command.css'
 
   let {
-    open = $bindable(false), items = [], label = 'Command menu', placeholder = 'Type a command or search…',
-    emptyText = 'No results', loadingText = 'Searching…', hotkey = 'k', load = null, debounce = 200, navigate = null,
+    open = $bindable(false), items = [], label = null, placeholder = null,
+    emptyText = null, loadingText = null, hotkey = 'k', load = null, debounce = 200, navigate = null,
     hints = true, onselect = null, trigger = null, class: className = '', classes = {}, ...rest
   } = $props()
 
@@ -179,21 +180,21 @@
     <div {...api.getPositionerProps()} {...part('positioner')}>
       <div {...rest} {...api.getContentProps()} {...part('content')} hidden={false} class={cx(className)} onanimationend={presence.done}>
         <!-- Hidden, yet still the dialog's and list's names: aria-labelledby reads hidden elements. -->
-        <h2 {...api.getTitleProps()} {...part('title')} hidden>{label}</h2>
+        <h2 {...api.getTitleProps()} {...part('title')} hidden>{label ?? uiLocale.messages.command.label}</h2>
         <div {...part('root')} {...list.getRootProps()}>
-          <span {...list.getLabelProps()} {...part('list-label')} hidden>{label}</span>
+          <span {...list.getLabelProps()} {...part('list-label')} hidden>{label ?? uiLocale.messages.command.label}</span>
           <div {...part('search')}>
             <iconify-icon {...part('search-icon')} icon="lucide:search" aria-hidden="true"></iconify-icon>
-            <input {...part('input')} {...list.getInputProps({ autoHighlight: true })} bind:this={inputEl} type="text" {placeholder}
+            <input {...part('input')} {...list.getInputProps({ autoHighlight: true })} bind:this={inputEl} type="text" placeholder={placeholder ?? uiLocale.messages.command.placeholder}
               oninput={(e) => search(e.target.value)} />
-            <kbd {...part('key')} data-esc>Esc</kbd>
+            <kbd {...part('key')} data-esc>{uiLocale.messages.command.esc}</kbd>
           </div>
           <div {...part('list')} {...list.getContentProps()} bind:this={listEl}>
             <!-- Earlier results stay while a search runs. -->
             {#if loading && !results.length}
-              <div {...part('status')}>{loadingText}</div>
+              <div {...part('status')}>{loadingText ?? uiLocale.messages.command.loading}</div>
             {:else if !results.length}
-              <div {...part('status')}>{emptyText}</div>
+              <div {...part('status')}>{emptyText ?? uiLocale.messages.command.empty}</div>
             {:else}
               {#each groups as group, i}
                 <div {...part('group')} {...list.getItemGroupProps({ id: `g${i}` })}>

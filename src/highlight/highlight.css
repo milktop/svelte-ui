@@ -1,0 +1,17 @@
+@layer ui {
+  mark[data-scope=highlight][data-part=mark] { padding: 0 0.0625em; border-radius: 2px; background: var(--ui-highlight);
+    color: inherit; font-weight: 600;
+    /* Named colours: a see-through tint, so the text keeps its own colour. */
+    &[data-color] { background: color-mix(in srgb, var(--highlight-color) 32%, transparent); }
+    &[data-color=yellow] { --highlight-color: #facc15; }
+    &[data-color=amber] { --highlight-color: #f59e0b; }
+    &[data-color=orange] { --highlight-color: #f97316; }
+    &[data-color=red] { --highlight-color: #ef4444; }
+    &[data-color=green] { --highlight-color: #22c55e; }
+    &[data-color=teal] { --highlight-color: #14b8a6; }
+    &[data-color=blue] { --highlight-color: #3b82f6; }
+    &[data-color=purple] { --highlight-color: #a855f7; }
+    &[data-color=pink] { --highlight-color: #ec4899; }
+    &[data-color=gray] { --highlight-color: #71717a; }
+    :root.dark &[data-color], [data-theme=dark] &[data-color] { background: color-mix(in srgb, var(--highlight-color) 42%, transparent); } }
+}

@@ -14,20 +14,23 @@
   - `color`: 'accent' (default), 'gray', 'red', 'orange', 'amber', 'green',
     'teal', 'blue', 'purple' or 'pink'; 'auto' picks one from the name, so the
     same person always gets the same colour
+  - `status`: a dot on its corner: 'online', 'away', 'busy' or 'offline'
+    (or any CSS colour); `statusLabel` says it for assistive tech
   - `tooltip`: true shows the name on hover (handy in a stack), or a string
     shows that instead
 -->
 <script>
   import * as avatar from '@zag-js/avatar'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import Tooltip from '../tooltip/Tooltip.svelte'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './avatar.css'
 
   let {
-    src = null, name = null, letters = 2, size = 'md', square = false, color = 'accent', tooltip = null,
+    src = null, name = null, letters = 2, size = 'md', square = false, color = 'accent', tooltip = null, status = null, statusLabel = null,
     class: className = '', classes = {}, ...rest
   } = $props()
 
@@ -58,10 +61,11 @@
   })
 
   const tip = $derived(tooltip === true ? name : tooltip || null)
+  const presets = ['online', 'away', 'busy', 'offline']
 </script>
 
 <span {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)}
-  data-size={custom ? 'custom' : size} data-square={square || undefined} data-color={tone} style:--avatar-size={custom}>
+  data-size={custom ? 'custom' : size} data-square={square || undefined} data-color={tone} data-has-status={status ? '' : undefined} style:--avatar-size={custom}>
   {#if src}<img {...part('image')} {...api.getImageProps()} {src} alt={name ?? ''} />{/if}
   <span {...part('fallback')} {...api.getFallbackProps()} aria-hidden={name ? undefined : 'true'}>
     {#if initials}{initials}{:else}<iconify-icon {...part('person')} icon="lucide:user"></iconify-icon>{/if}
@@ -69,5 +73,9 @@
   <!-- The tooltip's trigger is a layer over the whole avatar, which carries Zag's root props. -->
   {#if tip}
     <Tooltip content={tip}>{#snippet trigger(props)}<span {...props} {...part('tooltip-target')}></span>{/snippet}</Tooltip>
+  {/if}
+  {#if status}
+    <span {...part('status')} data-status={presets.includes(status) ? status : 'custom'} role="img"
+      aria-label={statusLabel ?? uiLocale.messages.avatar.status[status] ?? status} style:background={presets.includes(status) ? undefined : status}></span>
   {/if}
 </span>

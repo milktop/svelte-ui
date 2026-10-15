@@ -12,8 +12,9 @@
 <script>
   import * as fileUpload from '@zag-js/file-upload'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './file-upload.css'
 
@@ -27,6 +28,7 @@
   const id = $props.id()
   const service = useMachine(fileUpload.machine, () => ({
     id, name, disabled, accept, maxFiles, maxFileSize, acceptedFiles: files,
+    ...(uiLocale.zag('fileUpload') && { translations: uiLocale.zag('fileUpload') }),
     invalid: !!field?.invalid,
     onFileChange: (details) => { files = details.acceptedFiles },
   }))
@@ -35,14 +37,13 @@
   const urls = new WeakMap()
   const urlOf = (file) => urls.get(file) ?? urls.set(file, URL.createObjectURL(file)).get(file)
   const size = (bytes) => bytes < 1024 ? `${bytes} B` : bytes < 1048576 ? `${Math.round(bytes / 1024)} KB` : `${(bytes / 1048576).toFixed(1)} MB`
-  const reasons = { FILE_INVALID_TYPE: 'Not an allowed type', FILE_TOO_LARGE: 'Too large', TOO_MANY_FILES: 'Too many files', FILE_TOO_SMALL: 'Too small' }
 </script>
 
 <div {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)}>
   {#if label && !field}<label {...part('label')} {...api.getLabelProps()}>{label}</label>{/if}
   <div {...part('dropzone')} {...api.getDropzoneProps()} {...fieldAttrs(field)}>
     <iconify-icon {...part('icon')} icon="lucide:upload" aria-hidden="true"></iconify-icon>
-    <span {...part('prompt')}>Drop {maxFiles > 1 ? 'files' : 'a file'} here or <button {...part('browse')} {...api.getTriggerProps()}>browse</button></span>
+    <span {...part('prompt')}>{uiLocale.messages.fileUpload.prompt(maxFiles > 1)} <button {...part('browse')} {...api.getTriggerProps()}>{uiLocale.messages.fileUpload.browse}</button></span>
     {#if hint}<span {...part('hint')}>{hint}</span>{/if}
   </div>
   <input {...api.getHiddenInputProps()} id={field?.id} />
@@ -64,7 +65,7 @@
         <li {...part('file')} {...api.getItemProps({ file, type: 'rejected' })} data-rejected>
           <span {...part('preview')} {...api.getItemPreviewProps({ file, type: 'rejected' })}><iconify-icon icon="lucide:file-x" aria-hidden="true"></iconify-icon></span>
           <span {...part('name')} {...api.getItemNameProps({ file, type: 'rejected' })}>{file.name}</span>
-          <span {...part('reason')}>{errors.map((e) => reasons[e] ?? e).join(', ')}</span>
+          <span {...part('reason')}>{errors.map((e) => uiLocale.messages.fileUpload.reasons[e] ?? e).join(', ')}</span>
           <button {...part('remove')} {...api.getItemDeleteTriggerProps({ file, type: 'rejected' })}><iconify-icon icon="lucide:x"></iconify-icon></button>
         </li>
       {/each}

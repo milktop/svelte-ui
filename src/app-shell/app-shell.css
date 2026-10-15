@@ -12,6 +12,11 @@
     &[data-inset][data-mobile] > [data-scope=page] { margin: 0 0.5rem 0.5rem; }
     > [data-scope=topbar] { grid-area: topbar; }
     > [data-scope=page] { grid-area: main; }
+    /* Only the page scrolls; printing lets it run on. */
+    &[data-page-scroll] { height: 100dvh; overflow: hidden;
+      > [data-scope=page] { min-height: 0; overflow-y: auto; overscroll-behavior: contain; outline: none; }
+      @media print { height: auto; overflow: visible;
+        > [data-scope=page] { overflow-y: visible; } } }
 
     /* Inset: the page is a rounded panel on the frame, and the sidebar and top
        bar sit flat around it. The grey sidebar's items go white. */

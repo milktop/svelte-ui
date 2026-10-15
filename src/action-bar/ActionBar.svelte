@@ -19,14 +19,15 @@
   - `label`: the toolbar's accessible name
 -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import { Presence, portal } from '../presence.svelte.js'
   import '../theme.css'
   import './action-bar.css'
 
   let {
-    open = $bindable(false), closable = true, label = 'Selection actions', onclose = null,
+    open = $bindable(false), closable = true, label = null, onclose = null,
     selection = null, class: className = '', classes = {}, children, ...rest
   } = $props()
 
@@ -41,11 +42,11 @@
 
 {#if presence.present}
   <div {@attach portal} {...part('positioner')}>
-    <div {...rest} {...part('content')} class={cx(className)} role="toolbar" aria-label={label} data-state={open ? 'open' : 'closed'}
+    <div {...rest} {...part('content')} class={cx(className)} role="toolbar" aria-label={label ?? uiLocale.messages.actionBar.label} data-state={open ? 'open' : 'closed'}
       onanimationend={presence.done} onkeydown={(e) => e.key === 'Escape' && close()}>
       {#if selection}<div {...part('selection')}>{@render selection()}</div><span {...part('separator')} aria-hidden="true"></span>{/if}
       <div {...part('actions')}>{@render children?.()}</div>
-      {#if closable}<button {...part('close')} type="button" aria-label="Close" onclick={close}><iconify-icon icon="lucide:x"></iconify-icon></button>{/if}
+      {#if closable}<button {...part('close')} type="button" aria-label={uiLocale.messages.common.close} onclick={close}><iconify-icon icon="lucide:x"></iconify-icon></button>{/if}
     </div>
   </div>
 {/if}

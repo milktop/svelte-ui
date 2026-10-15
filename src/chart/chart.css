@@ -28,3 +28,24 @@
   /* Strokes keep their width though the drawing is stretched to fit. */
   [data-scope=sparkline][data-part=line] { stroke-width: 1.75; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
 }
+@layer ui {
+  [data-scope=donut][data-part=root] { display: inline-flex; align-items: center; gap: 1.5rem; max-width: 100%; color: var(--ui-text); font-family: var(--ui-font); font-size: 13px;
+    &[data-legend=bottom] { flex-direction: column; gap: 1rem; } }
+  [data-scope=donut][data-part=frame] { position: relative; flex-shrink: 0; }
+  [data-scope=donut][data-part=svg] { display: block; overflow: visible; }
+  [data-scope=donut][data-part=slice] { transition: opacity 120ms; cursor: default;
+    &[data-dim] { opacity: 0.45; } }
+  [data-scope=donut][data-part=center] { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    pointer-events: none; text-align: center;
+    & strong { font-size: 20px; font-weight: 700; line-height: 1.1; }
+    & span { color: var(--ui-muted); font-size: 12px; } }
+  [data-scope=donut][data-part=legend] { display: flex; flex-direction: column; gap: 0.375rem; margin: 0; padding: 0; list-style: none; min-width: 0;
+    [data-legend=bottom] > & { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 0.375rem 1rem; } }
+  [data-scope=donut][data-part=legend-item] { display: flex; align-items: center; gap: 0.5rem; transition: opacity 120ms;
+    &[data-dim] { opacity: 0.45; } }
+  [data-scope=donut][data-part=swatch] { width: 0.625rem; height: 0.625rem; border-radius: 9999px; flex-shrink: 0; }
+  [data-scope=donut][data-part=legend-label] { flex-grow: 1; color: var(--ui-muted); }
+  [data-scope=donut][data-part=legend-value] { font-weight: 600; font-variant-numeric: tabular-nums;
+    & small { color: var(--ui-muted); font-weight: 400; font-size: 11px; } }
+  [data-scope=donut][data-part=sr-only] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}

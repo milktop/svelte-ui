@@ -58,16 +58,17 @@
 </script>
 
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import Checkbox from '../checkbox/Checkbox.svelte'
   import Skeleton from '../skeleton/Skeleton.svelte'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './table.css'
 
   let {
     columns = [], rows = [], rowKey = 'id', selectable = false, selected = $bindable([]), sort = $bindable(null),
-    manualSort = false, loading = false, loadingRows = 5, emptyText = 'Nothing here yet', maxHeight = null, label = null,
+    manualSort = false, loading = false, loadingRows = 5, emptyText = null, maxHeight = null, label = null,
     size = 'md', flush = false, onrowclick = null, onsortchange = null, empty = null,
     class: className = '', classes = {}, children, ...rest
   } = $props()
@@ -144,7 +145,7 @@
           <tr>
             {#if selectable}
               <th {...part('select-cell')} scope="col">
-                <Checkbox label="Select all rows" labelHidden disabled={!rows.length}
+                <Checkbox label={uiLocale.messages.table.selectAll} labelHidden disabled={!rows.length}
                   bind:checked={() => allState, (on) => toggleAll(on === true)} />
               </th>
             {/if}
@@ -170,14 +171,14 @@
               </tr>
             {/each}
           {:else if !rows.length}
-            <tr><td {...part('empty')} colspan={columnCount}>{#if empty}{@render empty()}{:else}{emptyText}{/if}</td></tr>
+            <tr><td {...part('empty')} colspan={columnCount}>{#if empty}{@render empty()}{:else}{emptyText ?? uiLocale.messages.table.empty}{/if}</td></tr>
           {:else}
             {#each sortedRows as row (keyOf(row))}
               <tr {...part('row')} data-selected={isSelected(row) || undefined} aria-selected={selectable ? String(isSelected(row)) : undefined}
                 onclick={(e) => rowClicked(e, row)}>
                 {#if selectable}
                   <td {...part('select-cell')}>
-                    <Checkbox label="Select {display(row, columns[0])}" labelHidden
+                    <Checkbox label={uiLocale.messages.table.selectRow(display(row, columns[0]))} labelHidden
                       bind:checked={() => isSelected(row), (on) => toggleRow(row, on === true)} />
                   </td>
                 {/if}

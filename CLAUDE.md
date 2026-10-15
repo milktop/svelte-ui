@@ -9,6 +9,15 @@ props, tokens, part names and look. Read `readme.md` first.
 - `src/theme.css`: `--ui-*` tokens (dark under `html.dark`); `src/utils.js`: `cx`, `partsOf`, field, shell and sidebar contexts
 - `src/presence.svelte.js`: `Presence` (keeps a closing part until its animation ends) and `portal` (an attachment moving an element to <body>)
 - `src/color-scheme.svelte.js`: `colorScheme` (light/dark/system, saved, on <html>)
+- `src/appearance.svelte.js`: `appearance` (the accent's 50–950 scale and the
+  sidebar style on <html>, saved); `Appearance` is its panel
+- `src/locale.svelte.js`: `uiLocale` (the app's locale and the components'
+  words, from `src/format/messages.js`, `en` and `fr`); `src/format/format.js`:
+  formatNumber, formatBytes, formatRelative
+- `src/icons.js`: loads iconify-icon with the `--ui-icon-stroke` rule; components
+  import it (`import '../icons.js'`), not iconify-icon itself
+- react-ui (`~/sites/react/ui`) ports the same CSS: its stylesheets are ours
+  plus its changes, so diffing them shows what's new
 - `playground/`: Vite app (`npm run dev`). Pages are listed in `registry.js`;
   examples are `playground/examples/<slug>/<n>-<name>.svelte`, with a leading
   `<!-- Title\n  description -->` comment. The API panel parses the
@@ -58,6 +67,10 @@ API panel reads parts from both through the imports.
 - CSS: `@layer ui`, selectors `[data-scope=x][data-part=y]`. Containers (Card,
   Page) use `>` for modifiers, so they don't reach into nested components.
 - Imports its CSS and `../theme.css` itself.
+- Words: none hardcoded. Default the prop to null and fall back to
+  `uiLocale.messages.<component>.<word>`; Zag's own labels go through
+  `...(uiLocale.zag('<machine>') && { translations: uiLocale.zag('<machine>') })`.
+  Dates and numbers default to `uiLocale.locale`.
 - Inside a Field (`useField()`): skip your own label, pass `ids` to Zag so the
   field's label points at the control, and spread `fieldAttrs(field)` last on it.
 - Snippets for parts people replace (triggers, prev/next, items): render the
@@ -111,3 +124,17 @@ API panel reads parts from both through the imports.
   stay reactive; controlled `value` then works.
 - Field ids come from `$props.id()`; Zag ids options take functions for
   indexed parts (`input: () => id`).
+- Zag's part names don't always match the CSS (tree view's `node-checkbox`
+  and `branch-indent-guide` are styled as `checkbox` and `indent-guide`):
+  spread `part(…)` after Zag's props there.
+- A component holding another control (Attachments' layout switch) inside a
+  Field calls `provideField(null)` after `useField()`, or the inner control
+  takes the field's label.
+- confirm() mounts a Confirm component with Svelte's `mount` into a div on
+  <body>, and unmounts it after Dialog's `onexitcomplete`.
+- EventCalendar's menus open by sending a contextmenu event to a hidden
+  context trigger at the point (Zag places a menu only from that event).
+- A script testing a typed date must type one character per tick (await
+  between them): Svelte writes Zag's input value back after each event.
+- The first visit to a page importing a newly installed package can reload
+  the playground (Vite optimising it); scripts touring the pages stop there.

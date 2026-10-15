@@ -17,8 +17,9 @@
 <script>
   import * as dialog from '@zag-js/dialog'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import { Presence, portal } from '../presence.svelte.js'
   import '../theme.css'
   import './sheet.css'
@@ -45,7 +46,7 @@
     <div {...api.getPositionerProps()} {...part('positioner')} data-side={side}>
       <div {...rest} {...api.getContentProps()} {...part('content')} hidden={false} class={cx(className)} data-side={side} data-size={size}
         onanimationend={presence.done}>
-        {#if closable}<button {...api.getCloseTriggerProps()} {...part('close-trigger')} aria-label="Close"><iconify-icon icon="lucide:x"></iconify-icon></button>{/if}
+        {#if closable}<button {...api.getCloseTriggerProps()} {...part('close-trigger')} aria-label={uiLocale.messages.common.close}><iconify-icon icon="lucide:x"></iconify-icon></button>{/if}
         {#if heading || description}
           <div {...part('header')}>
             {#if heading}<h2 {...api.getTitleProps()} {...part('title')}>{heading}</h2>{/if}

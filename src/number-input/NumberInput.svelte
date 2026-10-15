@@ -14,8 +14,9 @@
 <script>
   import * as numberInput from '@zag-js/number-input'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './number-input.css'
 
@@ -37,7 +38,8 @@
 
   const id = $props.id()
   const service = useMachine(numberInput.machine, () => ({
-    id, name, disabled, min, max, step, formatOptions, locale, allowMouseWheel,
+    id, name, disabled, min, max, step, formatOptions, locale: locale ?? uiLocale.locale, allowMouseWheel,
+    ...(uiLocale.zag('numberInput') && { translations: uiLocale.zag('numberInput') }),
     invalid: !!field?.invalid,
     ids: field ? { input: field.id, label: field.labelId } : undefined,
     value: text,

@@ -9,25 +9,39 @@
   - `unavailable`: function(CalendarDate) returning true for dates that can't
     be picked (weekends, holidays); they show struck through
 
-  Up and Down in the input step its date by a day (Shift: a week), skipping
-  unavailable ones; on an empty input the first press picks today.
-  - `locale`: for formatting and the first day of the week ('en-GB')
+  - `locale`: for formatting and the first day of the week (the app's, uiLocale)
   - `placement`: where the calendar opens ('bottom-start')
+  - `inline`: just the calendar, always showing (no input or popup), e.g. a
+    month beside a schedule
   - `prev`, `next` snippets: replace those buttons; they get Zag's props
     (spread them onto your button) and the part's classes
+
+  Up and Down in the input step its date by a day (Shift: a week), skipping
+  unavailable ones; on an empty input the first press picks today. Typing
+  puts in the locale's separators (11102026 → 11/10/2026; 11.10.2026 in
+  German); a separator typed by hand, or a pasted date, works too.
+
+  A typed date is taken on Enter or when the input loses focus. One it can't
+  take (past `min` or `max`, `unavailable`, or not a whole date) stays in the
+  input, marked invalid with the reason under it, and the value doesn't
+  change; the input's validity is set too, so a form won't submit with it.
+  - `oninvalidchange`: called with the reason when that happens, and null
+    once the input holds a date it takes (or is cleared)
 -->
 <script>
   import * as datepicker from '@zag-js/date-picker'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import { today, getLocalTimeZone } from '@internationalized/date'
-  import 'iconify-icon'
+  import { today, getLocalTimeZone, DateFormatter } from '@internationalized/date'
+  import { parseDateString } from '@zag-js/date-utils'
+  import '../icons.js'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './date-picker.css'
 
   let {
     label = null, value = $bindable(null), range = false, min = null, max = null, unavailable = null,
-    locale = 'en-GB', placement = 'bottom-start', disabled = false,
+    locale = undefined, placement = 'bottom-start', disabled = false, inline = false, oninvalidchange = null,
     class: className = '', classes = {}, prev = null, next = null, ...rest
   } = $props()
 
@@ -35,8 +49,11 @@
   const part = partsOf('date-picker', () => classes)
 
   const id = $props.id()
+  const currentLocale = $derived(locale ?? uiLocale.locale)
   const service = useMachine(datepicker.machine, () => ({
-    id, locale, disabled,
+    id, locale: currentLocale, disabled,
+    ...(inline && { inline: true }),
+    ...(uiLocale.zag('datePicker') && { translations: uiLocale.zag('datePicker') }),
     invalid: !!field?.invalid,
     // Inside a Field, its label points at our input.
     ids: field ? { input: () => field.id, label: () => field.labelId } : undefined,
@@ -48,6 +65,7 @@
     positioning: { placement },
     // CalendarDate#toString is ISO.
     onValueChange: (details) => {
+      report(null)
       const iso = details.value.map(String)
       value = range ? iso : iso[0] ?? null
     },
@@ -73,22 +91,117 @@
     api.setValue(values)
     return true
   }
+
+  // The input's date pattern for the locale: its fields in order (with how
+  // many digits each takes) and the separator between them ('/', '.', '-').
+  const pattern = $derived.by(() => {
+    const parts = new Intl.DateTimeFormat(currentLocale).formatToParts(new Date(2000, 0, 1))
+    const fields = parts.filter((p) => ['day', 'month', 'year'].includes(p.type)).map((p) => (p.type === 'year' ? 4 : 2))
+    return { fields, separator: parts.find((p) => p.type === 'literal')?.value.trim() || '/' }
+  })
+
+  // Typing at the end: once a field has its digits, the separator goes in
+  // after it; more digits than it takes (pasted in one go) carry on into the
+  // next field; a separator typed straight after one put in is dropped (no
+  // "11//"). Runs before Zag's own handler, which then reads the new value.
+  function separate(e) {
+    const input = e.currentTarget
+    if (e.inputType !== 'insertText' || input.selectionStart !== input.value.length) return
+    const { fields, separator } = pattern
+    if (e.data === separator && input.value.endsWith(separator + separator)) {
+      input.value = input.value.slice(0, -1)
+      return
+    }
+    const pieces = input.value.split(separator)
+    if (!pieces.every((piece) => /^\d*$/.test(piece))) return
+    while (pieces.length < fields.length && pieces.at(-1).length > fields[pieces.length - 1]) {
+      const last = pieces.pop()
+      pieces.push(last.slice(0, fields[pieces.length]), last.slice(fields[pieces.length]))
+    }
+    const index = pieces.length - 1
+    if (index < fields.length - 1 && pieces[index].length === fields[index]) pieces.push('')
+    const next = pieces.join(separator)
+    if (next !== input.value) input.value = next
+  }
+
+  const dateText = (date) => new DateFormatter(currentLocale).format(date.toDate(getLocalTimeZone()))
+
+  // Why a typed date can't be taken, or the date itself (null when empty).
+  function check(input) {
+    const text = input.value.trim()
+    if (!text) return null
+    const t = uiLocale.messages.datePicker
+    const pieces = text.split(pattern.separator)
+    const whole = pieces.length === pattern.fields.length && pieces.every((piece) => /^\d+$/.test(piece))
+    const date = whole ? parseDateString(text, currentLocale, getLocalTimeZone()) : undefined
+    if (!date) return { reason: t.format(input.placeholder) }
+    if (min && date.compare(datepicker.parse(min)) < 0) return { reason: t.min(dateText(datepicker.parse(min))) }
+    if (max && date.compare(datepicker.parse(max)) > 0) return { reason: t.max(dateText(datepicker.parse(max))) }
+    if (api.isUnavailable(date)) return { reason: t.unavailable }
+    return { date }
+  }
+
+  // A typed date it can't take: the reason, shown under the input and set as
+  // its validity (so a form won't submit), until one it takes is chosen.
+  let problem = $state(null)
+  let rootEl = $state()
+  function report(next, input = null) {
+    if (next) input?.setCustomValidity(next.reason)
+    else for (const el of rootEl?.querySelectorAll('[data-part=input]') ?? []) el.setCustomValidity('')
+    if (next?.reason === problem?.reason && next?.index === problem?.index) return
+    problem = next
+    oninvalidchange?.(next ? next.reason : null)
+  }
+
+  // Takes the typed date, or reports why not (Zag would clamp or revert it).
+  function commit(input, index) {
+    const result = check(input)
+    if (!result) { report(null, input); return true }
+    if (result.reason) { report({ index, reason: result.reason }, input); return false }
+    report(null, input)
+    const values = api.value.slice()
+    values[index] = result.date
+    if (range && !values[1 - index]) values[1 - index] = result.date
+    if (range && values[0] && values[1] && values[0].compare(values[1]) > 0) values.reverse()
+    api.setValue(values)
+    return true
+  }
+
+  // Enter takes the typed date only if it can (Zag shows "undefined" for a
+  // part-typed one, 11/1); otherwise it says why.
+  function keydown(e, index, props) {
+    if (e.key === 'Enter') {
+      if (!commit(e.currentTarget, index)) e.preventDefault()
+      return
+    }
+    step(e, index) || props.onkeydown?.(e)
+  }
+
+  // An input's props: the field's description, and the reason it's invalid.
+  function inputProps(index) {
+    const props = { ...api.getInputProps({ index, fixOnBlur: false }), ...fieldAttrs(field) }
+    if (problem?.index !== index) return props
+    return { ...props, 'aria-invalid': 'true', 'aria-describedby': [props['aria-describedby'], `${id}-error`].filter(Boolean).join(' ') }
+  }
 </script>
 
-<div {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)}>
+<div bind:this={rootEl} {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)} data-inline={inline || undefined}>
   {#if label && !field}<label {...part('label')} {...api.getLabelProps()}>{label}</label>{/if}
-  <div {...part('control')} {...api.getControlProps()}>
-    {#each range ? [0, 1] : [0] as index}
-      {@const inputProps = api.getInputProps({ index })}
-      {#if index === 1}<span {...part('separator')}>–</span>{/if}
-      <input {...part('input')} {...inputProps} size="10" {...fieldAttrs(field)}
-        onkeydown={(e) => step(e, index) || inputProps.onkeydown?.(e)} />
-    {/each}
-    <button {...part('clear')} {...api.getClearTriggerProps()}><iconify-icon icon="lucide:x"></iconify-icon></button>
-    <button {...part('trigger')} {...api.getTriggerProps()}><iconify-icon icon="lucide:calendar"></iconify-icon></button>
-  </div>
+  {#if !inline}
+    <div {...part('control')} {...api.getControlProps()}>
+      {#each range ? [0, 1] : [0] as index}
+        {@const props = inputProps(index)}
+        {#if index === 1}<span {...part('separator')}>–</span>{/if}
+        <input {...part('input')} {...props} size="10" oninputcapture={separate}
+          onkeydown={(e) => keydown(e, index, props)} onblur={(e) => { props.onblur?.(e); commit(e.currentTarget, index) }} />
+      {/each}
+      <button {...part('clear')} {...api.getClearTriggerProps()} onclickcapture={() => report(null)}><iconify-icon icon="lucide:x"></iconify-icon></button>
+      <button {...part('trigger')} {...api.getTriggerProps()}><iconify-icon icon="lucide:calendar"></iconify-icon></button>
+    </div>
+    {#if problem}<div {...part('error')} id="{id}-error" role="alert">{problem.reason}</div>{/if}
+  {/if}
 
-  <div {...part('positioner')} {...api.getPositionerProps()}>
+  <div {...part('positioner')} {...(inline ? {} : api.getPositionerProps())}>
     <div {...part('content')} {...api.getContentProps()}>
       <div {...part('view')} {...api.getViewProps({ view })}>
         <div {...part('view-control')} {...api.getViewControlProps({ view })}>

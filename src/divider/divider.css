@@ -1,0 +1,12 @@
+@layer ui {
+  [data-scope=divider][data-part=root] { --line: 1px var(--style, solid) var(--ui-border); color: var(--ui-muted); font-family: var(--ui-font);
+    &[data-variant=dashed] { --style: dashed; }
+    &[data-variant=dotted] { --style: dotted; }
+    &[data-orientation=horizontal] { margin: var(--spacing, 0.75rem) 0; border-top: var(--line);
+      &[data-labelled] { display: flex; align-items: center; gap: 0.75rem; border-top: none;
+        &::before, &::after { content: ''; flex: 1; border-top: var(--line); }
+        &[data-align=start]::before { flex: 0 0 1rem; }
+        &[data-align=end]::after { flex: 0 0 1rem; } } }
+    &[data-orientation=vertical] { align-self: stretch; width: 0; min-height: 1em; margin: 0 var(--spacing, 0.5rem); border-left: var(--line); } }
+  [data-scope=divider][data-part=label] { flex-shrink: 0; font-size: 12px; font-weight: 500; white-space: nowrap; }
+}

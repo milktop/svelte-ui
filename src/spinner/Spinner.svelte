@@ -8,12 +8,13 @@
 -->
 <script>
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './spinner.css'
 
-  let { label = 'Loading', size = 'md', class: className = '', classes = {}, ...rest } = $props()
+  let { label = null, size = 'md', class: className = '', classes = {}, ...rest } = $props()
 
   const part = partsOf('spinner', () => classes)
 </script>
 
-<span {...rest} {...part('root')} class={cx(className)} data-size={size} role="status" aria-label={label}></span>
+<span {...rest} {...part('root')} class={cx(className)} data-size={size} role="status" aria-label={label ?? uiLocale.messages.spinner.label}></span>

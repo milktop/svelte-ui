@@ -1,6 +1,8 @@
 @layer ui {
   [data-scope=tooltip][data-part=trigger] { display: inline-flex; }
-  /* Zag copies the content's z-index onto its positioner. */
+  /* The positioner carries the z-index itself. Zag sets it inline as
+     var(--z-index) but doesn't always fill in the variable, so set both. */
+  [data-scope=tooltip][data-part=positioner] { z-index: 60; --z-index: 60; }
   [data-scope=tooltip][data-part=content] {
     z-index: 60; max-width: 16rem; padding: 0.25rem 0.5rem; white-space: normal; font-weight: 400;
     background: var(--ui-text); color: var(--ui-surface); font-family: var(--ui-font); font-size: 12px; line-height: 1.4;

@@ -10,8 +10,9 @@
   - `end` snippet: actions on the right
 -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf, useShell } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './app-shell.css'
 
@@ -23,7 +24,7 @@
 
 <header {...rest} {...part('root')} class={cx(className)}>
   {#if shell?.mobile}
-    <button {...part('menu')} type="button" aria-label="Open menu" aria-expanded={shell.drawerOpen} onclick={shell.toggle}>
+    <button {...part('menu')} type="button" aria-label={uiLocale.messages.shell.openMenu} aria-expanded={shell.drawerOpen} onclick={shell.toggle}>
       <iconify-icon icon="lucide:menu" aria-hidden="true"></iconify-icon>
     </button>
   {/if}

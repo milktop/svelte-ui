@@ -12,13 +12,14 @@
 <script>
   import * as clipboard from '@zag-js/clipboard'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './copy-button.css'
 
   let {
-    value = '', label = 'Copy', copiedLabel = 'Copied', iconOnly = false, timeout = 2000, oncopy = null,
+    value = '', label = null, copiedLabel = null, iconOnly = false, timeout = 2000, oncopy = null,
     class: className = '', classes = {}, ...rest
   } = $props()
 
@@ -26,10 +27,11 @@
   const id = $props.id()
   const service = useMachine(clipboard.machine, () => ({
     id, value: String(value ?? ''), timeout,
+    ...(uiLocale.zag('clipboard') && { translations: uiLocale.zag('clipboard') }),
     onStatusChange: (details) => { if (details.copied) oncopy?.(value) },
   }))
   const api = $derived(clipboard.connect(service, normalizeProps))
-  const text = $derived(api.copied ? copiedLabel : label)
+  const text = $derived(api.copied ? copiedLabel ?? uiLocale.messages.copyButton.copied : label ?? uiLocale.messages.copyButton.copy)
 </script>
 
 <button {...rest} {...api.getTriggerProps()} {...part('trigger')} class={cx(className)}

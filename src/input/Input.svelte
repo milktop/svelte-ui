@@ -16,7 +16,7 @@
   - `size`: 'sm' or 'md'; `round`: a pill (a search box)
 -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
   import '../theme.css'
   import './input.css'

@@ -13,8 +13,9 @@
   when they appear; the others are role=status.
 -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './alert.css'
 
@@ -36,6 +37,6 @@
     {#if actions}<div {...part('actions')}>{@render actions()}</div>{/if}
   </div>
   {#if ondismiss}
-    <button {...part('close')} type="button" aria-label="Dismiss" onclick={ondismiss}><iconify-icon icon="lucide:x"></iconify-icon></button>
+    <button {...part('close')} type="button" aria-label={uiLocale.messages.common.dismiss} onclick={ondismiss}><iconify-icon icon="lucide:x"></iconify-icon></button>
   {/if}
 </div>

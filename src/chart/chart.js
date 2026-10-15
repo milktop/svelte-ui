@@ -1,4 +1,5 @@
 import { scaleLinear } from 'd3-scale'
+import { formatNumber } from '../format/format.js'
 
 // Charts are SVG drawn by Svelte, with d3 for the maths (scales and shapes).
 // Series take --ui-chart-1…5 in turn, or a `color` of their own ('accent',
@@ -14,7 +15,7 @@ export const seriesOf = (series, y) =>
   (series ?? (y ? [{ key: y, label: y }] : [])).map((s, i) => ({ label: s.key, ...s, color: seriesColor(s.color, i) }))
 
 export const formatter = (format) => (value) =>
-  format ? format(value) : typeof value === 'number' ? value.toLocaleString() : String(value ?? '')
+  format ? format(value) : typeof value === 'number' ? formatNumber(value) : String(value ?? '')
 
 // The plot area inside the axes.
 export const pad = { top: 8, bottom: 24, right: 8 }

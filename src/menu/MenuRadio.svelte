@@ -6,7 +6,7 @@
 -->
 <script>
   import { getContext } from 'svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { useMenu, closeFor } from './context.js'
 
   let { value, icon = null, shortcut = null, disabled = false, keepOpen = null, children } = $props()
@@ -25,7 +25,11 @@
 </script>
 
 <div {...part('item')} {...menu.api.getOptionItemProps(props)}>
-  <span {...part('indicator')}><span {...part('mark')} {...menu.api.getItemIndicatorProps(props)} data-type="radio"></span></span>
+  <span {...part('indicator')} data-side={menu.indicator}>
+    <span {...part('mark')} {...menu.api.getItemIndicatorProps(props)} data-type="radio">
+      {#if menu.indicator === 'end'}<iconify-icon icon="lucide:check" aria-hidden="true"></iconify-icon>{/if}
+    </span>
+  </span>
   {#if icon}<iconify-icon {...part('icon')} {icon} aria-hidden="true"></iconify-icon>{/if}
   <span {...part('label')} bind:this={labelEl}>{@render children?.()}</span>
   {#if shortcut}<kbd {...part('shortcut')}>{shortcut}</kbd>{/if}

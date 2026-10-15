@@ -1,0 +1,29 @@
+@layer ui {
+  [data-scope=sortable-list][data-part=root] { display: block; width: 100%; color: var(--ui-text); font-family: var(--ui-font); font-size: 14px; }
+  [data-scope=sortable-list][data-part=list] { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none;
+    [data-variant=card] > & { background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: calc(var(--ui-radius) + 2px);
+      box-shadow: var(--ui-card-shadow); }
+    [data-variant=plain] > & { gap: 0.5rem; } }
+  [data-scope=sortable-list][data-part=item] { position: relative; display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0.75rem;
+    background: var(--ui-surface); box-sizing: border-box; outline: none; user-select: none;
+    [data-variant=card] > [data-part=list] > & { border-bottom: 1px solid var(--ui-border);
+      &:first-child { border-radius: calc(var(--ui-radius) + 2px) calc(var(--ui-radius) + 2px) 0 0; }
+      &:last-child { border-bottom: none; border-radius: 0 0 calc(var(--ui-radius) + 2px) calc(var(--ui-radius) + 2px); } }
+    [data-variant=plain] > [data-part=list] > & { border: 1px solid var(--ui-border); border-radius: calc(var(--ui-radius) + 2px); }
+    /* The rows it passes slide out of its way. */
+    &[data-shifting] { transition: transform 150ms ease; }
+    /* The whole row is the handle (handle={false}): it shows it can be grabbed. */
+    &[role=button] { cursor: grab; touch-action: none;
+      &:focus-visible { outline: 2px solid var(--ui-ring-soft); outline-offset: -2px; } }
+    /* Lifted while it's dragged (or picked up), above the others. */
+    &[data-dragging] { z-index: 1; border-radius: calc(var(--ui-radius) + 2px); box-shadow: var(--ui-shadow); cursor: grabbing; }
+    [data-disabled] & { user-select: auto; } }
+  [data-scope=sortable-list][data-part=handle] { display: grid; place-items: center; flex-shrink: 0; width: 1.5rem; height: 1.75rem; margin-left: -0.25rem;
+    padding: 0; border: none; border-radius: calc(var(--ui-radius) - 2px); background: transparent; color: var(--ui-muted);
+    font-size: 16px; cursor: grab; touch-action: none;
+    &:hover { background: var(--ui-hover); color: var(--ui-text); }
+    &:focus-visible { outline: 2px solid var(--ui-ring-soft); }
+    [data-dragging] & { cursor: grabbing; } }
+  [data-scope=sortable-list][data-part=content] { flex-grow: 1; min-width: 0; }
+  [data-scope=sortable-list][data-part=sr-only] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}

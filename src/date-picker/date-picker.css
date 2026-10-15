@@ -2,11 +2,14 @@
    table-cell-trigger…); the `classes` prop uses the short ones (prev, cell). */
 @layer ui {
   [data-scope=date-picker][data-part=root] { display: inline-block; position: relative;
-    color: var(--ui-text); font-family: var(--ui-font); }
+    color: var(--ui-text); font-family: var(--ui-font);
+    /* The calendar's own width, even where a grid or flex column would stretch it. */
+    &[data-inline] { width: fit-content; } }
   [data-scope=date-picker][data-part=label] { display: block; font-size: 14px; font-weight: 500; margin-bottom: 0.375rem; }
   [data-scope=date-picker][data-part=control] { display: flex; align-items: center; gap: 0.25rem; padding: 0 0.5rem;
-    height: var(--ui-control-height); box-sizing: border-box; background: var(--ui-surface);
-    border: 1px solid var(--ui-border); border-radius: var(--ui-radius);
+    height: var(--ui-control-height); box-sizing: border-box; background: var(--ui-field-bg);
+    border: 1px solid var(--ui-field-border); border-radius: var(--ui-radius);
+    &:hover { border-color: var(--ui-field-border-hover); }
     &:focus-within { border-color: var(--ui-ring); outline: 2px solid var(--ui-ring-soft); }
     &[data-invalid], &:has([aria-invalid=true]) { border-color: var(--ui-danger); }
     &[data-disabled] { opacity: 0.5; } }
@@ -14,15 +17,20 @@
     outline: none; font-size: 14px; color: inherit; field-sizing: content;
     &::placeholder { color: var(--ui-muted); } }
   [data-scope=date-picker][data-part=input]:last-of-type { flex-grow: 1; }
+  [data-scope=date-picker][data-part=error] { margin-top: 0.375rem; font-size: 12px; color: var(--ui-danger); }
   [data-scope=date-picker][data-part=separator] { color: var(--ui-muted); font-size: 14px; padding: 0 0.25rem; }
   [data-scope=date-picker]:is([data-part=clear-trigger], [data-part=trigger], [data-part=prev-trigger], [data-part=next-trigger]) {
     display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border: none; background: transparent;
     border-radius: 4px; color: var(--ui-muted); cursor: pointer;
     &:hover { background: var(--ui-hover); color: var(--ui-text); } }
 
-  /* Zag copies the content's z-index onto its positioner. */
+  /* The positioner carries the z-index itself. Zag sets it inline as
+     var(--z-index) but doesn't always fill in the variable, so set both. */
+  [data-scope=date-picker][data-part=positioner] { z-index: 50; --z-index: 50; }
   [data-scope=date-picker][data-part=content] { z-index: 50; padding: 0.75rem; background: var(--ui-surface); outline: none;
-    border: 1px solid var(--ui-border); border-radius: calc(var(--ui-radius) + 2px); box-shadow: var(--ui-shadow); }
+    border: 1px solid var(--ui-border); border-radius: calc(var(--ui-radius) + 2px); box-shadow: var(--ui-shadow);
+    /* An inline calendar in a popover (EventCalendar's date jump): the popover is the card. */
+    [data-scope=popover] & { padding: 0; border: none; border-radius: 0; box-shadow: none; background: transparent; } }
   [data-scope=date-picker][data-part=view-control] { display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 0.5rem; }
   [data-scope=date-picker][data-part=view-trigger] { font-weight: 600; font-size: 14px; border: none; background: transparent;

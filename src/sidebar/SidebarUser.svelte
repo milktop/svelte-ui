@@ -12,7 +12,7 @@
   - `letters`, `color`: passed to the Avatar
 -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import Menu from '../menu/Menu.svelte'
   import Avatar from '../avatar/Avatar.svelte'
   import { cx, partsOf, useShell } from '../utils.js'

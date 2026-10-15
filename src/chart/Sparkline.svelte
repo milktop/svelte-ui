@@ -13,7 +13,9 @@
   import { scaleLinear, scaleBand } from 'd3-scale'
   import { area, line, curveMonotoneX } from 'd3-shape'
   import { seriesColor } from './chart.js'
+  import { formatNumber } from '../format/format.js'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './chart.css'
 
@@ -34,7 +36,7 @@
   const band = $derived(scaleBand().domain(values.map((_, i) => i)).range([0, 100]).padding(0.25))
 </script>
 
-<div {...rest} {...part('root')} class={cx(className)} role="img" aria-label={label ?? `Trend: ${values.join(', ')}`} style:height="{height}px">
+<div {...rest} {...part('root')} class={cx(className)} role="img" aria-label={label ?? uiLocale.messages.chart.trend(values.map((v) => formatNumber(v)).join(', '))} style:height="{height}px">
   <svg {...part('svg')} viewBox="0 0 100 {height}" preserveAspectRatio="none" aria-hidden="true">
     {#if variant === 'bar'}
       {#each values as value, i}<rect x={band(i)} y={ys(value)} width={band.bandwidth()} height={Math.max(0, height - ys(value))} fill={colour} rx="0.5" />{/each}

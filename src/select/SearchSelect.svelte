@@ -3,16 +3,18 @@
   import * as combobox from '@zag-js/combobox'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
   import { tick } from 'svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './search-select.css'
 
   let {
-    label = null, items = [], value = $bindable(null), multiple = false, placeholder = 'Search…', emptyText = 'No matches',
-    hideSelected = false, closeOnSelect = undefined, load = null, debounce = 200, loadingText = 'Loading…', placement = 'bottom-start',
+    label = null, items = [], value = $bindable(null), multiple = false, placeholder = undefined, emptyText = undefined,
+    hideSelected = false, closeOnSelect = undefined, load = null, debounce = 200, loadingText = undefined, placement = 'bottom-start',
     labelKey = 'label', valueKey = 'value', disabledKey = 'disabled', variant = 'subtle', name = null, disabled = false,
     oncreate = null, clearable = false, tags = true, item: itemSnippet = null, create: createSnippet = null, empty = null,
+    chosen = null, start = null,
     class: className = '', classes = {}, ...rest
   } = $props()
 
@@ -95,7 +97,8 @@
 
   const id = $props.id()
   const service = useMachine(combobox.machine, () => ({
-    id, collection, name, disabled, multiple, placeholder, openOnClick: true, inputBehavior: 'autohighlight',
+    id, collection, name, disabled, multiple, placeholder: placeholder ?? uiLocale.messages.select.searchPlaceholder, openOnClick: true,
+    ...(uiLocale.zag('combobox') && { translations: uiLocale.zag('combobox') }), inputBehavior: 'autohighlight',
     closeOnSelect: closeOnSelect ?? !multiple,
     selectionBehavior: multiple ? 'clear' : 'replace',
     invalid: !!field?.invalid,
@@ -171,15 +174,16 @@
 <div {...rest} {...part('root')} {...api.getRootProps()} class={cx(className)} data-variant={variant} onfocusout={revert}>
   {#if label && !field}<label {...part('label')} {...api.getLabelProps()}>{label}</label>{/if}
   <div {...part('control')} {...api.getControlProps()} onmousedown={focusInput}>
+    {#if start}<span {...part('start')}>{@render start((selectedKeys.length ? byKey(selectedKeys[0]) : undefined) ?? null)}</span>{/if}
     <div {...part('tags')}>
       {#each picked as item (keyOf(item))}
         <span {...part('tag')}>
-          <span {...part('tag-text')}>{labelOf(item)}</span>
-          <button {...part('tag-remove')} type="button" tabindex="-1" aria-label="Remove {labelOf(item)}"
+          <span {...part('tag-text')}>{#if chosen}{@render chosen(item)}{:else}{labelOf(item)}{/if}</span>
+          <button {...part('tag-remove')} type="button" tabindex="-1" aria-label={uiLocale.messages.common.remove(labelOf(item))}
             onclick={(e) => { e.stopPropagation(); api.clearValue(keyOf(item)) }}><iconify-icon icon="lucide:x"></iconify-icon></button>
         </span>
       {/each}
-      <input bind:this={inputEl} {...part('input')} {...inputProps} placeholder={picked.length ? '' : placeholder} {...fieldAttrs(field)}
+      <input bind:this={inputEl} {...part('input')} {...inputProps} placeholder={picked.length ? '' : placeholder ?? uiLocale.messages.select.searchPlaceholder} {...fieldAttrs(field)}
         onkeydown={(e) => removeLast(e) || inputProps.onkeydown?.(e)} />
     </div>
     {#if clearable}<button {...part('clear')} {...api.getClearTriggerProps()}><iconify-icon icon="lucide:x"></iconify-icon></button>{/if}
@@ -197,13 +201,13 @@
         </li>
       {:else}
         {#if !creating}
-          <li {...part('empty')}>{#if loading}{loadingText}{:else if empty}{@render empty(typed)}{:else}{emptyText}{/if}</li>
+          <li {...part('empty')}>{#if loading}{loadingText ?? uiLocale.messages.select.loading}{:else if empty}{@render empty(typed)}{:else}{emptyText ?? uiLocale.messages.select.noMatches}{/if}</li>
         {/if}
       {/each}
       {#if creating}
         <li {...api.getItemProps({ item: creating })} {...part('create')}>
           {#if createSnippet}{@render createSnippet(creating.label)}
-          {:else}<iconify-icon icon="lucide:plus" aria-hidden="true"></iconify-icon><span>Create “{creating.label}”</span>{/if}
+          {:else}<iconify-icon icon="lucide:plus" aria-hidden="true"></iconify-icon><span>{uiLocale.messages.select.create(creating.label)}</span>{/if}
         </li>
       {/if}
     </ul>

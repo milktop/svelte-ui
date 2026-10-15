@@ -1,7 +1,9 @@
 /* Shared by Menu, its child components and submenus. Zag names most parts:
    item, option-item, trigger-item, separator, item-group-label… */
 @layer ui {
-  /* Zag copies the content's z-index onto its positioner. */
+  /* The positioner carries the z-index itself. Zag sets it inline as
+     var(--z-index) but doesn't always fill in the variable, so set both. */
+  [data-scope=menu][data-part=positioner] { z-index: 50; --z-index: 50; }
   [data-scope=menu][data-part=content] {
     z-index: 50; font-weight: 400; min-width: 12rem; padding: 0.5rem 0.25rem; box-sizing: border-box; text-align: left; outline: none;
     background: var(--ui-surface); color: var(--ui-text); font-family: var(--ui-font); font-size: 14px;
@@ -26,6 +28,9 @@
   [data-scope=menu][data-part=item-indicator] {
     &[data-type=checkbox] { display: block; font-size: 14px; color: var(--ui-accent); }
     &[data-type=radio] { display: block; width: 6px; height: 6px; border-radius: 9999px; background: var(--ui-accent); box-shadow: 0 0 0 3px var(--ui-accent-soft); } }
+  /* indicator='end' (the default): a tick after the label and any shortcut, for radios too. */
+  [data-scope=menu][data-part=indicator][data-side=end] { order: 1;
+    & > [data-type=radio] { width: auto; height: auto; font-size: 14px; color: var(--ui-accent); border-radius: 0; background: none; box-shadow: none; } }
   [data-scope=menu][data-part=chevron] { display: block; font-size: 14px; margin-left: auto; color: var(--ui-muted); }
   /* A div or an <hr> (Ark's): no border of its own. */
   [data-scope=menu][data-part=separator] { display: block; height: 1px; margin: 0.25rem -0.25rem; border: none; background: var(--ui-border); }

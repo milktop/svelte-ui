@@ -7,8 +7,9 @@
 -->
 <script>
   import { setContext, untrack } from 'svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf, useShell } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './sidebar.css'
 
@@ -39,7 +40,7 @@
       <div {...part('heading')} aria-hidden="true">{heading ?? ''}</div>
       {#if collapsible && !shell?.rail}
         <button {...part('collapse-all')} type="button" onclick={toggleAll}
-          aria-label={anyOpen ? 'Collapse all' : 'Expand all'} title={anyOpen ? 'Collapse all' : 'Expand all'}>
+          aria-label={anyOpen ? uiLocale.messages.shell.collapseAll : uiLocale.messages.shell.expandAll} title={anyOpen ? uiLocale.messages.shell.collapseAll : uiLocale.messages.shell.expandAll}>
           <iconify-icon icon={anyOpen ? 'lucide:chevrons-down-up' : 'lucide:chevrons-up-down'} aria-hidden="true"></iconify-icon>
         </button>
       {/if}

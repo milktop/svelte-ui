@@ -26,6 +26,11 @@
   - `name`: for plain form posts
   - `size`: 'sm' or 'md'; `placement`: where the list opens ('bottom-start')
   - `item` snippet: an option's content, given the item
+  - `chosen` snippet: the chosen item's content in the closed select (and
+    each tag's, picking several), given the item; with search, the box holds
+    typed text, so use `start` there
+  - `start` snippet: before the value (or the search box), given the chosen
+    item (the first, picking several; null if none), e.g. a colour's dot
   - `create` snippet: the create option's content, given the query
   - `empty` snippet: shown when nothing matches, given the query
 -->
@@ -37,15 +42,15 @@
     label = null, items = [], value = $bindable(null), placeholder = undefined,
     labelKey = 'label', valueKey = 'value', disabledKey = 'disabled',
     multiple = false, tags = false, variant = 'subtle', hideSelected = false,
-    searchable = false, load = null, debounce = 200, loadingText = 'Loading…', oncreate = null,
-    deselectable = false, closeOnSelect = undefined, clearable = false, emptyText = 'No matches',
+    searchable = false, load = null, debounce = 200, loadingText = undefined, oncreate = null,
+    deselectable = false, closeOnSelect = undefined, clearable = false, emptyText = undefined,
     name = null, size = 'md', placement = 'bottom-start', disabled = false,
-    item = null, create = null, empty = null, class: className = '', classes = {}, ...rest
+    item = null, chosen = null, start = null, create = null, empty = null, class: className = '', classes = {}, ...rest
   } = $props()
 
   const shared = $derived({
     label, items, placeholder, labelKey, valueKey, disabledKey, multiple, tags, variant, hideSelected,
-    closeOnSelect, clearable, emptyText, name, size, placement, disabled, item, empty,
+    closeOnSelect, clearable, emptyText, name, size, placement, disabled, item, chosen, start, empty,
     class: className, classes, ...rest,
   })
 </script>

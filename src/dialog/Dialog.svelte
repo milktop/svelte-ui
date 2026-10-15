@@ -19,19 +19,21 @@
   - `alert`: an alertdialog, for confirmations; the backdrop doesn't close it
   - `size`: 'sm', 'md' (default) or 'lg'
   - `closable`: false hides the close button
+  - `onexitcomplete`: called once it has closed and animated out
 -->
 <script>
   import * as dialog from '@zag-js/dialog'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import { Presence, portal } from '../presence.svelte.js'
   import '../theme.css'
   import './dialog.css'
 
   let {
     open = $bindable(false), heading = null, description = null, alert = false, size = 'md', closable = true,
-    trigger = null, footer = null, class: className = '', classes = {}, children, ...rest
+    trigger = null, footer = null, onexitcomplete = null, class: className = '', classes = {}, children, ...rest
   } = $props()
 
   const part = partsOf('dialog', () => classes)
@@ -42,6 +44,11 @@
   }))
   const api = $derived(dialog.connect(service, normalizeProps))
   const presence = new Presence(() => api.open)
+  let shown = false
+  $effect(() => {
+    if (shown && !presence.present) onexitcomplete?.()
+    shown = presence.present
+  })
 </script>
 
 {@render trigger?.(api.getTriggerProps())}
@@ -51,7 +58,7 @@
     <div {...part('positioner')} {...api.getPositionerProps()}>
       <div {...rest} {...part('content')} {...api.getContentProps()} hidden={false} class={cx(className)} data-size={size}
         onanimationend={presence.done}>
-        {#if closable}<button {...part('close-trigger')} {...api.getCloseTriggerProps()} aria-label="Close"><iconify-icon icon="lucide:x"></iconify-icon></button>{/if}
+        {#if closable}<button {...part('close-trigger')} {...api.getCloseTriggerProps()} aria-label={uiLocale.messages.common.close}><iconify-icon icon="lucide:x"></iconify-icon></button>{/if}
         {#if heading || description}
           <div {...part('header')}>
             {#if heading}<h2 {...part('title')} {...api.getTitleProps()}>{heading}</h2>{/if}

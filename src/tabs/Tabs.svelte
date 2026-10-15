@@ -21,7 +21,7 @@
   import * as tabs from '@zag-js/tabs'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
   import { setContext, untrack } from 'svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf } from '../utils.js'
   import '../theme.css'
   import './tabs.css'

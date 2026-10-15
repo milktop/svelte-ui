@@ -15,7 +15,7 @@
 -->
 <script>
   import { getContext } from 'svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import Tooltip from '../tooltip/Tooltip.svelte'
   import { cx, partsOf, useShell } from '../utils.js'
   import '../theme.css'

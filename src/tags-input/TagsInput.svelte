@@ -18,13 +18,14 @@
 <script>
   import * as tagsInput from '@zag-js/tags-input'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './tags-input.css'
 
   let {
-    label = null, value = $bindable([]), placeholder = 'Add…', max = Infinity, delimiter = ',', validate = undefined, allowDuplicates = false, addOnPaste = true, variant = 'subtle', editable = true,
+    label = null, value = $bindable([]), placeholder = undefined, max = Infinity, delimiter = ',', validate = undefined, allowDuplicates = false, addOnPaste = true, variant = 'subtle', editable = true,
     name = null, disabled = false, class: className = '', classes = {}, ...rest
   } = $props()
 
@@ -37,6 +38,7 @@
   const id = $props.id()
   const service = useMachine(tagsInput.machine, () => ({
     id, name, disabled, max, editable, value, delimiter, validate, allowDuplicates, addOnPaste, blurBehavior: 'add',
+    ...(uiLocale.zag('tagsInput') && { translations: uiLocale.zag('tagsInput') }),
     invalid: !!field?.invalid,
     ids: field ? { input: field.id, label: field.labelId } : undefined,
     onInputValueChange: (details) => { if (details.inputValue) typed = details.inputValue },
@@ -71,7 +73,7 @@
           <input {...part('tag-edit')} {...api.getItemInputProps(itemProps)} />
         </span>
       {/each}
-      <input bind:this={inputEl} {...part('input')} {...api.getInputProps()} placeholder={api.value.length ? '' : placeholder} {...fieldAttrs(field)} />
+      <input bind:this={inputEl} {...part('input')} {...api.getInputProps()} placeholder={api.value.length ? '' : placeholder ?? uiLocale.messages.tagsInput.placeholder} {...fieldAttrs(field)} />
     </div>
     <button {...part('clear')} {...api.getClearTriggerProps()}><iconify-icon icon="lucide:x"></iconify-icon></button>
   </div>

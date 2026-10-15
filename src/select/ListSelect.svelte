@@ -3,16 +3,18 @@
   import * as select from '@zag-js/select'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
   import { tick } from 'svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './select.css'
 
   let {
-    label = null, items = [], value = $bindable(null), placeholder = 'Select…', tags = false, variant = 'subtle',
-    emptyText = 'No matches', empty = null,
+    label = null, items = [], value = $bindable(null), placeholder = undefined, tags = false, variant = 'subtle',
+    emptyText = undefined, empty = null,
     labelKey = 'label', valueKey = 'value', disabledKey = 'disabled',
     name = null, size = 'md', multiple = false, hideSelected = false, deselectable = false, closeOnSelect = undefined, clearable = false, placement = 'bottom-start', disabled = false, item: itemSnippet = null,
+    chosen = null, start = null,
     class: className = '', classes = {}, ...rest
   } = $props()
 
@@ -39,6 +41,7 @@
   const id = $props.id()
   const service = useMachine(select.machine, () => ({
     id, collection, name, disabled, multiple, deselectable, closeOnSelect: closeOnSelect ?? !multiple,
+    ...(uiLocale.zag('select') && { translations: uiLocale.zag('select') }),
     invalid: !!field?.invalid,
     // Inside a Field, its label points at our trigger.
     ids: field ? { trigger: field.id, label: field.labelId } : undefined,
@@ -78,14 +81,20 @@
   {#if label && !field}<label {...part('label')} {...api.getLabelProps()}>{label}</label>{/if}
   <div {...part('control')} {...api.getControlProps()}>
     <button {...part('trigger')} {...triggerProps} {...fieldAttrs(field)} onkeydown={(e) => removeLast(e) || triggerProps.onkeydown?.(e)}>
+      {#if start}<span {...part('start')}>{@render start(api.selectedItems[0] ?? null)}</span>{/if}
       {#if multiple && tags && api.hasSelectedItems}
         <!-- Chips, not buttons (a button can't hold buttons): untick an item to remove it. -->
         <span {...part('tags')}>
-          {#each api.selectedItems as picked (valueOf(picked))}<span {...part('tag')}><span {...part('tag-text')}>{labelOf(picked)}</span></span>{/each}
+          {#each api.selectedItems as picked (valueOf(picked))}<span {...part('tag')}><span {...part('tag-text')}>{#if chosen}{@render chosen(picked)}{:else}{labelOf(picked)}{/if}</span></span>{/each}
+        </span>
+      {:else if chosen && api.hasSelectedItems}
+        <!-- Your rendering of the chosen item(s), in place of Zag's text. -->
+        <span {...part('value-text')} {...api.getValueTextProps()}>
+          {#each api.selectedItems as picked, i (valueOf(picked))}{#if i > 0}, {/if}{@render chosen(picked)}{/each}
         </span>
       {:else}
         <span {...part('value-text')} {...api.getValueTextProps()} data-placeholder={!api.hasSelectedItems || undefined}>
-          {api.hasSelectedItems ? api.valueAsString : placeholder ?? 'Select…'}
+          {api.hasSelectedItems ? api.valueAsString : placeholder ?? uiLocale.messages.select.placeholder}
         </span>
       {/if}
       <span {...part('indicator')} {...api.getIndicatorProps()}><iconify-icon icon="lucide:chevron-down"></iconify-icon></span>
@@ -103,7 +112,7 @@
           <span {...part('item-indicator')} {...api.getItemIndicatorProps({ item })}><iconify-icon icon="lucide:check"></iconify-icon></span>
         </li>
       {:else}
-        <li {...part('empty')}>{#if empty}{@render empty('')}{:else}{emptyText}{/if}</li>
+        <li {...part('empty')}>{#if empty}{@render empty('')}{:else}{emptyText ?? uiLocale.messages.select.empty}{/if}</li>
       {/each}
     </ul>
   </div>

@@ -17,8 +17,9 @@
 <script>
   import * as popover from '@zag-js/popover'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './popover.css'
 
@@ -50,7 +51,7 @@
     {/if}
     {@render children?.()}
     {#if closable}
-      <button {...part('close')} {...api.getCloseTriggerProps()} aria-label="Close"><iconify-icon icon="lucide:x"></iconify-icon></button>
+      <button {...part('close')} {...api.getCloseTriggerProps()} aria-label={uiLocale.messages.common.close}><iconify-icon icon="lucide:x"></iconify-icon></button>
     {/if}
   </div>
 </div>

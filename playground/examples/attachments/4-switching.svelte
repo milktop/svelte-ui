@@ -1,14 +1,10 @@
 <!-- Switching layout
-  The layout is the app’s choice: here a Segmented (icons only) is bound to it. -->
+  `switchable` adds a grid/list switch above the files; `persist` remembers the choice in this browser. To keep the choice yourself (say, in the user's settings), bind `layout`, or listen with `onlayoutchange`. -->
 <script>
-  import { Attachments, Segmented } from '@milktop/svelte-ui'
+  import { Attachments } from '@milktop/svelte-ui'
   import { files } from './files.js'
 
-  let view = $state('grid')
+  let items = $state(files.slice(0, 5))
 </script>
 
-<div class="flex w-full flex-col gap-3">
-  <Segmented items={[{ value: 'grid', label: 'Grid', icon: 'lucide:layout-grid' }, { value: 'list', label: 'List', icon: 'lucide:list' }]}
-    iconOnly label="Layout" bind:value={view} />
-  <Attachments layout={view} items={files.slice(0, 5)} removable />
-</div>
+<Attachments switchable persist="playground:attachments-layout" bind:items removable label="Lesson files" class="w-full" />

@@ -9,7 +9,7 @@
   - the content: actions, e.g. a button to create the first item
 -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx, partsOf } from '../utils.js'
   import '../theme.css'
   import './empty-state.css'

@@ -7,17 +7,20 @@
   - `value`: bindable; the item's own value
   - `label`: a label above it (skipped inside a Field)
   - `orientation`: 'vertical' or 'horizontal'
+  - `variant`: 'list' (default), or 'cards': each option a bordered card
+    (with its `description`, and an `icon` from the item), chosen one outlined
   - `name`: for plain form posts
 -->
 <script>
   import * as radio from '@zag-js/radio-group'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
+  import '../icons.js'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
   import '../theme.css'
   import './radio-group.css'
 
   let {
-    label = null, items = [], value = $bindable(null), orientation = 'vertical', name = null, disabled = false,
+    label = null, items = [], value = $bindable(null), orientation = 'vertical', variant = 'list', name = null, disabled = false,
     labelKey = 'label', valueKey = 'value', disabledKey = 'disabled',
     class: className = '', classes = {}, ...rest
   } = $props()
@@ -42,12 +45,13 @@
   const api = $derived(radio.connect(service, normalizeProps))
 </script>
 
-<div {...rest} {...part('root')} class={cx(className)}>
+<div {...rest} {...part('root')} class={cx(className)} data-variant={variant}>
   {#if label && !field}<span {...part('label')} {...api.getLabelProps()}>{label}</span>{/if}
   <div {...part('group')} {...api.getRootProps()} {...fieldAttrs(field)}>
     {#each items as item (valueOf(item))}
       <label {...part('item')} {...api.getItemProps(itemProps(item))}>
         <span {...part('control')} {...api.getItemControlProps(itemProps(item))}></span>
+        {#if item?.icon}<iconify-icon {...part('icon')} icon={item.icon} aria-hidden="true"></iconify-icon>{/if}
         <span {...part('text')}>
           <span {...part('item-text')} {...api.getItemTextProps(itemProps(item))}>{labelOf(item)}</span>
           {#if item?.description}<span {...part('description')}>{item.description}</span>{/if}

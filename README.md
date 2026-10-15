@@ -23,18 +23,22 @@ examples.
 The same set as imba-ui:
 
 - Actions: Button · CopyButton
-- Display: Avatar · Badge · Card · Table · Pagination · DataList · Stat/Stats ·
-  AreaChart · BarChart · Sparkline · Timeline
+- Display: Avatar/AvatarGroup · Badge · Kbd · FormatNumber/FormatBytes/FormatRelative ·
+  RollingNumber · Divider · Prose · Highlight · TreeView · Card · Table · Pagination ·
+  DataList · Stat/Stats · AreaChart · BarChart · DonutChart · Sparkline ·
+  EventCalendar · SortableList · Timeline
 - Feedback: Alert · Banner · Progress · Skeleton · Spinner · EmptyState · Toaster (`toaster`)
-- Inputs: Input · Textarea · NumberInput · PasswordInput · PinInput · TagsInput ·
+- Inputs: Input · Textarea · Editable · NumberInput · PasswordInput · PinInput · TagsInput ·
   Slider · FileUpload · Attachments · Editor (TipTap)
 - Pickers: Select (one component: searchable, server `load`, `oncreate`,
-  multiple, tags) · DatePicker
-- Choices: Checkbox · CheckboxGroup · Switch · RadioGroup · Segmented · ThemeToggle (`colorScheme`)
+  multiple, tags) · DatePicker (or `inline`) · TimeInput · NativeSelect
+- Choices: Checkbox · CheckboxGroup · Switch · RadioGroup · Segmented · SwatchPicker ·
+  ThemeToggle (`colorScheme`) · Appearance (`appearance`: accent scales, sidebar styles)
 - Forms: Field · Fields
-- Navigation: AppShell · Topbar · Sidebar · NavSection · NavGroup · NavItem ·
+- Navigation: AppShell (flat or inset; an inset shell, or `scroll="page"`, scrolls
+  only the page on wide screens) · Topbar · Sidebar · NavSection · NavGroup · NavItem ·
   SidebarUser · Page · Breadcrumbs · Command (⌘K)
-- Overlays: Tooltip · Popover · HoverCard · Dialog · Sheet · ActionBar · Menu ·
+- Overlays: Tooltip · Popover · HoverCard · Dialog · `confirm()` · Sheet · ActionBar · Menu ·
   ContextMenu (with Submenu, MenuItem, MenuGroup, MenuCheckbox, MenuRadioGroup…)
 - Disclosure: Tabs/Tab · Accordion/AccordionItem · Collapsible
 
@@ -65,7 +69,17 @@ utilities above:
 @import "tailwindcss";
 ```
 
-Theme it by setting tokens (see `src/theme.css`):
+The app's locale and the components' words (English and French built in)
+are one setting, `uiLocale`: dates, numbers, placeholders, empty states and
+screen-reader labels follow it.
+
+```js
+import { uiLocale } from '@milktop/svelte-ui'
+uiLocale.set('fr-FR')
+uiLocale.set('en-GB', { table: { empty: 'No pupils yet' } })
+```
+
+Theme it by setting tokens (see `src/theme.css`, or the playground's Tokens page):
 
 ```css
 :root { --ui-accent: #e11d48; --ui-radius: 10px; }

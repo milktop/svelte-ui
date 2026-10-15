@@ -5,7 +5,7 @@
   - `info`: adds an icon with this text in a tooltip
 -->
 <script>
-  import 'iconify-icon'
+  import '../icons.js'
   import Tooltip from '../tooltip/Tooltip.svelte'
   import { cx, partsOf } from '../utils.js'
   import '../theme.css'

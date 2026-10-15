@@ -6,7 +6,7 @@
 -->
 <script>
   import { getContext } from 'svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import { cx } from '../utils.js'
 
   let { value, heading = '', disabled = false, title = null, class: className = '', children, ...rest } = $props()

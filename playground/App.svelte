@@ -5,6 +5,7 @@
   } from '@milktop/svelte-ui'
   import Demo from './lib/Demo.svelte'
   import ApiPanel from './lib/ApiPanel.svelte'
+  import StylingPanel from './lib/StylingPanel.svelte'
   import ThemeSwitch from './lib/ThemeSwitch.svelte'
   import AppearancePanel from './lib/AppearancePanel.svelte'
   import { appearance, applyAppearance } from './lib/appearance.svelte.js'
@@ -12,12 +13,13 @@
   import { apiOf } from './lib/api.js'
   import pkg from '../package.json'
   import Theming from './pages/Theming.svelte'
+  import Tokens from './pages/Tokens.svelte'
   import Installation from './pages/Installation.svelte'
   import BlockPage from './lib/BlockPage.svelte'
   import Consultation from './demo/Consultation.svelte'
   import { blocks } from './blocks/registry.js'
 
-  const guides = { '#/theming': 'Theming', '#/installation': 'Installation' }
+  const guides = { '#/theming': 'Theming', '#/tokens': 'Tokens', '#/installation': 'Installation' }
 
   $effect(() => applyAppearance())
 
@@ -30,7 +32,8 @@
     ...pages.map((p) => ({ label: p.title, description: p.about, href: `#/${p.slug}`, icon: p.group.icon, group: p.group.heading })),
     ...blocks.map((b) => ({ label: b.title, description: b.about, href: `#/blocks/${b.slug}`, icon: b.icon, group: 'Blocks' })),
     { label: 'Consultation (perigovet)', description: 'A real app page, with its own shell', href: '#/demo/consultation', icon: 'lucide:stethoscope', group: 'Blocks' },
-    { label: 'Theming', description: 'Tokens and overrides', href: '#/theming', icon: 'lucide:palette', group: 'Guides' },
+    { label: 'Theming', description: 'Each way to restyle, from the app to one part', href: '#/theming', icon: 'lucide:palette', group: 'Guides' },
+    { label: 'Tokens', description: 'Every --ui-* token, by what it styles', href: '#/tokens', icon: 'lucide:swatch-book', group: 'Guides', keywords: ['variables', 'css'] },
     { label: 'Installation', description: 'Install, set up the CSS layers, import', href: '#/installation', icon: 'lucide:download', group: 'Guides' },
     { label: 'GitHub', description: 'Source, releases and issues', href: repo, icon: 'mdi:github', group: 'Guides', keywords: ['repo', 'source'] },
     { label: 'Toggle sidebar', value: 'sidebar', icon: 'lucide:panel-left', shortcut: '⌘B', group: 'Playground' },
@@ -43,8 +46,10 @@
     else if (command === 'light' || command === 'dark') colorScheme.value = command
   }
 
-  let hash = $state(location.hash)
-  let showApi = $state(false)
+  let hash = $state(location.hash.split('?')[0])
+  let query = $state(new URLSearchParams(location.hash.split('?')[1] ?? '').get('q') ?? '')
+  // Props or Styling, beside the page's heading (one at a time).
+  let panel = $state(null)
 
   const page = $derived(pages.find((p) => hash === `#/${p.slug}`))
   const block = $derived(blocks.find((b) => hash === `#/blocks/${b.slug}`))
@@ -55,7 +60,12 @@
     : [{ label: 'Svelte UI', href: '#/' }, { label: guides[hash] ?? 'Overview' }])
 </script>
 
-<svelte:window onhashchange={() => { hash = location.hash; showApi = false; scrollTo(0, 0) }} />
+<svelte:window onhashchange={() => {
+  hash = location.hash.split('?')[0]
+  query = new URLSearchParams(location.hash.split('?')[1] ?? '').get('q') ?? ''
+  panel = null
+  scrollTo(0, 0)
+}} />
 
 <!-- A demo app page fills the window, with its own shell. -->
 {#if hash === '#/demo/consultation'}
@@ -93,6 +103,7 @@
     <NavSection>
       <NavItem icon="lucide:house" href="#/" active={!page && !block && !guides[hash]}>Overview</NavItem>
       <NavItem icon="lucide:palette" href="#/theming" active={hash === '#/theming'}>Theming</NavItem>
+      <NavItem icon="lucide:swatch-book" href="#/tokens" active={hash === '#/tokens'}>Tokens</NavItem>
       <NavItem icon="lucide:download" href="#/installation" active={hash === '#/installation'}>Installation</NavItem>
     </NavSection>
     <NavSection heading="Components">
@@ -143,15 +154,23 @@
       {#key page}
         <div class="flex items-center justify-between gap-4">
           <h1 class="m-0 text-xl font-bold">{page.title}</h1>
-          <button type="button" aria-pressed={showApi} onclick={() => (showApi = !showApi)}
-            class="inline-flex h-7 shrink-0 cursor-pointer items-center gap-1.5 rounded-md border border-transparent bg-transparent px-2 text-xs text-(--ui-muted) hover:bg-(--ui-hover) hover:text-(--ui-text) aria-pressed:border-(--ui-border) aria-pressed:bg-(--ui-surface) aria-pressed:text-(--ui-text)">
-            <iconify-icon icon="lucide:list-tree"></iconify-icon>Props
-          </button>
+          <div class="flex shrink-0 gap-1">
+            {#each [['props', 'Props', 'lucide:list-tree'], ['styling', 'Styling', 'lucide:paintbrush']] as [key, label, icon]}
+              <button type="button" aria-pressed={panel === key} onclick={() => (panel = panel === key ? null : key)}
+                class="inline-flex h-7 shrink-0 cursor-pointer items-center gap-1.5 rounded-md border border-transparent bg-transparent px-2 text-xs text-(--ui-muted) hover:bg-(--ui-hover) hover:text-(--ui-text) aria-pressed:border-(--ui-border) aria-pressed:bg-(--ui-surface) aria-pressed:text-(--ui-text)">
+                <iconify-icon {icon}></iconify-icon>{label}
+              </button>
+            {/each}
+          </div>
         </div>
         <p class="mt-1 mb-0 text-sm text-(--ui-muted)">{intro}</p>
-        {#if showApi}
+        {#if panel === 'props'}
           <div class="mt-5 flex flex-col gap-4">
             {#each page.files as file}<ApiPanel {file} />{/each}
+          </div>
+        {:else if panel === 'styling'}
+          <div class="mt-5 flex flex-col gap-4">
+            {#each page.files as file}<StylingPanel {file} />{/each}
           </div>
         {/if}
         {#each examplesOf(page.slug) as example (example.path)}
@@ -162,6 +181,8 @@
       {#key block}<BlockPage {block} />{/key}
     {:else if hash === '#/theming'}
       <Theming />
+    {:else if hash === '#/tokens'}
+      <Tokens {query} />
     {:else if hash === '#/installation'}
       <Installation {repo} />
     {:else}

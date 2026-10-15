@@ -45,6 +45,13 @@
     &:hover { color: var(--ui-text); }
     &:focus-visible { outline: 2px solid var(--ui-ring-soft); }
     [data-layout=list] & { border: none; box-shadow: none; background: transparent; &:hover { background: var(--ui-hover); } } }
+  [data-scope=attachments][data-part=label] { display: block; margin-bottom: 0.375rem; font-size: 14px; font-weight: 500; }
+  /* The label and the layout switch, above the files: the switch on the right. */
+  [data-scope=attachments][data-part=header] { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.5rem;
+    & > [data-part=label] { margin-bottom: 0; }
+    & > [data-scope=segmented] { margin-left: auto; } }
+  /* In an invalid Field, the add tile's dashed border turns red. */
+  [data-scope=attachments][data-invalid] [data-part=add-tile] { border-color: var(--ui-danger); }
   [data-scope=attachments][data-part=add-input] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   [data-scope=attachments][data-part=add-tile] { display: flex; align-items: center; box-sizing: border-box; color: var(--ui-muted); cursor: pointer;
     &:hover { color: var(--ui-text); }

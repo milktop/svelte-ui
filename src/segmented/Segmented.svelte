@@ -16,7 +16,7 @@
 <script>
   import * as radio from '@zag-js/radio-group'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
-  import 'iconify-icon'
+  import '../icons.js'
   import Tooltip from '../tooltip/Tooltip.svelte'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
   import '../theme.css'

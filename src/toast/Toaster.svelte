@@ -20,11 +20,12 @@
   import Toast from './Toast.svelte'
   import { toaster } from './toaster.js'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import { portal } from '../presence.svelte.js'
   import '../theme.css'
   import './toast.css'
 
-  let { store = toaster, label = 'Notifications', class: className = '', classes = {} } = $props()
+  let { store = toaster, label = null, class: className = '', classes = {} } = $props()
 
   const part = partsOf('toast', () => classes)
   const id = $props.id()
@@ -32,7 +33,7 @@
   const api = $derived(toast.group.connect(service, normalizeProps))
 </script>
 
-<div {@attach portal} {...part('group')} {...api.getGroupProps({ label })} class={cx(className)}>
+<div {@attach portal} {...part('group')} {...api.getGroupProps({ label: label ?? uiLocale.messages.toaster.label })} class={cx(className)}>
   {#each api.getToasts() as data, index (data.id)}
     <Toast toast={data} {index} parent={service} {part} />
   {/each}

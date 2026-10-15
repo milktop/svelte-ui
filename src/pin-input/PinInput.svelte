@@ -15,6 +15,7 @@
   import * as pinInput from '@zag-js/pin-input'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
   import { cx, partsOf, useField, fieldAttrs } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './pin-input.css'
 
@@ -29,6 +30,7 @@
   const id = $props.id()
   const service = useMachine(pinInput.machine, () => ({
     id, name, disabled, count, type, mask, otp, placeholder,
+    ...(uiLocale.zag('pinInput') && { translations: uiLocale.zag('pinInput') }),
     invalid: !!field?.invalid,
     // Inside a Field, its label points at the first box.
     ids: field ? { label: field.labelId, input: (i) => (i === '0' ? field.id : `${id}-box-${i}`) } : undefined,

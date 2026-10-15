@@ -2,6 +2,7 @@
      the legend and a table of the data for assistive tech. Internal. -->
 <script>
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './chart.css'
 
@@ -36,7 +37,7 @@
     </div>
   {/if}
   <table {...part('sr-only')}>
-    <caption>{label}</caption>
+    <caption>{label ?? uiLocale.messages.chart.label}</caption>
     <tbody>
       <tr><th>{x}</th>{#each list as s}<th>{s.label}</th>{/each}</tr>
       {#each rows as row}<tr><td>{row[x] ?? ''}</td>{#each list as s}<td>{fmt(row[s.key])}</td>{/each}</tr>{/each}

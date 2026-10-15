@@ -1,8 +1,9 @@
 @layer ui {
   [data-scope=editor][data-part=label] { display: block; margin-bottom: 0.375rem; font-size: 14px; font-weight: 500; color: var(--ui-text); font-family: var(--ui-font); }
   [data-scope=editor][data-part=root] { display: block; position: relative; width: 100%; min-width: 0; box-sizing: border-box;
-    background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: var(--ui-radius);
+    background: var(--ui-field-bg); border: 1px solid var(--ui-field-border); border-radius: var(--ui-radius);
     color: var(--ui-text); font-family: var(--ui-font); font-size: 14px;
+    &:hover { border-color: var(--ui-field-border-hover); }
     &[data-focused] { border-color: var(--ui-ring); outline: 2px solid var(--ui-ring-soft); }
     &[data-invalid] { border-color: var(--ui-danger); }
     &[data-disabled] { background: var(--ui-hover); } }

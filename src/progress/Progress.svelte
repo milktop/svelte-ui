@@ -16,18 +16,19 @@
   import * as progress from '@zag-js/progress'
   import { useMachine, normalizeProps } from '@zag-js/svelte'
   import { cx, partsOf } from '../utils.js'
+  import { uiLocale } from '../locale.svelte.js'
   import '../theme.css'
   import './progress.css'
 
   let {
     value = null, min = 0, max = 100, label = null, showValue = false, variant = 'linear', size = 48, thickness = 5,
-    formatOptions = undefined, locale = 'en-GB', translations = undefined, class: className = '', classes = {}, ...rest
+    formatOptions = undefined, locale = undefined, translations = undefined, class: className = '', classes = {}, ...rest
   } = $props()
 
   const part = partsOf('progress', () => classes)
   const id = $props.id()
   // Zag treats a missing value as the midpoint, and null as indeterminate.
-  const service = useMachine(progress.machine, () => ({ id, value: value ?? null, min, max, formatOptions, locale, ...(translations && { translations }) }))
+  const service = useMachine(progress.machine, () => ({ id, value: value ?? null, min, max, formatOptions, locale: locale ?? uiLocale.locale, ...(translations && { translations }) }))
   const api = $derived(progress.connect(service, normalizeProps))
 </script>
 
