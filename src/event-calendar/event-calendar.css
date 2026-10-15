@@ -90,7 +90,7 @@
     /* Short events: title and time on one line. */
     &[data-compact] { flex-direction: row; align-items: center; gap: 0.375rem; padding-block: 0; border-top-width: 1px; border-bottom-width: 1px; line-height: 1.2; }
     &[data-dragging] { z-index: 4; cursor: grabbing; box-shadow: var(--ui-shadow); opacity: 0.92; } }
-  [data-scope=event-calendar][data-part=event-title] { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  [data-scope=event-calendar][data-part=event-title] { flex-shrink: 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   [data-scope=event-calendar][data-part=event-time] { color: var(--ui-muted); white-space: nowrap; }
   /* The bottom edge drags to resize. */
   [data-scope=event-calendar][data-part=resize] { position: absolute; left: 0; right: 0; bottom: 0; height: 0.5rem; cursor: ns-resize;

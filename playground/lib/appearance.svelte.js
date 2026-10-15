@@ -54,6 +54,8 @@ function load() {
 }
 
 export const appearance = $state(load())
+// A choice saved by <Appearance> wins over this panel's accent on load.
+if (!library.custom && library.accent !== appearance.accent && appearance.accent in scaledAccents) appearance.accent = library.accent
 delete appearance.theme
 export const reset = () => {
   Object.assign(appearance, defaults)

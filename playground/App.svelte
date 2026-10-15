@@ -77,11 +77,11 @@
       <a href="#/" aria-label="Svelte UI" class="inline-flex h-7 w-7 items-center justify-center rounded-[var(--ui-radius)] bg-(--ui-accent) text-xs font-bold text-(--ui-accent-text) no-underline">UI</a>
     {/snippet}
     {#snippet logo()}
-      <a href="#/" class="flex items-center gap-2 text-(--ui-text) no-underline">
+      <a href="#/" class="flex items-center gap-2 text-(--ui-sidebar-text) no-underline">
         <span class="inline-flex h-7 w-7 items-center justify-center rounded-[var(--ui-radius)] bg-(--ui-accent) text-xs font-bold text-(--ui-accent-text)">UI</span>
         Svelte UI
         <!-- The version, as a quiet pill after the name. -->
-        <span title="Version" class="rounded-full bg-(--ui-hover) px-1.5 py-0.5 text-[11px] leading-none font-medium text-(--ui-muted) tabular-nums">v{pkg.version}</span>
+        <span title="Version" class="rounded-full bg-(--ui-sidebar-hover) px-1.5 py-0.5 text-[11px] leading-none font-medium text-(--ui-sidebar-muted) tabular-nums">v{pkg.version}</span>
       </a>
     {/snippet}
     {#snippet footer()}
