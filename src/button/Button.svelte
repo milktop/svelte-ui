@@ -1,7 +1,9 @@
 <!--
-  A button. Other attributes (onclick, aria-label, form…) go on the <button>.
+  A button, or a link that looks like one when given `href`. Other attributes
+  (onclick, aria-label, form, target…) go on the <button> or <a>.
 
   <Button variant="primary" icon="lucide:save" loading={saving}>Save</Button>
+  <Button variant="primary" icon="lucide:plus" href="/invoices/new">New invoice</Button>
 
   - `variant`: 'default', 'primary', 'danger', 'soft', 'ghost' or 'link'
   - `size`: 'sm', 'md' (matching the inputs' height) or 'lg'
@@ -15,7 +17,9 @@
   - `countColor`: 'danger', 'accent', 'success', 'warning' or 'neutral'; or set
     `--ui-button-count-bg` and `--ui-button-count-text` for any other
   - `countLabel`: what the count is, for assistive tech ('new': "Inbox, 3 new")
-  - `type`: 'button' by default (pass 'submit' for forms)
+  - `href`: renders an <a> with the same look and parts; `disabled` (or
+    `loading`) drops the href and sets aria-disabled
+  - `type`: 'button' by default (pass 'submit' for forms); not on a link
 -->
 <script>
   import '../icons.js'
@@ -27,7 +31,7 @@
   let {
     variant = 'default', size = 'md', icon = null, iconEnd = null, loading = false,
     round = false, block = false, count = null, max = 99, dot = false, pulse = false, countColor = 'danger', countLabel = null,
-    type = 'button', disabled = false,
+    href = null, type = 'button', disabled = false,
     class: className = '', classes = {}, children, ...rest
   } = $props()
 
@@ -37,9 +41,14 @@
   const spoken = $derived(count > 0 ? `${count} ${countLabel ?? uiLocale.messages.button.countLabel}` : dot ? countLabel ?? uiLocale.messages.button.countLabel : '')
   // An aria-label hides the button's text from assistive tech, so the count joins the label.
   const label = $derived(rest['aria-label'] && spoken ? `${rest['aria-label']}, ${spoken}` : rest['aria-label'])
+  const off = $derived(disabled || loading)
+  // A link can't be disabled: without its href it goes nowhere, and aria-disabled says so.
+  const attrs = $derived(href != null
+    ? { href: off ? undefined : href, 'aria-disabled': off || undefined }
+    : { type, disabled: off })
 </script>
 
-<button {...rest} {...part('root')} class={cx(className)} {type} disabled={disabled || loading} aria-label={label}
+<svelte:element this={href != null ? 'a' : 'button'} {...rest} {...part('root')} class={cx(className)} {...attrs} aria-label={label}
   data-variant={variant} data-size={size} data-round={round || undefined} data-block={block || undefined}
   data-loading={loading || undefined} data-icon-only={(!children && !(icon && iconEnd)) || undefined} aria-busy={loading || undefined}>
   {#if loading}
@@ -53,4 +62,4 @@
     <span {...part('badge')} aria-hidden="true" data-dot={badge === '' || undefined} data-pulse={pulse || undefined} data-color={countColor}>{badge}</span>
     {#if !rest['aria-label']}<span {...part('spoken')}>, {spoken}</span>{/if}
   {/if}
-</button>
+</svelte:element>

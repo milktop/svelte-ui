@@ -11,7 +11,7 @@
     &:hover { background: var(--ui-hover); }
     &:active { translate: 0 1px; }
     &:focus-visible { outline: 2px solid var(--ui-ring-soft); border-color: var(--ui-ring); }
-    &:disabled { opacity: 0.5; cursor: not-allowed; translate: none; }
+    &:disabled, &[aria-disabled=true] { opacity: 0.5; cursor: not-allowed; translate: none; }
 
     &[data-variant=primary] { background: var(--ui-accent); border-color: var(--ui-accent); color: var(--ui-accent-text);
       &:hover { filter: brightness(1.1); } }
