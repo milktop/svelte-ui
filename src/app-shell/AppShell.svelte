@@ -47,7 +47,11 @@
 
   let mobile = $state(false)
   let drawerOpen = $state(false)
-  const rail = $derived(collapsed && !mobile)
+  // State, not $derived: a NavItem's tooltip (zag) reads it while being
+  // destroyed, mid-update, and that left a derived stale for good (the
+  // rail stopped following `collapsed`).
+  let rail = $state(false)
+  $effect.pre(() => { rail = collapsed && !mobile })
   // Only the page scrolls (see `scroll`).
   const pageScroll = $derived(!mobile && (inset || scroll === 'page'))
   let root = $state()
