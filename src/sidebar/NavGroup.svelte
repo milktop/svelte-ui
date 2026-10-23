@@ -8,13 +8,15 @@
   - `label`, `icon`
   - `open`: bindable. In an `accordion` Sidebar, opening one closes the others.
 
+  Opening it scrolls the sidebar just enough to show its items.
+
   In the rail only its icon shows, and its items open beside it as a flyout:
   on hover, or on click for keyboard and touch. Escape, leaving it or
   following a link closes it. It moves up when it would run past the bottom
   of the window, and scrolls when taller than it.
 -->
 <script>
-  import { getContext, setContext } from 'svelte'
+  import { getContext, setContext, tick } from 'svelte'
   import '../icons.js'
   import { cx, partsOf, useShell, useSidebar } from '../utils.js'
   import '../theme.css'
@@ -60,9 +62,20 @@
   }
 
   function toggle() {
-    if (!rail) open = !open
+    if (!rail) {
+      open = !open
+      if (open) reveal()
+    }
     else if (flyout) flyout = false
     else showFlyout()
+  }
+
+  // Scrolls the sidebar just enough to show the opened items (the heading
+  // stays in view when the group is taller than the sidebar).
+  async function reveal() {
+    await tick()
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+    root.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' })
   }
 
   // Leaving by keyboard closes the flyout.
