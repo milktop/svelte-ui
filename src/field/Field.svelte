@@ -10,16 +10,20 @@
   - `label`, `hint`, `error` (shown instead of the hint), `required`
   - `span`: columns (of 12) to take inside Fields
   - without children it renders an Input: `value` (bindable) and any other
-    props (type, placeholder, icon, suffix…) pass on to it
+    props (type, placeholder, icon, suffix…) pass on to it; with
+    type="number" a NumberInput (value a number or null, min, max, step…)
+
+  <Field label="Rate" type="number" min={0} prefix="£" bind:value={rate} />
 -->
 <script>
   import Input from '../input/Input.svelte'
+  import NumberInput from '../number-input/NumberInput.svelte'
   import { cx, partsOf, provideField } from '../utils.js'
   import '../theme.css'
   import './field.css'
 
   let {
-    label = null, hint = null, error = null, required = false, span = 12, value = $bindable(''),
+    label = null, hint = null, error = null, required = false, span = 12, value = $bindable(''), type = 'text',
     class: className = '', classes = {}, style = '', children, ...inputProps
   } = $props()
 
@@ -41,7 +45,9 @@
       {label}{#if required}<span {...part('required')} aria-hidden="true"> *</span>{/if}
     </label>
   {/if}
-  {#if children}{@render children()}{:else}<Input bind:value {required} {...inputProps} />{/if}
+  {#if children}{@render children()}
+  {:else if type === 'number'}<NumberInput bind:value {required} {...inputProps} />
+  {:else}<Input bind:value {type} {required} {...inputProps} />{/if}
   {#if error}<p {...part('error')} id="{id}-error">{error}</p>
   {:else if hint}<p {...part('hint')} id="{id}-hint">{hint}</p>{/if}
 </div>
